@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Style from "./drumMachine.module.css";
 
 export default function DrumMachine() {
@@ -90,16 +90,16 @@ export default function DrumMachine() {
       setDisplayText("");
     }, 2000);
   };
-  
-  if (typeof window !== undefined) {
-    window.addEventListener("keypress", (e) => {
+ ;
+  useEffect(() => {
+    document.addEventListener("keypress", (e) => {
       drumpads.forEach((pad) => {
         if (pad.key == e.key.toUpperCase()) {
           handleClick(pad.key);
         }
       });
-    });
-  }
+    })
+  },[])
 
   return (
     <div id="container" className={Style.container}>
