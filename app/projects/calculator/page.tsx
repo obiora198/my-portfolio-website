@@ -102,7 +102,7 @@ export default function Calculator() {
 
   useEffect(() => {
     document.addEventListener("keypress", () => handleEvent);
-  }, []);
+  }, [handleEvent]);
 
   function handleEvent(event: KeyboardEvent) {
     buttons.forEach((button) => {

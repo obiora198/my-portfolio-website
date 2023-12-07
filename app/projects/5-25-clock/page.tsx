@@ -163,14 +163,14 @@ export default function PormodoroClock() {
               id="break-decrement"
               onClick={() => handleDecrease("break-decrement")}
             >
-              <i className={`${Style.i} fa-solid fa-arrow-down`}></i>
+              ⬇️
             </button>
             <span id="break-length">{breakLength}</span>
             <button
               id="break-increment"
               onClick={() => handleIncrease("break-increment")}
             >
-              <i className={`${Style.i} fa-solid fa-arrow-up`}></i>
+              ⬆️
             </button>
           </div>
         </div>
@@ -181,14 +181,14 @@ export default function PormodoroClock() {
               id="session-decrement"
               onClick={() => handleDecrease("session-decrement")}
             >
-              <i className={`${Style.i} fa-solid fa-arrow-down`}></i>
+              ⬇️
             </button>
             <span id="session-length">{sessionLength}</span>
             <button
               id="session-increment"
               onClick={() => handleIncrease("session-increment")}
             >
-              <i className={`${Style.i} fa-solid fa-arrow-up`}></i>
+              ⬆️
             </button>
           </div>
         </div>

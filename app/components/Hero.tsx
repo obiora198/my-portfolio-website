@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export default function Hero() {
@@ -8,7 +9,7 @@ export default function Hero() {
           <p>
             Hello, <br />
             <span className="font-bold text-6xl text-amber-400">
-              I'm Obiora Sopulu E.
+              I&apos;m Obiora Sopulu E.
             </span>{" "}
             <br />{" "}
             <span className="font-bold text-6xl text-amber-50">
@@ -19,11 +20,11 @@ export default function Hero() {
           </p>
         </div>
         <div className="w-full h-full grid place-items-end">
-          <img
+          <Image
             src="/hero-img2.png"
             alt="hero image"
-            width="100"
-            height="100"
+            width="1000"
+            height="1000"
             className="w-[80%] border-8 border-amber-50 rounded-se-full rounded-ee-full"
           />
         </div>

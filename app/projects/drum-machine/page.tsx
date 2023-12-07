@@ -104,6 +104,7 @@ export default function DrumMachine() {
         <div className={Style.keys}>
           {drumpads.map((pad) => (
             <button
+              key={drumpads.indexOf(pad)}
               className={Style.drumPad}
               id={pad.title}
               onClick={(e) => handleClick(e.currentTarget.innerText)}

@@ -20,9 +20,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <script src="https://kit.fontawesome.com/1b7d41b7e1.js" crossOrigin="anonymous"></script>
-      </head>
       <body className={`${poppins.className} bg-gray-950 text-amber-50`} >
         <NavBar />
         {children}
