@@ -20,6 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="shortcut icon" href="/my-logo.png" type="image/x-icon" />
+      </head>
       <body className={`${poppins.className} bg-gray-950 text-amber-50`} >
         <NavBar />
         {children}
