@@ -1,7 +1,8 @@
 import React from 'react'
-import { Courgette } from 'next/font/google'
+import { Pacifico } from 'next/font/google'
+import Style from './navbar.module.css'
 
-const logoFont = Courgette({
+const logoFont = Pacifico({
   subsets: ['latin'],
   weight: ['400']
 })
@@ -9,11 +10,11 @@ const logoFont = Courgette({
 export default function NavBar() {
   return (
     <>
-    <header className='w-full h-[100px] bg-gray-800 fixed  text-amber-100 text-2xl px-48 flex justify-between items-center z-20'>
-        <div className={`${logoFont.className} font-bold text-6xl`}>
+    <header className='w-full h-[100px] bg-gray-800 fixed  text-amber-100 text-2xl px-4 sm:px-48 flex justify-between items-center z-20'>
+        <div className={`${logoFont.className,Style.logo} font-bold text-6xl text-amber-200`}>
             OS
         </div>
-        <nav>
+        <nav className='hidden sm:block'>
             <ul className='flex gap-8'>
                 <li>
                   <a href="/">Home</a>  

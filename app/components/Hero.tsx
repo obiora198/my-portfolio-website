@@ -4,7 +4,7 @@ import React from "react";
 export default function Hero() {
   return (
     <>
-      <div className="h-screen text-amber-100 grid grid-cols-2 gap-16 px-48 pb-24 pt-[140px]">
+      <div className="min-h-screen text-amber-100 grid sm:grid-cols-2 gap-16 p-4 sm:px-48 pb-24 pt-[140px] relative">
         <div className="w-full h-full grid place-content-center text-2xl text-start">
           <p>
             Hello, <br />
@@ -19,14 +19,10 @@ export default function Hero() {
             Nextsj and Tailwind css
           </p>
         </div>
-        <div className="w-full h-full grid place-items-end">
-          <Image
-            src="/hero-img2.png"
-            alt="hero image"
-            width="1000"
-            height="1000"
-            className="w-[80%] border-8 border-amber-50 rounded-se-full rounded-ee-full"
-          />
+        <div className="w-full h-full grid place-items-end absolute sm:static -top-10 -z-10">
+          <div className="sm:hidden h-full w-full bg-[rgba(0,0,0,0.5)] absolute"></div>
+          <div className=" w-full sm:w-[80%] h-[80%] bg-[url(/hero-img2.png)] bg-center bg-cover border-8 border-amber-50 rounded-se-full rounded-ee-full">
+          </div>
         </div>
       </div>
     </>

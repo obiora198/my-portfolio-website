@@ -4,7 +4,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 export default function Footer() {
   return (
     <>
-    <footer className='bg-gray-800 text-amber-100 text-2xl py-6 px-48 flex flex-col justify-center items-center gap-4'>
+    <footer className='bg-gray-800 text-amber-100 text-2xl py-6 px-4 sm:px-48 flex flex-col justify-center items-center gap-4'>
         <ul className='flex gap-8'>
             <li>
               <a href="https://github.com/obiora198"><GitHubIcon /></a>  
@@ -13,7 +13,7 @@ export default function Footer() {
               <a href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/"><LinkedInIcon /></a>  
             </li>
         </ul>
-        <small className='italic font-extralight'>Copyright © 2023 Created by Obiora Sopuluchukwu Emmanuel</small>
+        <small className='italic font-extralight text-sm text-center'>Copyright © 2023 Created by Obiora Sopuluchukwu Emmanuel</small>
     </footer>
     </>
   )
