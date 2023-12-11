@@ -19,12 +19,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className='scroll-smooth'>
       <head>
         <link rel="shortcut icon" href="/my-logo.png" type="image/x-icon" />
       </head>
-      <body className={`${poppins.className} bg-gray-950 text-amber-50 `} >
-        <NavBar />
+      <body className={`${poppins.className} bg-gray-950 text-amber-50`}  >
+        <NavBar homeId='#hero-section' contactId='#contact-section' portfolioId='#portfolio-section' />
         {children}
       </body>
     </html>

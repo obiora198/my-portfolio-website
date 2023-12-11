@@ -51,51 +51,47 @@ export default function Calculator() {
           setCurrentValue((prevValue) => value);
           setEquation((prevEquation) => newEquation.slice(0, -1) + value);
         } else {
-            setCurrentValue((prevValue) => value);
-            setEquation((prevEquation) => currentEquation.slice(0, -1) + value);
+          setCurrentValue((prevValue) => value);
+          setEquation((prevEquation) => currentEquation.slice(0, -1) + value);
         }
       } else {
         if (currentEquation.includes("=")) {
-            const newEquation = currentEquation.split("=");
-            setCurrentValue((prevValue) => value);
-            setEquation((prevEquation) => newEquation[1] + value);
+          const newEquation = currentEquation.split("=");
+          setCurrentValue((prevValue) => value);
+          setEquation((prevEquation) => newEquation[1] + value);
         } else {
-            setCurrentValue((prevValue) => value);
-            setEquation((prevEquation) => currentEquation + value);
+          setCurrentValue((prevValue) => value);
+          setEquation((prevEquation) => currentEquation + value);
         }
       }
     } else if (value == ".") {
-        setCurrentValue(prevValue => (
-            prevValue.includes(".")
-            ? prevValue
-            : prevValue + value
-        ));
-        setEquation((prevEquation) => prevEquation + value);
+      setCurrentValue((prevValue) =>
+        prevValue.includes(".") ? prevValue : prevValue + value
+      );
+      setEquation((prevEquation) => prevEquation + value);
     } else {
       if (currentValue.length > 20) {
         setCurrentValue((prevValue) => "DIGIT LIMIT MET");
         setTimeout(() => {
-            setCurrentValue((prevValue) => currentValue);
-            setEquation((prevEquation) => prevEquation);
+          setCurrentValue((prevValue) => currentValue);
+          setEquation((prevEquation) => prevEquation);
         }, 1000);
       } else {
-        setCurrentValue((prevValue) => (
-            "0/*-+".includes(prevValue) ||
-            equation.includes("=")
-              ? value
-              : prevValue == "DIGIT LIMIT MET"
-              ? prevValue
-              : prevValue + value
-        ));
-        setEquation((prevEquation) => (
-            ("0/*+".includes(currentValue) &&
-              "0/*+".includes(prevEquation)) ||
-            prevEquation.includes("=")
-              ? value
-              : currentValue == "DIGIT LIMIT MET"
-              ? prevEquation
-              : prevEquation + value
-        ));
+        setCurrentValue((prevValue) =>
+          "0/*-+".includes(prevValue) || equation.includes("=")
+            ? value
+            : prevValue == "DIGIT LIMIT MET"
+            ? prevValue
+            : prevValue + value
+        );
+        setEquation((prevEquation) =>
+          ("0/*+".includes(currentValue) && "0/*+".includes(prevEquation)) ||
+          prevEquation.includes("=")
+            ? value
+            : currentValue == "DIGIT LIMIT MET"
+            ? prevEquation
+            : prevEquation + value
+        );
       }
     }
   }
@@ -113,11 +109,9 @@ export default function Calculator() {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center mt-24">
-      <div className="w-[350px] bg-black p-2">
-        <div
-          className="w-full text-right"
-        >
+    <div className="w-full flex flex-col justify-center items-center pt-[150px] px-4">
+      <div className="w-[250px] sm:w-[350px] bg-black p-2">
+        <div className="w-full text-right">
           <div className="w-full min-h-[30px] break-all font-mono text-yellow-400">
             {equation}
           </div>
@@ -149,21 +143,15 @@ export default function Calculator() {
           ))}
         </div>
       </div>
-      <em
-        style={{
-          fontSize: "24px",
-          color: "#004466",
-          marginTop: "30px",
-        }}
-      >
-        Designed by Obiora Sopuluchukwu Emmanuel
-      </em>
+      <p className="text-white italic pt-8 font-thin sm:text-xl text-center">
+        Designed by Obiora Sopuluchukwu emmanuel
+      </p>
     </div>
   );
 }
 
 const buttonsStyle =
-  "hover:border-2 hover:border-gray-200 w-full h-[75px] text-white hover:text-black";
+  "hover:border-2 hover:border-gray-200 w-full h-[55px] sm:h-[75px] text-white hover:text-black";
 const buttons = [
   {
     id: "clear",

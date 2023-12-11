@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
 import React from "react";
-import Style  from "./clock.module.css";
+import Style from "./clock.module.css";
 import Head from "next/head";
 
 const formatNumber = (num: number) => {
@@ -9,9 +9,9 @@ const formatNumber = (num: number) => {
 };
 
 type Timeleft = {
-    minutes: String
-    seconds: String
-}
+  minutes: String;
+  seconds: String;
+};
 
 export default function PormodoroClock() {
   const [breakLength, setBreakLength] = React.useState<number>(5);
@@ -20,7 +20,9 @@ export default function PormodoroClock() {
     minutes: formatNumber(sessionLength),
     seconds: formatNumber(0),
   });
-  const [intervalId, setIntervalId] = React.useState<NodeJS.Timeout | null>(null);
+  const [intervalId, setIntervalId] = React.useState<NodeJS.Timeout | null>(
+    null
+  );
   const [timerLabel, setTimerLabel] = React.useState<String>("Session");
   const [audio, setAudio] = React.useState<HTMLAudioElement | null>(null);
   const [pause, setPause] = React.useState<Boolean>(false);
@@ -34,7 +36,7 @@ export default function PormodoroClock() {
     setBreakLength(5);
     setSessionLength(25);
     if (intervalId) {
-      clearInterval(intervalId)
+      clearInterval(intervalId);
     }
     setIntervalId(null);
     setTimerLabel("Session");
@@ -150,85 +152,78 @@ export default function PormodoroClock() {
   };
 
   return (
-   <>
-    <main className={Style.main}>
-    <div className={Style.container}>
-      <h2>25 + 5 Clock</h2>
+    <>
+      <main className={Style.main}>
+        <div className={Style.container}>
+          <h2>25 + 5 Clock</h2>
 
-      <div className={Style.session_break_length}>
-        <div id="break-label" className={Style.length}>
-          <p>Break Length</p>
-          <div className={Style.btns}>
-            <button className={Style.button}
-              id="break-decrement"
-              onClick={() => handleDecrease("break-decrement")}
+          <div className={Style.session_break_length}>
+            <div id="break-label" className={Style.length}>
+              <p>Break Length</p>
+              <div className={Style.btns}>
+                <button
+                  className={Style.button}
+                  id="break-decrement"
+                  onClick={() => handleDecrease("break-decrement")}
+                >
+                  ⬇️
+                </button>
+                <span id="break-length">{breakLength}</span>
+                <button
+                  id="break-increment"
+                  onClick={() => handleIncrease("break-increment")}
+                >
+                  ⬆️
+                </button>
+              </div>
+            </div>
+            <div id="session-label" className={Style.length}>
+              <p>Session Length</p>
+              <div className={Style.btns}>
+                <button
+                  id="session-decrement"
+                  onClick={() => handleDecrease("session-decrement")}
+                >
+                  ⬇️
+                </button>
+                <span id="session-length">{sessionLength}</span>
+                <button
+                  id="session-increment"
+                  onClick={() => handleIncrease("session-increment")}
+                >
+                  ⬆️
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className={Style.display}>
+            <p id="timer-label">{timerLabel}</p>
+            <span
+              id="time-left"
+              className={Style.timeleft}
+              style={{ color: +timeLeft.minutes <= 1 ? "red" : "" }}
             >
-              ⬇️
+              {timeLeft.minutes + ":" + timeLeft.seconds}
+            </span>
+          </div>
+          <div className={Style.playreset}>
+            <button id="start_stop" onClick={handleStart}>
+              <i className={`${Style.i} fa-solid fa-play`}></i>
+              <i className={`${Style.i} fa-solid fa-pause`}></i>
             </button>
-            <span id="break-length">{breakLength}</span>
-            <button
-              id="break-increment"
-              onClick={() => handleIncrease("break-increment")}
-            >
-              ⬆️
+            <button id="reset" onClick={handleReset}>
+              <i className={`${Style.i} fa-solid fa-rotate`}></i>
             </button>
           </div>
+          <audio
+            id="beep"
+            preload="auto"
+            src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+          ></audio>
+          <em className={Style.em}>Designed by Obiora Sopuluchukwu Emmanuel</em>
         </div>
-        <div id="session-label" className={Style.length}>
-          <p>Session Length</p>
-          <div className={Style.btns}>
-            <button
-              id="session-decrement"
-              onClick={() => handleDecrease("session-decrement")}
-            >
-              ⬇️
-            </button>
-            <span id="session-length">{sessionLength}</span>
-            <button
-              id="session-increment"
-              onClick={() => handleIncrease("session-increment")}
-            >
-              ⬆️
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className={Style.display}>
-        <p id="timer-label">{timerLabel}</p>
-        <span
-          id="time-left"
-          className={Style.timeleft}
-          style={{ color: +timeLeft.minutes <= 1 ? "red" : ''}}
-        >
-          {timeLeft.minutes + ":" + timeLeft.seconds}
-        </span>
-      </div>
-      <div className={Style.playreset}>
-        <button id="start_stop" onClick={handleStart}>
-          <i className={`${Style.i} fa-solid fa-play`}></i>
-          <i className={`${Style.i} fa-solid fa-pause`}></i>
-        </button>
-        <button id="reset" onClick={handleReset}>
-          <i className={`${Style.i} fa-solid fa-rotate`}></i>
-        </button>
-      </div>
-      <audio
-        id="beep"
-        preload="auto"
-        src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
-      ></audio>
-      <em
-        style={{
-          fontSize: "24px",
-          color: "orange",
-          marginTop: "30px",
-        }}
-      >
-        Designed by Obiora Sopuluchukwu Emmanuel
-      </em>
-    </div>
-    </main>
-   </>
+      </main>
+    </>
   );
 }

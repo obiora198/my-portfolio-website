@@ -3,13 +3,20 @@
 import React, { useState } from "react";
 import { Pacifico } from "next/font/google";
 import Style from "./navbar.module.css";
+import Link from "next/link";
 
 const logoFont = Pacifico({
   subsets: ["latin"],
   weight: ["400"],
 });
 
-export default function NavBar() {
+interface ids {
+  homeId: string
+  portfolioId: string
+  contactId: string
+}
+
+export default function NavBar({homeId, contactId, portfolioId}: ids) {
   const [isOPen, setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -29,21 +36,21 @@ export default function NavBar() {
         <nav
           className={`${
             isOPen
-              ? "bg-gray-800 sm:static w-full opacity-80 sm:opacity-100 py-4"
-              : "w-full top-0 opacity-0 sm:opacity-100"
+              ? "bg-gray-800 sm:static w-full sm:w-auto opacity-80 sm:opacity-100 py-4"
+              : "w-full sm:w-auto top-0 opacity-0 sm:opacity-100"
           } absolute sm:static top-[100px] left-0 sm:block duration-500 ease-in-out `}
         >
           <ul
-            className='flex flex-col sm:flex-row sm:gap-8 gap-4 justify-center items-center'
+            className={`flex flex-col sm:flex-row sm:gap-8 gap-4 justify-center items-center ${isOPen ? '' : 'hidden sm:flex'}`}
           >
             <li>
-              <a href="/">Home</a>
+              <Link href={homeId} scroll={false}>Home</Link>
             </li>
             <li>
-              <a href="">About</a>
+              <Link href={portfolioId} scroll={false}>Portfolio</Link>
             </li>
             <li>
-              <a href="">Portfolio</a>
+              <Link href={contactId} scroll={false}>Contact</Link>
             </li>
           </ul>
         </nav>

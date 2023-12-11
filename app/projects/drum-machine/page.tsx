@@ -147,15 +147,9 @@ export default function DrumMachine() {
           </div>
         </div>
       </div>
-      <em
-        style={{
-          fontSize: "24px",
-          color: "white",
-          marginTop: "30px",
-        }}
-      >
-        Designed by Obiora Sopuluchukwu Emmanuel
-      </em>
+      <p className="text-white italic pt-8 font-thin sm:text-xl text-center">
+        Designed by Obiora Sopuluchukwu emmanuel
+      </p>
     </div>
   );
 }

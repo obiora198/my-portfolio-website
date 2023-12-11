@@ -1,4 +1,5 @@
   .main{
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,7 +10,7 @@
   }
   .container,
   .display{
-    width: 600px;
+    max-width: 600px;
     display: flex;
     flex-direction:column;
     align-items: center;
@@ -19,10 +20,12 @@
   .session_break_length,
   .length,
   .btns{
-    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center
+  }
+  .session_break_length {
+    gap: 2em;
   }
   .length{
     flex-direction: column;
@@ -52,4 +55,37 @@
   .playreset{
     display: flex;
     gap: 16px;
+  }
+
+  .em{
+      font-size: 24px;
+      color: orange;
+      margin-top: 30px;
+    }
+
+  @media screen and (max-width: 500px) {
+    .main {
+      font-size: 1.5em;
+    }
+    .container{
+      padding-top: 1cm;
+      gap: 18px;
+    }
+    .session_break_length {
+      font-size: .75em;
+      font-weight: 800;
+      gap: 4px;
+    }
+    .length{
+    flex-direction: column;
+      width: 150px;
+    }
+    .display{
+      width: 200px;
+      gap: 8px;  
+    }
+    .em{
+      font-size: 1em;
+      text-align: center;
+    }
   }

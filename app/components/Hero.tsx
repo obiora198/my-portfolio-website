@@ -6,7 +6,7 @@ export default function Hero() {
     <>
       <div className="min-h-screen text-amber-100 grid sm:grid-cols-2 gap-16 p-4 sm:px-48 pb-24 pt-[140px] relative">
         <div className="w-full h-full grid place-content-center text-xl sm:text-2xl text-start">
-          <p>
+          <p className="text-justify">
             Hello, <br />
             <span className="font-bold text-5xl sm:text-6xl text-amber-400">
               I&apos;m Obiora Sopulu E.
