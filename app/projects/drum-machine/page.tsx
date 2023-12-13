@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useState } from "react";
 import Style from "./drumMachine.module.css";
+import NavBar from "@/app/components/nav/NavBar";
 
 export default function DrumMachine() {
   const [displayText, setDisplayText] = useState<string>("");
@@ -102,54 +103,57 @@ export default function DrumMachine() {
   },[])
 
   return (
-    <div id="container" className={Style.container}>
-      <div id="drum-machine" className={Style.drumMachine}>
-        <div className={Style.keys}>
-          {drumpads.map((pad) => (
-            <button
-              key={drumpads.indexOf(pad)}
-              className={Style.drumPad}
-              id={pad.title}
-              onClick={(e) => handleClick(e.currentTarget.innerText)}
-            >
-              <audio
-                className="clip"
-                id={pad.key}
-                src={toggleKit && pad.audio2 ? pad.audio2 : pad.audio}
-              ></audio>
-              {pad.key}
-            </button>
-          ))}
-        </div>
-        <div className={Style.controls}>
-          <div className={Style.audioSlider}>
-            <span>Volume control</span>
-            <input
-              id="volume"
-              type="range"
-              max="1"
-              min="0"
-              step="0.01"
-              value={volume}
-              onChange={handleVolume}
-              className={Style.volume}
-            />
+    <>
+      <NavBar links={[{text: 'Home', url: '/'}]}/>
+      <div id="container" className={Style.container}>
+        <div id="drum-machine" className={Style.drumMachine}>
+          <div className={Style.keys}>
+            {drumpads.map((pad) => (
+              <button
+                key={drumpads.indexOf(pad)}
+                className={Style.drumPad}
+                id={pad.title}
+                onClick={(e) => handleClick(e.currentTarget.innerText)}
+              >
+                <audio
+                  className="clip"
+                  id={pad.key}
+                  src={toggleKit && pad.audio2 ? pad.audio2 : pad.audio}
+                ></audio>
+                {pad.key}
+              </button>
+            ))}
           </div>
-          <div id="display" className={Style.display}>{displayText}</div>
-          <div className={Style.switch}>
-            <span>Switch Set</span>
-            <div className={Style.toggleSwitch} onClick={flip}>
-              <div
-                className={Style.toggle}
-                style={!toggleKit ? { marginLeft: "0" } : { marginLeft: "55%" }}
-              ></div>
+          <div className={Style.controls}>
+            <div className={Style.audioSlider}>
+              <span>Volume control</span>
+              <input
+                id="volume"
+                type="range"
+                max="1"
+                min="0"
+                step="0.01"
+                value={volume}
+                onChange={handleVolume}
+                className={Style.volume}
+              />
+            </div>
+            <div id="display" className={Style.display}>{displayText}</div>
+            <div className={Style.switch}>
+              <span>Switch Set</span>
+              <div className={Style.toggleSwitch} onClick={flip}>
+                <div
+                  className={Style.toggle}
+                  style={!toggleKit ? { marginLeft: "0" } : { marginLeft: "55%" }}
+                ></div>
+              </div>
             </div>
           </div>
         </div>
+        <p className="text-white italic pt-8 font-thin sm:text-xl text-center">
+          Designed by Obiora Sopuluchukwu emmanuel
+        </p>
       </div>
-      <p className="text-white italic pt-8 font-thin sm:text-xl text-center">
-        Designed by Obiora Sopuluchukwu emmanuel
-      </p>
-    </div>
+    </>
   );
 }

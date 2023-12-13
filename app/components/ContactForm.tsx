@@ -4,7 +4,7 @@ import { TextField, Button } from "@mui/material";
 export default function ContactForm() {
   return (
     <>
-      <div className="w-full sm:h-screen flex flex-col items-center justify-center py-8">
+      <div id="contact-section" className="w-full sm:h-screen flex flex-col items-center justify-center py-8">
         <h1 className="text-5xl font-bold mb-4 sm:my-16">Get in touch</h1>
         <div className="min-w-[50%] bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8">
           <form className="w-full flex flex-col items-center gap-4">

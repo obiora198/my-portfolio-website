@@ -2,7 +2,7 @@ import ProjectCard from "./ProjectCard";
 
 export default function Portfolio() {
   return (
-    <div className="min-h-screen text-amber-50 flex flex-col items-center justify-center gap-4 sm:gap-16 p-4 sm:px-48 sm:py-24">
+    <div id="portfolio-section" className="min-h-screen text-amber-50 flex flex-col items-center justify-center gap-4 sm:gap-16 p-4 sm:px-48 sm:py-24">
       <h1 className="font-bold text-6xl text-center">My Portfolio</h1>
 
       <div className="h-full w-[80%] grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 place-items-center rounded-lg">

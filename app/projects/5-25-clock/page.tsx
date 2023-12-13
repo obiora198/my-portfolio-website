@@ -3,6 +3,7 @@
 import React from "react";
 import Style from "./clock.module.css";
 import Head from "next/head";
+import NavBar from "@/app/components/nav/NavBar";
 
 const formatNumber = (num: number) => {
   return num < 10 && num >= 0 ? "0" + num : "" + num;
@@ -153,6 +154,7 @@ export default function PormodoroClock() {
 
   return (
     <>
+      <NavBar links={[{text: 'Home', url: '/'}]}/>
       <main className={Style.main}>
         <div className={Style.container}>
           <h2>25 + 5 Clock</h2>

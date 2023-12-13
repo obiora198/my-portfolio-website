@@ -4,7 +4,7 @@ import React from "react";
 export default function Hero() {
   return (
     <>
-      <div className="min-h-screen text-amber-100 grid sm:grid-cols-2 gap-16 p-4 sm:px-48 pb-24 pt-[140px] relative">
+      <div id="hero-section" className="min-h-screen text-amber-100 grid sm:grid-cols-2 gap-16 p-4 sm:px-48 pb-24 pt-[140px] relative">
         <div className="w-full h-full grid place-content-center text-xl sm:text-2xl text-start">
           <p className="text-justify">
             Hello, <br />

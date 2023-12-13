@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import NavBar from "@/app/components/nav/NavBar";
 
 export default function Calculator() {
   const [currentValue, setCurrentValue] = useState<string>("0");
@@ -109,44 +110,46 @@ export default function Calculator() {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center pt-[150px] px-4">
-      <div className="w-[250px] sm:w-[350px] bg-black p-2">
-        <div className="w-full text-right">
-          <div className="w-full min-h-[30px] break-all font-mono text-yellow-400">
-            {equation}
+    <>
+      <NavBar links={[{text: 'Home', url: '/'}]}/>
+      <div className="w-full flex flex-col justify-center items-center pt-[150px] px-4">
+        <div className="w-[250px] sm:w-[350px] bg-black p-2">
+          <div className="w-full text-right">
+            <div className="w-full min-h-[30px] break-all font-mono text-yellow-400">
+              {equation}
+            </div>
+            <div id="display" className="w-full font-mono text-2xl text-white">
+              {currentValue}
+            </div>
           </div>
-          <div id="display" className="w-full font-mono text-2xl text-white">
-            {currentValue}
+          <div className="w-full grid grid-rows-5 grid-cols-4 gap-[1px]">
+            {buttons.map((button) => (
+              <button
+                id={button.id}
+                key={button.id}
+                className={`${
+                  button.value === "AC"
+                    ? "col-span-2 bg-[#ac3939]"
+                    : button.value === "0"
+                    ? "col-span-2 bg-[#4d4d4d]"
+                    : button.value === "="
+                    ? "row-span-2 h-auto bg-[#004466]"
+                    : "*/+-".includes(button.value)
+                    ? "bg-[#666666]"
+                    : "bg-[#4d4d4d]"
+                } ${buttonsStyle}`}
+                onClick={() => handleClick(button.value)}
+              >
+                {button.value}
+              </button>
+            ))}
           </div>
         </div>
-
-        <div className="w-full grid grid-rows-5 grid-cols-4 gap-[1px]">
-          {buttons.map((button) => (
-            <button
-              id={button.id}
-              key={button.id}
-              className={`${
-                button.value === "AC"
-                  ? "col-span-2 bg-[#ac3939]"
-                  : button.value === "0"
-                  ? "col-span-2 bg-[#4d4d4d]"
-                  : button.value === "="
-                  ? "row-span-2 h-auto bg-[#004466]"
-                  : "*/+-".includes(button.value)
-                  ? "bg-[#666666]"
-                  : "bg-[#4d4d4d]"
-              } ${buttonsStyle}`}
-              onClick={() => handleClick(button.value)}
-            >
-              {button.value}
-            </button>
-          ))}
-        </div>
+        <p className="text-white italic pt-8 font-thin sm:text-xl text-center">
+          Designed by Obiora Sopuluchukwu emmanuel
+        </p>
       </div>
-      <p className="text-white italic pt-8 font-thin sm:text-xl text-center">
-        Designed by Obiora Sopuluchukwu emmanuel
-      </p>
-    </div>
+    </>
   );
 }
 

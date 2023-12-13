@@ -2,21 +2,31 @@ import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import Portfolio from "./components/Portfolio";
-import RootLayout from "./layout";
+import NavBar from "./components/nav/NavBar";
+
+const links = [
+  {
+    text: "Home",
+    url: "#hero-section",
+  },
+  {
+    text: "Portfolio",
+    url: "#portfolio-section",
+  },
+  {
+    text: "contact",
+    url: "#contact-section",
+  },
+];
 
 export default function Home() {
   return (
-    <RootLayout >
-      <div id="hero-section">
-        <Hero />
-      </div>
-      <div id="portfolio-section">
-        <Portfolio />
-      </div>
-      <div id="contact-section">
-        <ContactForm />
-      </div>
+    <>
+      <NavBar  links={links}/>
+      <Hero />
+      <Portfolio />
+      <ContactForm />
       <Footer />
-    </RootLayout>
+    </>
   );
 }

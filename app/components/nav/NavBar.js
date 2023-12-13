@@ -10,13 +10,7 @@ const logoFont = Pacifico({
   weight: ["400"],
 });
 
-interface ids {
-  homeId: string
-  portfolioId: string
-  contactId: string
-}
-
-export default function NavBar({homeId, contactId, portfolioId}: ids) {
+export default function NavBar({links}) {
   const [isOPen, setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -43,15 +37,11 @@ export default function NavBar({homeId, contactId, portfolioId}: ids) {
           <ul
             className={`flex flex-col sm:flex-row sm:gap-8 gap-4 justify-center items-center ${isOPen ? '' : 'hidden sm:flex'}`}
           >
-            <li>
-              <Link href={homeId} scroll={false}>Home</Link>
-            </li>
-            <li>
-              <Link href={portfolioId} scroll={false}>Portfolio</Link>
-            </li>
-            <li>
-              <Link href={contactId} scroll={false}>Contact</Link>
-            </li>
+            {
+              links?.map((link,index) => (
+                <Link key={index} href={link.url}>{link.text}</Link>
+              ))
+            }
           </ul>
         </nav>
 

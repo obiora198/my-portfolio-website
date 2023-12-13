@@ -1,7 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
-import NavBar from './components/nav/NavBar'
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -24,7 +23,6 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/my-logo.png" type="image/x-icon" />
       </head>
       <body className={`${poppins.className} bg-gray-950 text-amber-50`}  >
-        <NavBar homeId='#hero-section' contactId='#contact-section' portfolioId='#portfolio-section' />
         {children}
       </body>
     </html>
