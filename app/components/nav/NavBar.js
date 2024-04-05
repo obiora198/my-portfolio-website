@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Pacifico } from "next/font/google";
 import Style from "./navbar.module.css";
 import Link from "next/link";
+import Avatar from '@mui/material/Avatar';
 
 const logoFont = Pacifico({
   subsets: ["latin"],
@@ -51,6 +52,9 @@ export default function NavBar({links}) {
         >
           Contact me
         </a>
+        <Link href="./auth">
+            <Avatar src=""/>
+        </Link>
         <div
           onClick={handleClick}
           className="bg-amber-200 w-10 h-10 flex flex-col items-center justify-around p-2 rounded-lg sm:hidden z-40"
