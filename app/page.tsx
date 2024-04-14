@@ -1,9 +1,13 @@
+'use client'
+
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import Portfolio from "./components/Portfolio";
 import NavBar from "./components/nav/NavBar";
 import ProjectForm from "./components/ProjectForm";
+import { useEffect } from "react";
+import { useUser } from "./userContext";
 
 const links = [
   {
@@ -21,13 +25,16 @@ const links = [
 ];
 
 export default function Home() {
+  
+  const {user} = useUser()
+  
   return (
     <>
       <NavBar links={links} />
       <Hero />
-      <ProjectForm />
-      <Portfolio />
-      <ContactForm />
+      {user.name === 'emmanuel' && <ProjectForm />}
+      {/* <Portfolio /> */}
+      {/* <ContactForm /> */}
       <Footer />
     </>
   );

@@ -5,40 +5,54 @@ import { TextField, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { CldUploadWidget } from "next-cloudinary";
 import Head from "next/head";
+import { useUser } from "../userContext";
+import Loading from "../components/Loading";
 
 const ProjectForm = () => {
+  const { user } = useUser();
+
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [image, setImage] = React.useState("");
+  const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const [imagePublicId, setImagePublicId] = React.useState("");
 
-  // const openWidget = () => {
-  //   // create the widget
-  //   const widget = window.cloudinary
-  //     .createUploadWidget(
-  //       {
-  //         cloudName: "dgd3z5vbo",
-  //         uploadPreset: "ml_default",
-  //       },
-  //       (error, result) => {
-  //         if (
-  //           result.event === "success" &&
-  //           result.info.resource_type === "image"
-  //         ) {
-  //           console.log(result.info);
-  //           setImagePublicId(result.info.public_id);
-  //         }
-  //       }
-  //     )
-  //     .then()
-  //     .catch((error) => console.error(error));
-  //   widget.open(); // open up the widget after creation
-  // };
-      const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(title,description,image);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    console.log(`Bearer ${user.token}`);
+
+    try {
+      const response = await fetch(
+        "https://my-portfolio-api-1v51.onrender.com/api/v1/project",
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify({
+            title: title,
+            description: description,
+            // images: [image.public_id],
+            images: ["image"],
+            link: url,
+          }),
+        }
+      );
+
+      // Handle response if necessary
+      if (response.status === 200) {
+        const data = await response.json();
+        console.log(data);
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <>
       <Head>
@@ -47,35 +61,43 @@ const ProjectForm = () => {
           type="text/javascript"
         ></script>
       </Head>
+      {loading && <Loading />}
       <div
         id="contact-section"
         className="w-full sm:h-screen flex flex-col items-center justify-center py-8"
       >
         <h1 className="text-5xl font-bold mb-4 sm:my-16">Upload A Project</h1>
         <div className="min-w-[50%] bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8">
-          <form className="w-full flex flex-col items-center gap-4">
+          <form
+            className="w-full flex flex-col items-center gap-4"
+            onSubmit={handleSubmit}
+          >
             <TextField
               id="outlined-basic"
               type="text"
               variant="outlined"
               placeholder="Project Title"
               className="w-full"
-              onChange={(e)=>setTitle(e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
             />
             <TextField
               id="outlined-basic"
-              type="email"
+              type="text"
               variant="outlined"
               placeholder="Project Description"
               multiline={true}
               className="w-full"
-              onChange={(e)=>setDescription(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
             />
-            {
-              image && (
-                <h3>Image: {image.original_filename}</h3>
-              )
-            }
+            <TextField
+              id="outlined-basic"
+              type="text"
+              variant="outlined"
+              placeholder="Project link"
+              className="w-full"
+              onChange={(e) => setUrl(e.target.value)}
+            />
+            {image && <h3>Image: {image.original_filename}</h3>}
 
             <CldUploadWidget
               uploadPreset="ml_default"
@@ -101,7 +123,7 @@ const ProjectForm = () => {
             <Button
               variant="contained"
               className="bg-amber-200 hover:bg-amber-50 text-gray-900 px-4 py-2 text-sm rounded-full mt-4"
-              onClick={handleSubmit}
+              type="submit"
             >
               Submit
             </Button>
