@@ -20,11 +20,10 @@ const ProjectForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(`Bearer ${user.token}`);
 
     try {
       const response = await fetch(
-        "https://my-portfolio-api-1v51.onrender.com/api/v1/project",
+        "https://my-portfolio-api-1v51.onrender.com/api/v1/projects",
         {
           method: "POST",
           headers: {
@@ -34,15 +33,14 @@ const ProjectForm = () => {
           body: JSON.stringify({
             title: title,
             description: description,
-            // images: [image.public_id],
-            images: ["image"],
+            images: [image.public_id],
             link: url,
           }),
         }
       );
 
       // Handle response if necessary
-      if (response.status === 200) {
+      if (response.status === 201) {
         const data = await response.json();
         console.log(data);
         setLoading(false);

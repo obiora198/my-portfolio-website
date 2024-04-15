@@ -33,8 +33,8 @@ export default function Home() {
       <NavBar links={links} />
       <Hero />
       {user.name === 'emmanuel' && <ProjectForm />}
-      {/* <Portfolio /> */}
-      {/* <ContactForm /> */}
+      <Portfolio />
+      <ContactForm />
       <Footer />
     </>
   );

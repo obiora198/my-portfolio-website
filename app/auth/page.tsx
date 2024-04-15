@@ -37,7 +37,7 @@ export default function Login() {
       // Handle response if necessary
       if (response.status === 200) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setUser({name:data.user.name, token:data.token});
         setLoading(false)
         router.push("/");
