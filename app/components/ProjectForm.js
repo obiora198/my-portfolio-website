@@ -56,7 +56,7 @@ const ProjectForm = () => {
       <Head>
         <script
           src="https://widget.Cloudinary.com/v2.0/global/all.js"
-          type="text/javascript"
+          type="text/javascript" async
         ></script>
       </Head>
       {loading && <Loading />}
