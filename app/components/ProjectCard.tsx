@@ -1,16 +1,16 @@
 "use client";
 
-import Image from "next/image";
+import { CldImage } from 'next-cloudinary';
 import Link from "next/link";
 import React, { useState } from "react";
 
 interface Params {
-  img: string;
-  text: string;
+  image: string;
+  title: string;
   url: String;
 }
 
-export default function ProjectCard({ img, text,url }: Params) {
+export default function ProjectCard({ image, title,url }: Params) {
   const [hover, setHover] = useState<Boolean>(false);
 
   return (
@@ -21,11 +21,11 @@ export default function ProjectCard({ img, text,url }: Params) {
         onMouseLeave={() => setHover(false)}
       >
         <div className="relative">
-          <Image
-            src={img}
+          <CldImage
+            src={image}
             width={1000}
             height={1000}
-            alt={text}
+            alt={title}
             className="w-full rounded-lg"
           />
           <div className="absolute top-0 bottom-0 w-full hover:bg-[rgba(0,0,0,0.5)] grid place-items-center text-4xl text-amber-100 text-center duration-1000 px-8">
@@ -34,7 +34,7 @@ export default function ProjectCard({ img, text,url }: Params) {
                 hover ? "absolute top-[50%] -translate-y-[50%]" : "absolute top-[50%] translate-y-[50%] text-[rgba(0,0,0,0)]"
               }  transition-all ease-in-out duration-1000`}
             >
-              {text}
+              {title}
             </span>
           </div>
         </div>
