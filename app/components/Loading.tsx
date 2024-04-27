@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 export default function Loading() {
   return (
 
-    <div className='w-full h-full absolute bg-white opacity-75 flex items-center justify-center z-40'>
+    <div className='w-full h-full absolute bg-white opacity-75 flex items-center justify-center'>
         <Box sx={{ display: 'flex' }}>
           <CircularProgress />
         </Box>

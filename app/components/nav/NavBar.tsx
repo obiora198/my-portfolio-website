@@ -11,7 +11,12 @@ const logoFont = Pacifico({
   weight: ["400"],
 });
 
-export default function NavBar({links}) {
+interface Links {
+  text: string
+  url: string
+}
+
+export default function NavBar({ links }: { links: Links[] }) {
   const [isOPen, setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -20,7 +25,7 @@ export default function NavBar({links}) {
 
   return (
     <>
-      <header className="w-full h-[100px] bg-gray-800 fixed text-amber-100 text-2xl px-4 sm:px-48 flex justify-between items-center z-20">
+      <header className="bg-gray-800 sticky top-0 w-[calc(100%-256px)] text-amber-100 text-xl mx-64 px-4 mt-2 flex justify-between items-center z-10 rounded-b-md">
         <div
           className={`${
             (logoFont.className, Style.logo)
@@ -46,15 +51,17 @@ export default function NavBar({links}) {
           </ul>
         </nav>
 
-        <a
-          href=""
-          className="bg-amber-200 hover:bg-amber-50 text-gray-900 px-4 py-2 text-sm rounded-full hidden sm:block"
-        >
-          Contact me
-        </a>
-        <Link href="./auth">
-            <Avatar src=""/>
-        </Link>
+        <div className="flex gap-4">
+          <a
+            href=""
+            className="bg-amber-200 hover:bg-amber-50 text-gray-900 px-4 py-2 text-sm rounded-full hidden sm:block"
+          >
+            Contact me
+          </a>
+          <Link href="./auth">
+              <Avatar src="" className="bg-amber-200"/>
+          </Link>
+        </div>
         <div
           onClick={handleClick}
           className="bg-amber-200 w-10 h-10 flex flex-col items-center justify-around p-2 rounded-lg sm:hidden z-40"

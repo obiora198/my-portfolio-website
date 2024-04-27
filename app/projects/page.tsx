@@ -1,7 +1,7 @@
 import Portfolio from "../components/Portfolio";
 
-const Projects = () => {
 
+const Projects = () => {
   return (
     <>
     <Portfolio />

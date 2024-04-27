@@ -22,7 +22,7 @@ const UserContext = createContext<TokenContextProps>({
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<TokenContextProps['user']>(defaultUser); // Remove `| null` here
+    const [user, setUser] = useState<TokenContextProps['user']>(defaultUser); 
 
     return (
         <UserContext.Provider value={{ user: user, setUser: setUser }}>
