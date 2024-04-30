@@ -14,7 +14,7 @@ const defaultUser = { // Define a default user object
     token: null
 };
 
-const UserContext = createContext<TokenContextProps>({
+export const UserContext = createContext<TokenContextProps>({
     user: defaultUser, // Use the default user object
     setUser: () => {}
 });
