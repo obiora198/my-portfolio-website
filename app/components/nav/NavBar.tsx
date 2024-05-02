@@ -25,9 +25,9 @@ export default function NavBar({ links }: { links: Links[] }) {
 
   return (
     <>
-      <header className="w-full px-4 pt-2 sm:px-16 md:px-32 lg:px-64">
+      <header className="w-full px-4 pt-2 sm:px-16 md:px-24 lg:px-32">
         {/* mobile display start */}
-        <div className="sm:hidden bg-gray-800 sticky top-0 w-full text-amber-100 text-xl px-4 flex items-center justify-between z-10 rounded-full">
+        <div className="sm:hidden bg-gray-800 w-full text-amber-100 text-xl px-4 flex items-center justify-between z-50 rounded-full">
           <div
             className={`${
               (logoFont.className, Style.logo)

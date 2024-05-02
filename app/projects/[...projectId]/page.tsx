@@ -31,24 +31,26 @@ const Page: React.FC = () => {
   }, [])
 
   return (
-    <div className='w-full pb-32 pt-16 px-80 flex flex-col items-center gap-16'>
+    <div className='w-full py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center gap-8'>
       {project && (
         <>
-        <h1 className='text-6xl'>{project.title}</h1>
-          {project.images[0] && (
-            <CldImage 
-              src={project.images[0]}
-              width={1000}
-              height={1000}
-              alt={project.title}
-              className='w-full h-[300px]'
-            />
-          )}
+        <h1 className='text-4xl sm:text-5xl text-center'>{project.title}</h1>
+          <div className='w-full py-4 bg-amber-50 grid place-content-center'>
+            {project.images[0] && (
+              <CldImage
+                src={project.images[0]}
+                width={300}
+                height={300}
+                alt={project.title}
+                className=''
+              />
+            )}
+          </div>
 
-          <div className='w-full text-xl'>
+          <div className='w-full bg-gray-800 text-xl text-center rounded-lg p-4'>
 
             <p className=''>{project.description}</p>
-            <p>click <a href={project.link}>here</a> to view the live project</p>
+            <p>click <a href={project.link} className='text-gray-950 hover:text-gray-900'>here</a> to view the live project</p>
           </div>
 
 

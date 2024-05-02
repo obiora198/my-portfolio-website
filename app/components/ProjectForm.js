@@ -6,7 +6,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { CldUploadWidget } from "next-cloudinary";
 import Head from "next/head";
 import { useUser } from "../userContext";
-import Loading from "../components/Loading";
+import Loading from "./Loading";
 
 const ProjectForm = () => {
   const { user } = useUser();

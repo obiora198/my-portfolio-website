@@ -32,11 +32,11 @@ export default function Portfolio() {
 
   console.log(projects);
   return (
-    <div id="portfolio-section" className="min-h-screen text-amber-50 flex flex-col items-center gap-4 sm:gap-16 px-4 sm:px-16 md:px-24 lg:px-32 pt-16">
+    <div id="portfolio-section" className="min-h-screen bg-gray-800 text-amber-50 flex flex-col items-center gap-8 px-4 sm:px-16 md:px-24 lg:px-32 pt-16">
       {loading && <Loading />}
       <h1 className="font-bold text-5xl text-center">My Portfolio</h1>
 
-      <div className="h-full w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 place-items-center rounded-lg">
+      <div className="h-full w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 sm:gap-8 place-items-center rounded-lg">
         {projects.map((item) => (
           <ProjectCard image={item.images[0]} title={item.title} url={`./projects/${item._id}`} key={projects.indexOf(item)} />
         ))}
