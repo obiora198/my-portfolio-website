@@ -4,25 +4,22 @@ import React from "react";
 export default function Hero() {
   return (
     <>
-      <div id="hero-section" className="min-h-screen text-amber-100 grid sm:grid-cols-2 gap-16 p-4 sm:px-48 pb-24 pt-[140px] relative">
-        <div className="w-full h-full grid place-content-center text-xl sm:text-2xl text-start">
-          <p className="text-justify">
-            Hello, <br />
-            <span className="font-bold text-5xl sm:text-6xl text-amber-400">
-              I&apos;m Obiora Sopulu E.
-            </span>{" "}
-            <br />{" "}
-            <span className="font-bold text-5xl sm:text-6xl text-amber-50">
-              an exprienced web developer
-            </span>{" "}
-            <br /> I build visually appealing and functional components using
-            Nextsj and Tailwind css
+      <div id="hero-section" className="min-h-screen text-amber-100 grid md:grid-cols-2 p-4 sm:px-16 md:px-32 lg:px-64 relative">
+        <div className="w-full h-full grid place-content-center">
+          <p className="text-center text-3xl">
+            Hello, I'm Sopuluchukwu E. Obiora, a 
+            <span className="text-amber-200 text-4xl"> fullstack web developer,</span> I build
+            <span className="text-amber-200 text-4xl"> visually appealing </span>and
+            <span className="text-amber-200 text-4xl"> functional</span> fullstack web apps
+            , feel free to look around and see some of my work.
           </p>
         </div>
-        <div className="w-full h-full grid place-items-end absolute sm:static -top-4 -z-10">
-          <div className="sm:hidden h-full w-full bg-[rgba(0,0,0,0.5)] absolute"></div>
-          <div className=" w-full sm:w-[80%] h-[80%] bg-[url(/hero-img2.png)] bg-center bg-cover border-8 border-amber-50 rounded-se-full rounded-ee-full">
+        <div className="w-full h-full absolute flex items-center justify-center md:static -top-16 -z-10">
+          <div className="md:hidden h-full w-full bg-[rgba(0,0,0,0.7)] absolute"></div>
+          <div className="hidden md:block h-4/5 w-4/5 bg-[url(/hero-img2.png)] bg-cover bg-center relative">
+            <div className="h-full w-full bg-gradient-to-r from-gray-950 to-40% to-transparent absolute"></div>
           </div>
+          <Image src='/hero-img2.png' className=" h-full w-full md:hidden" alt="" width={1000} height={1000}/>
         </div>
       </div>
     </>
