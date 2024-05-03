@@ -37,14 +37,14 @@ export default function RootLayout({
 const links = [
   {
     text: "Home",
-    url: "#hero-section",
+    url: "/",
   },
   {
-    text: "Portfolio",
-    url: "#portfolio-section",
+    text: "Projects",
+    url: "/projects",
   },
   {
-    text: "contact",
-    url: "#contact-section",
+    text: "Lets connect",
+    url: "/#contact-section",
   },
 ];

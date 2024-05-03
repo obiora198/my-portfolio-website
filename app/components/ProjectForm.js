@@ -49,6 +49,7 @@ const ProjectForm = () => {
       }
     } catch (error) {
       console.error(error);
+      
     }
   };
   return (
@@ -59,13 +60,13 @@ const ProjectForm = () => {
           type="text/javascript" async
         ></script>
       </Head>
-      {loading && <Loading />}
       <div
         id="contact-section"
-        className="w-full sm:h-screen flex flex-col items-center justify-center py-8"
-      >
-        <h1 className="text-5xl font-bold mb-4 sm:my-16">Upload A Project</h1>
-        <div className="min-w-[50%] bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8">
+        className="w-full h-[80vh] sm:h-screen border-8 border-gray-950 bg-gray-800 flex flex-col items-center justify-center py-8 rounded-lg"
+        >
+        <h1 className="text-4xl md:text-5xl font-bold mb-8">Upload A Project</h1>
+        <div className="min-w-[50%] bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8 relative">
+          {loading && <div className='w-full h-full absolute top-0 left-0'><Loading dark={true}/></div>}
           <form
             className="w-full flex flex-col items-center gap-4"
             onSubmit={handleSubmit}

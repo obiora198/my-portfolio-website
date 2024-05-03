@@ -31,7 +31,7 @@ const Page: React.FC = () => {
   }, [])
 
   return (
-    <div className='w-full py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center gap-8'>
+    <div className='w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center gap-8'>
       {project && (
         <>
         <h1 className='text-4xl sm:text-5xl text-center'>{project.title}</h1>
@@ -42,7 +42,7 @@ const Page: React.FC = () => {
                 width={300}
                 height={300}
                 alt={project.title}
-                className=''
+                className='rounded-lg'
               />
             )}
           </div>

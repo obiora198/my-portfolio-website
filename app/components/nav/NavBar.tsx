@@ -25,9 +25,9 @@ export default function NavBar({ links }: { links: Links[] }) {
 
   return (
     <>
-      <header className="w-full px-4 pt-2 sm:px-16 md:px-24 lg:px-32">
+      <header className="w-full px-4 py-2 sm:px-16 md:px-24 lg:px-32">
         {/* mobile display start */}
-        <div className="sm:hidden bg-gray-800 w-full text-amber-100 text-xl px-4 flex items-center justify-between z-50 rounded-full">
+        <div className="sm:hidden bg-gray-800 w-full text-xl px-4 flex items-center justify-between z-50 rounded-full">
           <div
             className={`${
               (logoFont.className, Style.logo)
@@ -40,15 +40,15 @@ export default function NavBar({ links }: { links: Links[] }) {
               isOPen
                 ? "bg-gradient-to-b from-transparent to-gray-800 py-4"
                 : "top-0 opacity-0"
-            } w-full absolute top-10 left-0 duration-500 ease-in-out rounded-b-md flex flex-col justify-between items-center`}>
-            <ul className={`flex flex-col justify-between items-center text-center px-16 ${isOPen ? '' : 'hidden'}`}
+            } w-full absolute top-10 left-0 duration-500 ease-in-out rounded-b-md flex flex-col justify-between items-center z-50`}>
+            <ul className={`flex flex-col justify-between items-center text-center text-gray-900 gap-1 px-16 ${isOPen ? '' : 'hidden'}`}
             >
               {
                 links?.map((link,index) => (
-                  <Link key={index} href={link.url} className="w-full hover:border-b border-amber-200 pr-2">{link.text}</Link>
+                  <Link key={index} href={link.url} className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleClick}>{link.text}</Link>
                 ))
               }
-              <Link href='./auth' className="w-full hover:border-b border-amber-200">Login</Link>
+              <Link href='./auth' className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleClick}>Login</Link>
             </ul>
           </nav>
           <div

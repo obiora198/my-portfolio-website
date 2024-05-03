@@ -3,9 +3,9 @@ import Portfolio from "../components/Portfolio";
 
 const Projects = () => {
   return (
-    <>
-    <Portfolio />
-    </>
+    <div className="w-full h-full pb-2">
+      <Portfolio />
+    </div>
   )
 }
 
