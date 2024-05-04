@@ -6,14 +6,20 @@ import { FormEventHandler } from "react";
 import { TextField, Button } from "@mui/material";
 import { useUser } from "../userContext";
 import Loading from "../components/Loading";
+import { createUserSession,getUserSession } from "../lib/userSession";
 
 export default function Login() {
   const router = useRouter();
-  const {setUser} = useUser()
+  // const {setUser} = useUser()
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+
+  const clearForm = () => {
+    setEmail('')
+    setPassword('')
+  }
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -36,9 +42,9 @@ export default function Login() {
 
       // Handle response if necessary
       if (response.status === 200) {
+        clearForm()
         const data = await response.json();
-        // console.log(data);
-        setUser({name:data.user.name, token:data.token});
+        createUserSession({name:data.user.name, token:data.token})
         setLoading(false)
         router.push("/");
       } else {

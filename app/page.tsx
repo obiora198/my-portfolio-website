@@ -1,20 +1,18 @@
-'use client'
-
 import ContactForm from "./components/ContactForm";
 import Hero from "./components/Hero";
 import Portfolio from "./components/Portfolio";
 import ProjectForm from "./components/ProjectForm";
-import { UserContext } from "./userContext";
-import { useContext } from "react";
+import { getUserSession } from "./lib/userSession";
 
-export default function Home() {
+
+export default async function Home() {
   
-  const {user} = useContext(UserContext)
+  const user = await getUserSession()
   
   return (
     <>
       <Hero />
-      {user.name === 'emmanuel' && <ProjectForm />}
+      {user?.name === 'emmanuel' && <ProjectForm />}
       <Portfolio />
       <ContactForm />
     </>

@@ -5,11 +5,16 @@ import { TextField, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { CldUploadWidget } from "next-cloudinary";
 import Head from "next/head";
-import { useUser } from "../userContext";
+import { getUserSession } from "../lib/userSession";
 import Loading from "./Loading";
 
+const getUser = async () => {
+  const res = await getUserSession()
+  return res;
+}
+
+
 const ProjectForm = () => {
-  const { user } = useUser();
 
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -17,11 +22,19 @@ const ProjectForm = () => {
   const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
+  const clearForm = () => {
+    setTitle('')
+    setDescription('')
+    setImage('')
+    setUrl('')
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      const user = await getUser()
       const response = await fetch(
         "https://my-portfolio-api-1v51.onrender.com/api/v1/projects",
         {
@@ -41,17 +54,30 @@ const ProjectForm = () => {
 
       // Handle response if necessary
       if (response.status === 201) {
+        clearForm()
         const data = await response.json();
         console.log(data);
         setLoading(false);
       } else {
+        await fetch(
+          "https://my-portfolio-api-1v51.onrender.com/api/v1/projects/delete-image",
+          {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              images: [image.public_id]
+            }),
+          }
+        );
         setLoading(false);
       }
     } catch (error) {
       console.error(error);
-      
     }
   };
+  
   return (
     <>
       <Head>
@@ -59,6 +85,7 @@ const ProjectForm = () => {
           src="https://widget.Cloudinary.com/v2.0/global/all.js"
           type="text/javascript" async
         ></script>
+        <script src="https://console.cloudinary.com/console/c-876bfd119aa2e944477da90e6bf2a7/media_library/jquery/dist/jquery.js" type="text/javascript" async></script>
       </Head>
       <div
         id="contact-section"
@@ -102,6 +129,7 @@ const ProjectForm = () => {
               uploadPreset="ml_default"
               onSuccess={(result, { widget }) => {
                 setImage(result?.info);
+                console.log(result);
                 widget.close();
               }}
             >

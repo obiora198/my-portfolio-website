@@ -5,6 +5,9 @@ import { Pacifico } from "next/font/google";
 import Style from "./navbar.module.css";
 import Link from "next/link";
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { deleteSession } from "@/app/lib/userSession";
 
 const logoFont = Pacifico({
   subsets: ["latin"],
@@ -16,11 +19,15 @@ interface Links {
   url: string
 }
 
-export default function NavBar({ links }: { links: Links[] }) {
+export default function NavBar({ links,loggedIn }: { links: Links[]; loggedIn: boolean }) {
   const [isOPen, setIsOpen] = useState(false);
 
   const handleClick = () => {
     setIsOpen(!isOPen);
+  };
+
+  const handleLogout = () => {
+    deleteSession();
   };
 
   return (
@@ -48,7 +55,7 @@ export default function NavBar({ links }: { links: Links[] }) {
                   <Link key={index} href={link.url} className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleClick}>{link.text}</Link>
                 ))
               }
-              <Link href='./auth' className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleClick}>Login</Link>
+              <Link href='/auth' className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleClick}>Login</Link>
             </ul>
           </nav>
           <div
@@ -96,9 +103,17 @@ export default function NavBar({ links }: { links: Links[] }) {
               }
             </ul>
           </nav>
-          <Link href="./auth">
-              <Avatar src="" className="bg-amber-200 text-gray-900"/>
-          </Link>
+          {
+            loggedIn ? (
+              <Button variant="outlined" className="text-amber-400" color="error" onClick={handleLogout} >
+                <LogoutOutlinedIcon />
+              </Button>
+            ) : (
+              <Link href="/auth">
+                  <Avatar src="" className="bg-amber-200 text-gray-900"/>
+              </Link>
+            )
+          }
         </div>
         {/* larger screens end  */}
       </header>

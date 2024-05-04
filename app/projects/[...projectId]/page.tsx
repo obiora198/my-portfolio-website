@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { CldImage } from 'next-cloudinary'
+import Loading from '@/app/components/Loading'
 
 interface Project {
   images: string[]
@@ -15,14 +16,20 @@ const Page: React.FC = () => {
   const searchParam = useParams()['projectId'][1]
   
   const [project, setProject] = useState<Project|null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const getProject = async () => {
       try {
+        setLoading(true)
+
         const res = await fetch(`https://my-portfolio-api-1v51.onrender.com/api/v1/projects/${searchParam}`)
         const data = await res.json()
         setProject(data.project)
+
+        setLoading(false)
       } catch (error) {
+        setLoading(false)
         console.error(error)
       }
     }
@@ -31,11 +38,12 @@ const Page: React.FC = () => {
   }, [])
 
   return (
-    <div className='w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center gap-8'>
+    <div className='w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center gap-8 relative'>
+      {loading && <div className='w-4/5 h-4/5 absolute'><Loading dark={null} /></div> }
       {project && (
         <>
         <h1 className='text-4xl sm:text-5xl text-center'>{project.title}</h1>
-          <div className='w-full py-4 bg-amber-50 grid place-content-center'>
+          <div className='w-full py-2 bg-gray-400 grid place-content-center'>
             {project.images[0] && (
               <CldImage
                 src={project.images[0]}
