@@ -55,7 +55,15 @@ export default function NavBar({ links,loggedIn }: { links: Links[]; loggedIn: b
                   <Link key={index} href={link.url} className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleClick}>{link.text}</Link>
                 ))
               }
+              {
+            loggedIn ? (
+              <button className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleLogout} >
+                logout
+              </button>
+            ) : (
               <Link href='/auth' className="bg-amber-200 active:bg-amber-50 px-4 rounded-full" onClick={handleClick}>Login</Link>
+            )
+          }
             </ul>
           </nav>
           <div
