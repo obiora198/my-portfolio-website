@@ -29,7 +29,7 @@ const defaultImage: ImageProps = {
   original_filename:'',
 }
 
-export default function CustomDialog({currentTarget}:{currentTarget: HTMLElement | null}) {
+export default function CustomDialog({anchorEl, setAnchor}:{anchorEl: HTMLElement | null; setAnchor: (anchor: HTMLElement | null)=>void}) {
   // edit form props 
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -39,10 +39,8 @@ export default function CustomDialog({currentTarget}:{currentTarget: HTMLElement
   // edit form props end
 
    //MENU CONTROL >>>> START
-   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null | null>(null);
-   const menuOpen = anchorEl == null ? false : true;
-   setAnchorEl(currentTarget);
-   const handleCloseMenu = () => setAnchorEl(null);
+   const menuOpen = Boolean(anchorEl)
+   const handleCloseMenu = () => setAnchor(null);
    //MENU CONTROL >>>> END
 
    //DELETE DIALOG CONTROL >>>> START

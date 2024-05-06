@@ -20,7 +20,8 @@ const Page: React.FC = () => {
   
   const [project, setProject] = useState<Project|null>(null)
   const [loading, setLoading] = useState(false)
-  const [target, setTarget] = useState<HTMLElement | null>(null)
+  // const [target, setTarget] = useState<HTMLElement | null>(null)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null | null>(null);
 
   useEffect(() => {
     const getProject = async () => {
@@ -42,10 +43,7 @@ const Page: React.FC = () => {
   }, [])
 
   const handlePencilClick = (event: React.MouseEvent<HTMLElement>) => {
-    setTarget(event.currentTarget as HTMLButtonElement) 
-    console.log(target);
-    
-    
+    setAnchorEl(event.currentTarget as HTMLButtonElement) 
   }
   return (
     <div className='w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center gap-8 relative'>
@@ -78,7 +76,7 @@ const Page: React.FC = () => {
         </>
       )}
 
-      <CustomDialog  currentTarget={target} />
+      <CustomDialog  anchorEl={anchorEl} setAnchor={setAnchorEl} />
     </div>
   )
 }

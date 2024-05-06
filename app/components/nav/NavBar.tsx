@@ -113,7 +113,7 @@ export default function NavBar({ links,loggedIn }: { links: Links[]; loggedIn: b
           </nav>
           {
             loggedIn ? (
-              <Button variant="outlined" className="text-amber-400" color="error" onClick={handleLogout} >
+              <Button variant="outlined"size="small" className="text-amber-400" color="error" onClick={handleLogout} >
                 <LogoutOutlinedIcon />
               </Button>
             ) : (

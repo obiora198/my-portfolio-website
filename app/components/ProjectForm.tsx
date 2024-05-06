@@ -10,12 +10,7 @@ import Loading from "./Loading";
 
 type ProjectProps = {
   submitHandler: (event: React.FormEvent<HTMLFormElement>) => void
-  changeHandler: (value :{
-    title?: string
-    description?: string
-    image?: string
-    link?: string
-  }) => void
+  changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 type ImageProps = {
@@ -33,7 +28,6 @@ const defaultImage: ImageProps = {
 const ProjectForm = ({handleSubmit,handleChange}: {handleSubmit: ProjectProps['submitHandler'];handleChange: ProjectProps["changeHandler"]}) => {
 
   const [loading, setLoading] = React.useState(false);
-  const [image, setImage] = React.useState<ImageProps>(defaultImage);
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -42,8 +36,8 @@ const ProjectForm = ({handleSubmit,handleChange}: {handleSubmit: ProjectProps['s
     setLoading(false)
   }
 
-  const handleInputChange = (inputValue: string) => {
-    handleChange(inputValue)
+  const hadleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handle
   }
   
   
@@ -73,7 +67,7 @@ const ProjectForm = ({handleSubmit,handleChange}: {handleSubmit: ProjectProps['s
               variant="outlined"
               placeholder="Project Title"
               className="w-full"
-              onChange={(e) => handleInputChange(e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
             />
             <TextField
               id="outlined-basic"
@@ -82,7 +76,7 @@ const ProjectForm = ({handleSubmit,handleChange}: {handleSubmit: ProjectProps['s
               placeholder="Project Description"
               multiline={true}
               className="w-full"
-              onChange={(e) => handleInputChange(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
             />
             <TextField
               id="outlined-basic"
@@ -90,7 +84,7 @@ const ProjectForm = ({handleSubmit,handleChange}: {handleSubmit: ProjectProps['s
               variant="outlined"
               placeholder="Project link"
               className="w-full"
-              onChange={(e) => handleInputChange(e.target.value)}
+              onChange={(e) => setUrl(e.target.value)}
             />
             {image && <h3>Image: {image.original_filename}</h3>}
 
