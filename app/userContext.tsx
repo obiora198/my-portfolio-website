@@ -1,32 +1,35 @@
 'use client'
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react'
 
 interface TokenContextProps {
-    user: {
-        name: string | null,
-        token: string | null
-    };
-    setUser: (user: { name: string | null, token: string | null }) => void; // Removed `null` here
+  user: {
+    name: string | null
+    token: string | null
+  }
+  setUser: (user: { name: string | null; token: string | null }) => void // Removed `null` here
 }
 
-const defaultUser = { // Define a default user object
-    name: null,
-    token: null
-};
+const defaultUser = {
+  // Define a default user object
+  name: null,
+  token: null,
+}
 
 export const UserContext = createContext<TokenContextProps>({
-    user: defaultUser, // Use the default user object
-    setUser: () => {}
-});
+  user: defaultUser, // Use the default user object
+  setUser: () => {},
+})
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => useContext(UserContext)
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<TokenContextProps['user']>(defaultUser); 
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [user, setUser] = useState<TokenContextProps['user']>(defaultUser)
 
-    return (
-        <UserContext.Provider value={{ user: user, setUser: setUser }}>
-            {children}
-        </UserContext.Provider>
-    );
-};
+  return (
+    <UserContext.Provider value={{ user: user, setUser: setUser }}>
+      {children}
+    </UserContext.Provider>
+  )
+}

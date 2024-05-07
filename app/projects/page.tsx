@@ -1,5 +1,4 @@
-import Portfolio from "../components/Portfolio";
-
+import Portfolio from '../components/Portfolio'
 
 const Projects = () => {
   return (
