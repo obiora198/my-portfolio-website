@@ -1,7 +1,7 @@
 import ContactForm from "./components/ContactForm";
 import Hero from "./components/Hero";
 import Portfolio from "./components/Portfolio";
-import ProjectForm from "./components/ProjectForm";
+import NewProjectForm from "./components/newProjectForm"
 import { getUserSession } from "./lib/userSession";
 
 
@@ -12,7 +12,7 @@ export default async function Home() {
   return (
     <>
       <Hero />
-      {user?.name === 'emmanuel' && <ProjectForm />}
+      {user?.name === 'emmanuel' && <NewProjectForm />}
       <Portfolio />
       <ContactForm />
     </>
