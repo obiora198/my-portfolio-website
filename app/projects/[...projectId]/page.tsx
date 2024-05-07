@@ -32,7 +32,7 @@ const Page: React.FC = () => {
     setAnchorEl(event.currentTarget as HTMLButtonElement);
   };
   return (
-    <div className="w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center gap-8 relative">
+    <div className="w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center justify-center gap-8 relative">
       {loading && (
         <div className="w-4/5 h-4/5 absolute">
           <Loading dark={null} />
@@ -85,12 +85,12 @@ const Page: React.FC = () => {
           project not found! return to{" "}
           <Link
             href={"/projects"}
-            className="text-gray-950 hover:text-gray-900"
+            className="text-amber-200 hover:text-amber-50"
           >
             projects page
           </Link>{" "}
-          or
-          <Link href={"/"} className="text-gray-950 hover:text-gray-900">
+          or{" "}
+          <Link href={"/"} className="text-amber-200 hover:text-amber-50">
             homepage
           </Link>{" "}
         </p>
