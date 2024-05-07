@@ -1,6 +1,7 @@
 import { getUserSession } from "./userSession";
 
 type ProjectProps = {
+  [key: string]: any;
   title: string;
   description: string;
   image: string;
@@ -21,8 +22,7 @@ export default async function editProject(props: ProjectProps) {
     const user = await getUser();
     const body: any = {}
     Object.keys(props).forEach((key) => {
-      if(key !== 'id') {
-        // @ts-ignore
+      if(key !== 'id' && key !== 'image') {
         const str = props[key];
         if (str.replace(/\s+/g, '').length !== 0) {
           body[key] = str
@@ -32,7 +32,7 @@ export default async function editProject(props: ProjectProps) {
     const response = await fetch(
       `https://my-portfolio-api-1v51.onrender.com/api/v1/projects/${id}`,
       {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${user.token}`,
@@ -40,11 +40,11 @@ export default async function editProject(props: ProjectProps) {
         body: JSON.stringify(body),
       }
     );
-
     // Handle response if necessary
-    if (response.status === 201) {
+    if (response.status === 200) {
       const data = await response.json();
       console.log(data);
+      return {success: true}
     } else {
       await fetch(
         "https://my-portfolio-api-1v51.onrender.com/api/v1/projects/delete-image",
