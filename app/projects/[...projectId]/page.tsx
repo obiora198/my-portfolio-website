@@ -67,7 +67,7 @@ const Page: React.FC = () => {
             )}
           </div>
 
-          <div className="w-full bg-gray-800 text-xl text-center rounded-lg p-4">
+          <div className="w-full bg-gray-800 text-xl rounded-lg p-4">
             <p className="">{project.description}</p>
             <p>
               click{' '}
