@@ -12,7 +12,7 @@ export default async function Portfolio() {
     >
       <h1 className="font-bold text-5xl text-center">My Portfolio</h1>
 
-      <div className="h-full w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 sm:gap-8 place-items-center rounded-lg relative">
+      <div className="h-full w-full max-w-[1000px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 sm:gap-8 place-items-center rounded-lg relative">
         {projects.map((item: ProjectType) => (
           <ProjectCard
             image={item.images[0]}

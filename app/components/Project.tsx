@@ -20,7 +20,7 @@ export default function Project({
             <h1 className="text-2xl sm:text-3xl md:text-4xl text-center">
               {project.title}
             </h1>
-            {user && <EditButton id={project._id} />}
+            {user.name ==='emmanuel' && <EditButton id={project._id} />}
           </div>
           <div className="w-full py-2 bg-gray-400 grid place-content-center">
             {project.images[0] && (

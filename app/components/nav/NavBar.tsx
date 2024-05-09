@@ -38,7 +38,7 @@ export default function NavBar({
 
   return (
     <>
-      <header className="w-full px-4 py-2 sm:px-16 md:px-24 lg:px-32">
+      <header className="w-full px-4 py-2 sm:px-16 md:px-24 lg:px-32 flex items-center justify-center">
         {/* mobile display start */}
         <div className="sm:hidden bg-gray-800 w-full text-xl px-4 flex items-center justify-between z-50 rounded-full">
           <div
@@ -111,7 +111,7 @@ export default function NavBar({
         {/* mobile display ends */}
 
         {/* larger screens start */}
-        <div className="hidden sm:flex bg-gray-800 sticky top-0 w-full text-amber-100 text-xl px-8 items-center justify-between z-10 rounded-full">
+        <div className="hidden sm:flex bg-gray-800 sticky top-0 w-full max-w-[1000px] text-amber-100 text-xl px-8 items-center justify-between z-10 rounded-full">
           <div
             className={`${
               (logoFont.className, Style.logo)

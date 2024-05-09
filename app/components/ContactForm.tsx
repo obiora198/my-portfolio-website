@@ -9,7 +9,7 @@ export default function ContactForm() {
         className="w-full h-screen flex flex-col items-center justify-center px-4 sm:px-16 md:px-32 lg:px-64"
       >
         <h1 className="text-5xl font-bold mb-8">Get in touch</h1>
-        <div className="w-full bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8">
+        <div className="w-full max-w-[600px] bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8">
           <form className="w-full flex flex-col items-center gap-4">
             <TextField
               id="outlined-basic"
