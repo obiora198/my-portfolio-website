@@ -7,6 +7,7 @@ import { CldUploadWidget } from 'next-cloudinary'
 import Head from 'next/head'
 import Loading from './Loading'
 import createProject from '../lib/createProject'
+import revalidate from '../lib/revalidateFetch'
 
 type ImageProps = {
   public_id: string
@@ -42,6 +43,7 @@ export default function NewprojectForm() {
       image: image.public_id,
       link: url,
     })
+    revalidate('projects')
     clearForm()
     setLoading(false)
   }

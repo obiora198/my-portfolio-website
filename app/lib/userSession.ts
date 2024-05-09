@@ -1,13 +1,9 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import { UserType } from '../configs/tsTypes'
 
-interface User {
-  name: string | null
-  token: string | null
-}
-
-export async function createUserSession(user: User) {
+export async function createUserSession(user: UserType) {
   cookies().set(
     'user',
     JSON.stringify({ name: user.name, token: user.token }),
@@ -19,7 +15,7 @@ export async function createUserSession(user: User) {
   )
 }
 
-export async function getUserSession(): Promise<User> {
+export async function getUserSession(): Promise<UserType> {
   const user = cookies().get('user')?.value
   if (user) {
     return JSON.parse(user)

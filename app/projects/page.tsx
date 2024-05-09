@@ -6,7 +6,7 @@ const Projects = async () => {
 
   return (
     <div className="w-full h-full pb-2">
-      <Portfolio projects={projects} />
+      <Portfolio />
     </div>
   )
 }

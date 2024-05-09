@@ -10,6 +10,7 @@ import Loading from '../Loading'
 import getProject from '@/app/lib/getProject'
 import editProject from '@/app/lib/editProject'
 import { ProjectType, ImagePropsType, UpdateDialogProps } from '@/app/configs/tsTypes'
+import revalidate from '@/app/lib/revalidateFetch'
 
 export default function UpdateDialog({
   id,
@@ -57,6 +58,7 @@ export default function UpdateDialog({
     console.log(res)
 
     if (res?.success == true) {
+      revalidate('project')
       getProjectData()
       onClose()
     }

@@ -1,25 +1,10 @@
-'use client'
-
-import React, { useState, useEffect } from 'react'
 import ProjectCard from './ProjectCard'
-import Loading from './Loading'
 import { ProjectType } from '../configs/tsTypes'
+import getProjects from '../lib/getProjects'
 
+export default async function Portfolio() {
 
-export default function Portfolio({projects}:{projects:ProjectType[]}) {
-  // const [projects, setProjects] = useState<ProjectType[]>([])
-  const [loading, setLoading] = useState(false)
-
-  // const fetchProjects = async () => {
-  //   setLoading(true)
-  //   const data = await getProjects()
-  //   setProjects(data)
-  //   setLoading(false)
-  // }
-
-  useEffect(() => {
-    // fetchProjects()
-  }, [])
+  const projects: ProjectType[] = await getProjects()
 
   return (
     <div
@@ -29,17 +14,11 @@ export default function Portfolio({projects}:{projects:ProjectType[]}) {
       <h1 className="font-bold text-5xl text-center">My Portfolio</h1>
 
       <div className="h-full w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 sm:gap-8 place-items-center rounded-lg relative">
-        {loading && (
-          <div className="w-full h-[calc(100vh-200px)] absolute top-0 left-0">
-            <Loading dark={null} />
-          </div>
-        )}
-
-        { projects.map((item: ProjectType) => (
+        {projects.map((item: ProjectType) => (
           <ProjectCard
             image={item.images[0]}
             title={item.title}
-            url={`./projects/${item._id}`}
+            url={item._id}
             key={projects.indexOf(item)}
           />
         ))}

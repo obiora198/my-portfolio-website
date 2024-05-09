@@ -1,14 +1,12 @@
+'use client'
+
 import { CldImage } from 'next-cloudinary'
 import Link from 'next/link'
 import EditButton from './EditButton'
-import getProject from "../lib/getProject"
-import { ProjectType } from '../configs/tsTypes'
+import { ProjectType, UserType } from '../configs/tsTypes'
 
 
-
-export default async function Project({project}:{project: ProjectType}) {
-  
-    // const project = await getProject({id:id})
+export default function Project({project,user}: {project: ProjectType; user: UserType}) {
 
     return (
         <div className="w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center justify-center gap-8 relative">
@@ -19,7 +17,7 @@ export default async function Project({project}:{project: ProjectType}) {
             <h1 className="text-2xl sm:text-3xl md:text-4xl text-center">
               {project.title}
             </h1>
-            <EditButton id={project._id} />
+            {user && <EditButton id={project._id} />}
           </div>
           <div className="w-full py-2 bg-gray-400 grid place-content-center">
             {project.images[0] && (

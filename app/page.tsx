@@ -13,7 +13,7 @@ export default async function Home() {
     <>
       <Hero />
       {user?.name === 'emmanuel' && <NewProjectForm />}
-      <Portfolio projects={projects}  />
+      <Portfolio />
       <ContactForm />
     </>
   )

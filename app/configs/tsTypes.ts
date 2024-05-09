@@ -31,3 +31,8 @@ export type UpdateDialogProps = {
   open: boolean
   onClose: () => void
 }
+
+export interface UserType {
+  name: string | null
+  token: string | null
+}
