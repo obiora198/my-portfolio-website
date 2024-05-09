@@ -4,13 +4,11 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { FormEventHandler } from 'react'
 import { TextField, Button } from '@mui/material'
-import { useUser } from '../userContext'
 import Loading from '../components/Loading'
 import { createUserSession, getUserSession } from '../lib/userSession'
 
 export default function Login() {
   const router = useRouter()
-  // const {setUser} = useUser()
 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
@@ -37,6 +35,7 @@ export default function Login() {
             email: email,
             password: password,
           }),
+          next: { tags: ['user'] }
         }
       )
 

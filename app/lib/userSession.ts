@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { UserType } from '../configs/tsTypes'
+import revalidate from './revalidateFetch'
 
 export async function createUserSession(user: UserType) {
   cookies().set(
@@ -26,4 +27,5 @@ export async function getUserSession(): Promise<UserType> {
 
 export async function deleteSession() {
   cookies().delete('user')
+  revalidate('user')
 }

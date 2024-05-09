@@ -111,7 +111,7 @@ export default function NavBar({
         {/* mobile display ends */}
 
         {/* larger screens start */}
-        <div className="hidden sm:flex bg-gray-800 sticky top-0 w-full max-w-[1000px] text-amber-100 text-xl px-8 items-center justify-between z-10 rounded-full">
+        <div className="hidden sm:flex bg-gray-800 sticky top-0 w-full max-w-[1024px] text-amber-100 text-xl px-8 items-center justify-between z-10 rounded-full">
           <div
             className={`${
               (logoFont.className, Style.logo)
