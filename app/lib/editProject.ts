@@ -12,10 +12,9 @@ type ProjectProps = {
 export default async function editProject(props: ProjectProps) {
   const { title, description, image, link, id } = props
 
-
   try {
     const user = await getUserSession()
-    
+
     const body: any = {}
     Object.keys(props).forEach((key) => {
       if (key !== 'id' && key !== 'image') {

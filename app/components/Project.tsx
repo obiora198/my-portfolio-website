@@ -5,12 +5,15 @@ import Link from 'next/link'
 import EditButton from './EditButton'
 import { ProjectType, UserType } from '../configs/tsTypes'
 
-
-export default function Project({project,user}: {project: ProjectType; user: UserType}) {
-
-    return (
-        <div className="w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center justify-center gap-8 relative">
-      
+export default function Project({
+  project,
+  user,
+}: {
+  project: ProjectType
+  user: UserType
+}) {
+  return (
+    <div className="w-full min-h-[calc(100vh-150px)] py-8 px-4 sm:py-16 sm:px-16 md:px-32 lg:px-64 flex flex-col items-center justify-center gap-8 relative">
       {project ? (
         <>
           <div className="w-full flex lg:relative justify-between lg:justify-center">
@@ -61,5 +64,5 @@ export default function Project({project,user}: {project: ProjectType; user: Use
         </p>
       )}
     </div>
-    )
+  )
 }

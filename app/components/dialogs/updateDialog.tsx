@@ -9,14 +9,14 @@ import { CldUploadWidget } from 'next-cloudinary'
 import Loading from '../Loading'
 import getProject from '@/app/lib/getProject'
 import editProject from '@/app/lib/editProject'
-import { ProjectType, ImagePropsType, UpdateDialogProps } from '@/app/configs/tsTypes'
+import {
+  ProjectType,
+  ImagePropsType,
+  UpdateDialogProps,
+} from '@/app/configs/tsTypes'
 import revalidate from '@/app/lib/revalidateFetch'
 
-export default function UpdateDialog({
-  id,
-  open,
-  onClose,
-}: UpdateDialogProps) {
+export default function UpdateDialog({ id, open, onClose }: UpdateDialogProps) {
   const [project, setProject] = React.useState<ProjectType | null>(null)
   const [title, setTitle] = React.useState(project?.title as string)
   const [description, setDescription] = React.useState(

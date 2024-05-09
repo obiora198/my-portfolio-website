@@ -7,7 +7,6 @@ import { Button } from '@mui/material'
 import Loading from '../Loading'
 import { DeleteDialogProps } from '@/app/configs/tsTypes'
 
-
 export default function DeleteDialog({
   open,
   loading,

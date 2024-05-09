@@ -14,7 +14,6 @@ export default function CustomDialog({
   id,
   setAnchor,
 }: DialogPropsType) {
-  
   //MENU CONTROL >>>> START
   const menuOpen = Boolean(anchorEl)
   const handleCloseMenu = () => setAnchor(null)

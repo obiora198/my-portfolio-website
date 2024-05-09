@@ -3,7 +3,6 @@ import { ProjectType } from '../configs/tsTypes'
 import getProjects from '../lib/getProjects'
 
 export default async function Portfolio() {
-
   const projects: ProjectType[] = await getProjects()
 
   return (
