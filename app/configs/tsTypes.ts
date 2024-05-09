@@ -10,7 +10,6 @@ export interface DialogPropsType {
   anchorEl: HTMLElement | null
   id: string
   setAnchor: (anchor: HTMLElement | null) => void
-  setStamp: (stamp: number) => void
 }
 
 export type ImagePropsType = {
@@ -31,5 +30,4 @@ export type UpdateDialogProps = {
   id: string
   open: boolean
   onClose: () => void
-  setStamp: (stamp: number) => void
 }

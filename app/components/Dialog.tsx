@@ -10,7 +10,6 @@ export default function CustomDialog({
   anchorEl,
   id,
   setAnchor,
-  setStamp,
 }: DialogPropsType) {
   
   //MENU CONTROL >>>> START
@@ -32,7 +31,6 @@ export default function CustomDialog({
     const res = await deleteProject({ id: id })
     if (res?.success) {
       handleCloseDeleteDialog()
-      setStamp(Date.now())
     }
     setDeleteLoading(false)
   }
@@ -73,7 +71,6 @@ export default function CustomDialog({
         id={id}
         open={updateDialogOpen}
         onClose={handleCloseupdateDialog}
-        setStamp={setStamp}
       />
       {/* edit dialog end  */}
 

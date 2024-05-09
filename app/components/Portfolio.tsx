@@ -3,33 +3,22 @@
 import React, { useState, useEffect } from 'react'
 import ProjectCard from './ProjectCard'
 import Loading from './Loading'
+import { ProjectType } from '../configs/tsTypes'
 
-interface Project {
-  images: string[]
-  title: string
-  _id: string
-}
 
-export default function Portfolio() {
-  const [projects, setProjects] = useState<Project[]>([])
+export default function Portfolio({projects}:{projects:ProjectType[]}) {
+  // const [projects, setProjects] = useState<ProjectType[]>([])
   const [loading, setLoading] = useState(false)
 
-  const getProjects = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch(
-        'https://my-portfolio-api-1v51.onrender.com/api/v1/projects'
-      )
-      const responseObj = await response.json()
-      setProjects(responseObj.data)
-      setLoading(false)
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  // const fetchProjects = async () => {
+  //   setLoading(true)
+  //   const data = await getProjects()
+  //   setProjects(data)
+  //   setLoading(false)
+  // }
 
   useEffect(() => {
-    getProjects()
+    // fetchProjects()
   }, [])
 
   return (
@@ -46,7 +35,7 @@ export default function Portfolio() {
           </div>
         )}
 
-        {projects.map((item) => (
+        { projects.map((item: ProjectType) => (
           <ProjectCard
             image={item.images[0]}
             title={item.title}

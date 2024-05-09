@@ -15,7 +15,6 @@ export default function UpdateDialog({
   id,
   open,
   onClose,
-  setStamp,
 }: UpdateDialogProps) {
   const [project, setProject] = React.useState<ProjectType | null>(null)
   const [title, setTitle] = React.useState(project?.title as string)
@@ -60,7 +59,6 @@ export default function UpdateDialog({
     if (res?.success == true) {
       getProjectData()
       onClose()
-      setStamp(Date.now())
     }
     setLoading(false)
   }
