@@ -4,8 +4,7 @@ import { ProjectType } from '../configs/tsTypes'
 import fetchProjects from '../lib/fetchProjects'
 import React from 'react'
 
-export default function Projects() {
-  // const projects: ProjectType[] = await fetchProjects()
+export default function ProjectsUi() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
 
   const start = async() => {
@@ -22,7 +21,7 @@ export default function Projects() {
   return (
     <div
       id="portfolio-section"
-      className="min-h-screen w-full bg-gray-800 text-amber-50 flex flex-col items-center gap-8 px-4 sm:px-16 md:px-24 lg:px-32 pt-16 pb-8"
+      className="min-h-screen w-full text-amber-50 flex flex-col items-center gap-8 px-4 sm:px-16 md:px-24 lg:px-32 pt-16 pb-8"
     >
       <div className="py-8 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -33,8 +32,9 @@ export default function Projects() {
           </div>
           <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 pt-10 sm:mt-8 sm:pt-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
             {projects.map((project) => (
-              <article
+              <a
                 key={project.id}
+                href={`/projects/${project.id}`}
                 className="flex max-w-xl flex-col items-start justify-between"
               >
                 <img
@@ -60,7 +60,7 @@ export default function Projects() {
                     {project.data.description}
                   </p>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </div>

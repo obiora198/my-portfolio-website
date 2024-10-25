@@ -1,12 +1,10 @@
-export default async function fetchProject({ id }: { id: string }) {
+export default async function fetchProjects() {
   try {
-    const res = await fetch(
-      `https://my-portfolio-api-1v51.onrender.com/api/v1/projects/${id}`,
-      { next: { tags: ['project'] } }
-    )
-    const data = await res.json()
-    return data.project
-  } catch (error) {
-    console.error(error)
+    const response = await fetch('/api/projects')
+    const data = await response.json()
+    return data.data
+    // console.log(data.data)
+  } catch (e) {
+    console.log(e)
   }
 }

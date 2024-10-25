@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import Footer from './components/Footer'
 import Nav from './components/nav/Nav'
-import { getUserSession } from './lib/userSession'
 import { AuthContextProvider } from './context/authContext'
 
 const poppins = Poppins({
@@ -21,7 +20,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const user = await getUserSession()
 
   return (
     <html lang="en" className="scroll-smooth">

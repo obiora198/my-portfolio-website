@@ -5,9 +5,6 @@ import { Pacifico } from 'next/font/google'
 import Style from './navbar.module.css'
 import Link from 'next/link'
 import AdminButton from '../buttons/AdminButton'
-import Button from '@mui/material/Button'
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
-import { deleteSession } from '@/app/lib/userSession'
 import { useAuthContext } from '../../context/authContext'
 
 const logoFont = Pacifico({
@@ -26,10 +23,6 @@ export default function Nav({ links }: { links: Links[] }) {
 
   const handleClick = () => {
     setIsOpen(!isOPen)
-  }
-
-  const handleLogout = () => {
-    deleteSession()
   }
 
   return (
@@ -65,22 +58,7 @@ export default function Nav({ links }: { links: Links[] }) {
                   {link.text}
                 </Link>
               ))}
-              {user ? (
-                <button
-                  className="bg-amber-200 active:bg-amber-50 px-4 rounded-full"
-                  onClick={handleLogout}
-                >
-                  logout
-                </button>
-              ) : (
-                <Link
-                  href="/auth"
-                  className="bg-amber-200 active:bg-amber-50 px-4 rounded-full"
-                  onClick={handleClick}
-                >
-                  Login
-                </Link>
-              )}
+              <AdminButton />
             </ul>
           </nav>
           <div
@@ -130,19 +108,7 @@ export default function Nav({ links }: { links: Links[] }) {
               ))}
             </ul>
           </nav>
-          {user ? (
-            <Button
-              variant="outlined"
-              size="small"
-              className="text-amber-400"
-              color="error"
-              onClick={handleLogout}
-            >
-              <LogoutOutlinedIcon />
-            </Button>
-          ) : (
-            <AdminButton />
-          )}
+          <AdminButton />
         </div>
         {/* larger screens end  */}
       </header>
