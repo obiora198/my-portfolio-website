@@ -1,4 +1,4 @@
-export default async function getProject({ id }: { id: string }) {
+export default async function fetchProject({ id }: { id: string }) {
   try {
     const res = await fetch(
       `https://my-portfolio-api-1v51.onrender.com/api/v1/projects/${id}`,

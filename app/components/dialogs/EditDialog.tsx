@@ -3,13 +3,13 @@
 import * as React from 'react'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import deleteProject from '../lib/deleteProject'
-import { DialogPropsType } from '../configs/tsTypes'
-import DeleteDialog from './dialogs/deleteDialog'
-import UpdateDialog from './dialogs/updateDialog'
-import revalidate from '../lib/revalidateFetch'
+import deleteProject from '../../lib/deleteProject'
+import { DialogPropsType } from '../../configs/tsTypes'
+import DeleteDialog from './deleteDialog'
+import UpdateDialog from './updateDialog'
+import revalidate from '../../lib/revalidateFetch'
 
-export default function CustomDialog({
+export default function EditDialog({
   anchorEl,
   id,
   setAnchor,

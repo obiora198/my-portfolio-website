@@ -4,11 +4,11 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { FormEventHandler } from 'react'
 import { TextField, Button } from '@mui/material'
-import Loading from '../components/Loading'
-import { createUserSession, getUserSession } from '../lib/userSession'
+import signIn from '@/firebase/auth/signIn'
 
 export default function Login() {
   const router = useRouter()
+  // const {setUser} = useUser()
 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
@@ -24,34 +24,14 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const response = await fetch(
-        'https://my-portfolio-api-1v51.onrender.com/api/v1/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
-          next: { tags: ['user'] }
-        }
-      )
-
-      // Handle response if necessary
-      if (response.status === 200) {
-        clearForm()
-        const data = await response.json()
-        createUserSession({ name: data.user.name, token: data.token })
-        setLoading(false)
+      const user = await signIn(email, password)
+      if (user) {
         router.push('/')
-      } else {
-        setLoading(false)
       }
-    } catch (error) {
-      console.error(error)
+    } catch (e) {
+      console.log('could not log in')
     }
+    setLoading(false)
   }
 
   return (
@@ -59,14 +39,8 @@ export default function Login() {
       id="contact-section"
       className="w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center py-8"
     >
-      <h1 className="text-5xl font-bold mb-8">Admin Login</h1>
-      <div className="min-w-[50%] bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8 relative">
-        {loading && (
-          <div className="w-full h-full absolute top-0 left-0">
-            <Loading dark={true} />
-          </div>
-        )}
-
+      <h3 className="text-5xl font-bold mb-8">Admin Login</h3>
+      <div className="min-w-[50%]  bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8 relative">
         <form
           className="w-full flex flex-col items-center gap-4"
           method="POST"

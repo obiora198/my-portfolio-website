@@ -4,8 +4,20 @@ import { ProjectType } from '../configs/tsTypes'
 import fetchProjects from '../lib/fetchProjects'
 import React from 'react'
 
-export default async function Projects() {
-  const projects: ProjectType[] = await fetchProjects()
+export default function Projects() {
+  // const projects: ProjectType[] = await fetchProjects()
+  const [projects, setProjects] = React.useState<ProjectType[]>([])
+
+  const start = async() => {
+    let res = await fetchProjects()
+    console.log(res);
+    
+    setProjects(res.data)
+  }
+
+  React.useEffect(()=>{
+    start()
+  },[])
 
   return (
     <div

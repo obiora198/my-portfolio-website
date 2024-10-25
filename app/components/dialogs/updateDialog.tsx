@@ -7,7 +7,7 @@ import { TextField, Button } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { CldUploadWidget } from 'next-cloudinary'
 import Loading from '../Loading'
-import getProject from '@/app/lib/getProject'
+import getProject from '@/app/lib/fetchProject'
 import editProject from '@/app/lib/editProject'
 import {
   ProjectType,

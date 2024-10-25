@@ -1,11 +1,11 @@
-import Project from '@/app/components/Project'
-import getProject from '@/app/lib/getProject'
-import getProjects from '@/app/lib/getProjects'
+import Project
+import fetchProject from '@/app/lib/fetchProject'
+import fetchProjects from '@/app/lib/fetchProjects'
 import { ProjectType } from '@/app/configs/tsTypes'
 import { getUserSession } from '@/app/lib/userSession'
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params
+  const { slug } = await params
 
   // const [route,id] = projectId
 
@@ -20,8 +20,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
 }
 
 export async function generateStaticParams() {
-  const projects: ProjectType[] = await getProjects()
+  const projects: ProjectType[] = await fetchProjects()
   return projects.map((project) => ({
-    slug: project._id,
+    slug: project.id,
   }))
 }

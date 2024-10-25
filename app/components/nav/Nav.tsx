@@ -4,10 +4,11 @@ import React, { useState } from 'react'
 import { Pacifico } from 'next/font/google'
 import Style from './navbar.module.css'
 import Link from 'next/link'
-import Avatar from '@mui/material/Avatar'
+import AdminButton from '../buttons/AdminButton'
 import Button from '@mui/material/Button'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import { deleteSession } from '@/app/lib/userSession'
+import { useAuthContext } from '../../context/authContext'
 
 const logoFont = Pacifico({
   subsets: ['latin'],
@@ -19,13 +20,8 @@ interface Links {
   url: string
 }
 
-export default function NavBar({
-  links,
-  loggedIn,
-}: {
-  links: Links[]
-  loggedIn: boolean
-}) {
+export default function Nav({ links }: { links: Links[] }) {
+  const { user } = useAuthContext()
   const [isOPen, setIsOpen] = useState(false)
 
   const handleClick = () => {
@@ -38,7 +34,7 @@ export default function NavBar({
 
   return (
     <>
-      <header className="w-full px-4 py-2 sm:px-16 md:px-24 lg:px-32 flex items-center justify-center">
+      <header className="w-full px-4 py-2 sm:px-8 flex items-center justify-center">
         {/* mobile display start */}
         <div className="sm:hidden bg-gray-800 w-full text-xl px-4 flex items-center justify-between z-50 rounded-full">
           <div
@@ -69,7 +65,7 @@ export default function NavBar({
                   {link.text}
                 </Link>
               ))}
-              {loggedIn ? (
+              {user ? (
                 <button
                   className="bg-amber-200 active:bg-amber-50 px-4 rounded-full"
                   onClick={handleLogout}
@@ -111,7 +107,7 @@ export default function NavBar({
         {/* mobile display ends */}
 
         {/* larger screens start */}
-        <div className="hidden sm:flex bg-gray-800 sticky top-0 w-full max-w-[1024px] text-amber-100 text-xl px-8 items-center justify-between z-10 rounded-full">
+        <div className="hidden sm:flex bg-gray-800 sticky top-0 w-full text-amber-100 text-xl px-8 items-center justify-between z-10 rounded-b-md">
           <div
             className={`${
               (logoFont.className, Style.logo)
@@ -134,7 +130,7 @@ export default function NavBar({
               ))}
             </ul>
           </nav>
-          {loggedIn ? (
+          {user ? (
             <Button
               variant="outlined"
               size="small"
@@ -145,9 +141,7 @@ export default function NavBar({
               <LogoutOutlinedIcon />
             </Button>
           ) : (
-            <Link href="/auth">
-              <Avatar src="" className="bg-amber-200 text-gray-900" />
-            </Link>
+            <AdminButton />
           )}
         </div>
         {/* larger screens end  */}

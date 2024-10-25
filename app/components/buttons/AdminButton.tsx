@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { MouseEvent } from 'react'
+import { useState, MouseEvent } from 'react'
 import Button from '@mui/material/Button'
-import EditIcon from '@mui/icons-material/Edit'
-import CustomDialog from './Dialog'
+import { Avatar } from '@mui/material'
+import React from 'react'
+import AdminDialog from '../dialogs/AdminDialog'
 
-export default function EditButton({ id }: { id: string }) {
+export default function AdminButton() {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null)
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -16,16 +16,15 @@ export default function EditButton({ id }: { id: string }) {
   return (
     <>
       <Button
-        variant="outlined"
+        variant="text"
         color="inherit"
         size="small"
         onClick={handleClick}
-        className="block lg:absolute right-0 "
       >
-        <EditIcon />
+        <Avatar src="" className="bg-amber-200 text-gray-900" />
       </Button>
 
-      <CustomDialog anchorEl={anchor} setAnchor={setAnchor} id={id} />
+      <AdminDialog anchorEl={anchor} setAnchor={setAnchor} />
     </>
   )
 }

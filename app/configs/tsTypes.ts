@@ -1,9 +1,12 @@
 export interface ProjectType {
-  images: string[]
-  title: string
-  link: string
-  description: string
-  _id: string
+  id: string
+  data: {
+    title: string
+    description: string
+    link: string
+    image: string
+    createdAt: string
+  }
 }
 
 export interface DialogPropsType {
