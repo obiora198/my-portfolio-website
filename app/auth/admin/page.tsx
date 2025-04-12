@@ -31,7 +31,7 @@ export default function Page() {
 
   React.useEffect(() => {
     if (!user) {
-      router.push('/')
+      router.push('/auth')
     }
   }, [user])
 

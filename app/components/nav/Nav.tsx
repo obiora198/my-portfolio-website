@@ -27,16 +27,33 @@ export default function Nav({ links }: { links: Links[] }) {
 
   return (
     <>
-      <header className="w-full px-4 py-2 sm:px-8 flex items-center justify-center">
+      <header className="w-full sticky top-0 bg-white opacity-90 px-32 border-b shadow-sm shadow-indigo-100">
+        {/* larger screens start */}
+        <div className="flex sticky top-0 w-full text-2xl pt-6 pb-2  text-black items-center justify-between z-10">
+          <Link className="text-4xl" href={'/'}>
+            Emmanuel
+          </Link>
+
+          <nav className="">
+            <ul className="w-full flex justify-center items-center gap-8">
+              {links?.map((link, index) => (
+                <li key={index}>
+                  <Link
+                    href={link.url}
+                    className="border-b-0 transition duration-500 hover:border-b-2 hover:border-indigo-500 hover:text-indigo-500"
+                  >
+                    {link.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+        {/* larger screens end  */}
+
         {/* mobile display start */}
-        <div className="sm:hidden bg-gray-800 w-full text-xl px-4 flex items-center justify-between z-50 rounded-full">
-          <div
-            className={`${
-              (logoFont.className, Style.logo)
-            } font-bold text-5xl text-amber-200`}
-          >
-            SO
-          </div>
+        <div className="sm:hidden w-full text-xl px-4 flex items-center justify-between z-50">
+          <div className="font-bold text-5xl text-indigo-500">SO</div>
 
           <nav
             className={`${
@@ -52,7 +69,7 @@ export default function Nav({ links }: { links: Links[] }) {
                 <Link
                   key={index}
                   href={link.url}
-                  className="bg-amber-200 active:bg-amber-50 px-4 rounded-full"
+                  className="bg-indigo-500 active:bg-indigo-50 px-4 rounded-full"
                   onClick={handleClick}
                 >
                   {link.text}
@@ -63,7 +80,7 @@ export default function Nav({ links }: { links: Links[] }) {
           </nav>
           <div
             onClick={handleClick}
-            className="bg-amber-200 w-8 h-8 flex flex-col items-center justify-around p-1 rounded-md z-40"
+            className="bg-indigo-500 w-8 h-8 flex flex-col items-center justify-around p-1 rounded-md z-40"
           >
             <div
               className={`bg-gray-900 w-full h-0.5 rounded-full ${
@@ -83,34 +100,6 @@ export default function Nav({ links }: { links: Links[] }) {
           </div>
         </div>
         {/* mobile display ends */}
-
-        {/* larger screens start */}
-        <div className="hidden sm:flex bg-gray-800 sticky top-0 w-full text-amber-100 text-xl px-8 items-center justify-between z-10 rounded-b-md">
-          <div
-            className={`${
-              (logoFont.className, Style.logo)
-            } font-bold text-5xl sm:text-6xl text-amber-200`}
-          >
-            SO
-          </div>
-
-          <nav className="">
-            <ul className="w-full flex justify-center items-center gap-8">
-              {links?.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    href={link.url}
-                    className="hover:border-b border-amber-200"
-                  >
-                    {link.text}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <AdminButton />
-        </div>
-        {/* larger screens end  */}
       </header>
     </>
   )

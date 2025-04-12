@@ -4,11 +4,13 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { FormEventHandler } from 'react'
 import { TextField, Button } from '@mui/material'
-import signIn from '@/firebase/auth/signIn'
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth'
+import firebase_app from '@/firebase/config'
 
 export default function Login() {
   const router = useRouter()
   // const {setUser} = useUser()
+  const auth = getAuth(firebase_app)
 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
@@ -23,14 +25,16 @@ export default function Login() {
     event.preventDefault()
     setLoading(true)
 
-    try {
-      const user = await signIn(email, password)
-      if (user) {
-        router.push('/')
-      }
-    } catch (e) {
-      console.log('could not log in')
-    }
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          router.push('/auth/admin')
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+          });
     setLoading(false)
   }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import ProjectsUi from '../components/Projects-ui'
+import ProjectsUi from '../components/sections/Projects'
 
 export default async function Projects() {
 
