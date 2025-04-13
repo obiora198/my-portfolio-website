@@ -11,7 +11,7 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: 'Obiora Sopuluchukwu',
+  title: 'Emmanuel Obiora',
   description: 'A portfolio website created to showcase my work',
 }
 
@@ -30,7 +30,7 @@ export default async function RootLayout({
         className={`${poppins.className}`}
       >
         <AuthContextProvider>
-          <Nav links={links} />
+          {/* <Nav links={links} /> */}
 
           {children}
 
@@ -41,25 +41,25 @@ export default async function RootLayout({
   )
 }
 
-const links = [
-  {
-    text: 'Home',
-    url: '/',
-  },
-  {
-    text: 'About',
-    url: '/#about-section',
-  },
-  {
-    text: 'Skills',
-    url: '/#skills-section',
-  },
-  {
-    text: 'Projects',
-    url: '/#projects-section',
-  },
-  {
-    text: 'Contact',
-    url: '/#contact-section',
-  },
-]
+// const links = [
+//   {
+//     text: 'Home',
+//     url: '/',
+//   },
+//   {
+//     text: 'About',
+//     url: '/#about-section',
+//   },
+//   {
+//     text: 'Skills',
+//     url: '/#skills-section',
+//   },
+//   {
+//     text: 'Projects',
+//     url: '/#projects-section',
+//   },
+//   {
+//     text: 'Contact',
+//     url: '/#contact-section',
+//   },
+// ]

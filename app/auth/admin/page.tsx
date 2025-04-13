@@ -7,13 +7,16 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import uploadImage from '../../../firebase/firestore/uploadImage'
+import AdminButton from '@/app/components/buttons/AdminButton'
+import Button from '@mui/material/Button'
 
 export default function Page() {
   const { user } = useAuthContext()
   const router = useRouter()
+  const [loading, setLoading] = React.useState<boolean>(false)
 
   const [title, setTitle] = React.useState<string>('')
-  const [description, setDescription] = React.useState<string>('')
+  const [githubLink, setGithubLink] = React.useState<string>('')
   const [link, setLink] = React.useState<string>('')
 
   const [image, setImage] = useState<File | null | undefined>(null)
@@ -38,30 +41,41 @@ export default function Page() {
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     try {
+      setLoading(true)
       const imageUrl = await uploadImage(image)
 
       const res = await addProject({
         title: title,
-        description: description,
+        // description: description,
         link: link,
+        githubLink: githubLink,
         image: imageUrl,
         createdAt: new Date().getTime(),
       })
 
       if (res.status == 201) {
-          console.log(res.message);
-          router.push('/projects')
-      } 
+        setLoading(false)
+        setTitle('')
+        setGithubLink('')
+        setLink('')
+        console.log(res.message)
+        router.push('/#projects')
+      }
     } catch (e) {
+      setLoading(false)
       console.log(e)
+      alert('Error uploading project')
     }
   }
 
   return (
     <>
-      <div className="w-full px-4 pt-8">
+      <div className="w-full px-4 pt-4 pb-4 flex flex-col items-center justify-center gap-4">
+        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 mt-4 mb-4">
+          Upload a project
+        </h1>
         <form
-          className="bg-white border border-indigo-400 max-w-[650px] mx-auto p-8 mb-8 rounded"
+          className="bg-white border-2 w-[400px] mx-auto p-8 mb-8 rounded-[32px]"
           onSubmit={(e) => handleFormSubmit(e)}
         >
           <div className="space-y-12">
@@ -91,7 +105,7 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
-                <div className="col-span-full">
+                {/* <div className="col-span-full">
                   <label
                     htmlFor="about"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -111,7 +125,7 @@ export default function Page() {
                   <p className="mt-3 text-sm leading-6 text-gray-600">
                     Write something about this project.
                   </p>
-                </div>
+                </div> */}
                 <div className="sm:col-span-4">
                   <label
                     htmlFor="link"
@@ -127,6 +141,26 @@ export default function Page() {
                         type="text"
                         placeholder="project link"
                         onChange={(e) => setLink(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="sm:col-span-4">
+                  <label
+                    htmlFor="github-link"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    github link
+                  </label>
+                  <div className="mt-2">
+                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                      <input
+                        id="github-link"
+                        name="github-link"
+                        type="text"
+                        placeholder="project github-link"
+                        onChange={(e) => setGithubLink(e.target.value)}
                         className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                       />
                     </div>
@@ -199,14 +233,23 @@ export default function Page() {
             >
               Cancel
             </button>
-            <button
+            <Button
+              variant="contained"
+              disabled={loading}
               type="submit"
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Publish
-            </button>
+              {loading ? (
+                <div className="w-6 h-6 border-2 border-white rounded-full animate-spin border-t-indigo-600 inline-block"></div>
+              ) : (
+                ''
+              )}
+              Submit
+            </Button>
           </div>
         </form>
+
+        <AdminButton />
       </div>
     </>
   )

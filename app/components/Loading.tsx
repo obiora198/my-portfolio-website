@@ -8,12 +8,11 @@ interface Theme {
 
 export default function Loading({ dark }: Theme) {
   return (
-    <div
-      className={`${dark ? 'bg-black' : 'bg-white'} w-full h-full opacity-75 flex items-center justify-center rounded-lg z-50`}
-    >
-      <Box sx={{ display: 'flex' }}>
-        <CircularProgress />
-      </Box>
+    <div className="w-full h-screen opacity-75 flex items-center justify-center animate-pulse rounded-lg z-50">
+      <div className="relative">
+        <div className="w-28 h-28 border-4 border-white rounded-full animate-spin border-t-indigo-600 inline-block"></div>
+        <img src="/hero-img.png" alt="Loading" className="absolute top-0" />
+      </div>
     </div>
   )
 }

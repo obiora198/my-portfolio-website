@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-export default function About () {
+export default function About() {
   return (
     <section id="about-section">
       <div className="w-full h-screen flex flex-col items-center px-40 pt-16">
@@ -17,13 +17,20 @@ export default function About () {
             width={300}
             height={300}
           />
-          <p className="text-black text-justify">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nisi, amet
-            nobis voluptates iure facilis necessitatibus minus deleniti repellat
-            alias velit commodi. Aut velit quo ducimus modi dolorum, id tempora
-            cupiditate impedit ipsam quasi quisquam dolor doloribus ea hic iusto
-            inventore, magnam numquam optio sequi tenetur sit quae. Minus,
-            corporis amet.
+          <p className="text-lg text-justify">
+            I’m a self-taught web developer with a passion for building fast,
+            modern, and user-friendly applications. My journey began with
+            Next.js, Tailwind CSS, and Firebase, where I crafted responsive
+            frontends with sleek designs. As my curiosity grew, I dove into
+            backend development, mastering Express.js, MongoDB, and
+            Node.js—building robust APIs and ensuring seamless data flow with
+            Postman. <br /> 
+            What drives me? Problem-solving, clean code, and continuous
+            learning. I thrive on turning ideas into reality, whether it's a
+            dynamic full-stack app or an optimized UI. My goal? To join a team
+            where I can contribute my skills, grow as a developer, and create
+            impactful digital experiences. Let’s build something amazing
+            together! 🚀
           </p>
         </div>
       </div>

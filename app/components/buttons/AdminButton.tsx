@@ -2,7 +2,7 @@
 
 import { useState, MouseEvent } from 'react'
 import Button from '@mui/material/Button'
-import { Avatar } from '@mui/material'
+import LogoutIcon from '@mui/icons-material/Logout';
 import React from 'react'
 import AdminDialog from '../dialogs/AdminDialog'
 
@@ -21,7 +21,7 @@ export default function AdminButton() {
         size="small"
         onClick={handleClick}
       >
-        <Avatar src="" className="bg-amber-200 text-gray-900" />
+        <LogoutIcon className=" text-red-600 text-5xl" />
       </Button>
 
       <AdminDialog anchorEl={anchor} setAnchor={setAnchor} />

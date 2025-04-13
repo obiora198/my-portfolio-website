@@ -3,15 +3,19 @@
 import { ProjectType } from '../../configs/tsTypes'
 import fetchProjects from '../../lib/fetchProjects'
 import React from 'react'
+import Loading from '../Loading'
 
 export default function Projects() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
+  const [loading, setLoading] = React.useState<boolean>(false)
 
   const start = async () => {
-    let res = await fetchProjects()
-    console.log(res)
+    setLoading(true)
+    let projectsArray = await fetchProjects()
+    console.log(projectsArray)
 
-    setProjects(res.data)
+    setProjects(projectsArray)
+    setLoading(false)
   }
 
   React.useEffect(() => {
@@ -24,11 +28,11 @@ export default function Projects() {
         <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 my-4">
           Projects
         </h1>
-        <div className="w-full grid grid-cols-2 gap-8 items-center justify-items-center">
-          {projects.map((project) => (
+        <div className="w-full columns-2 gap-8">
+          {projects ? projects.map((project) => (
             <div
               key={project.id}
-              className="w-full bg-white flex flex-col gap-3 items-center justify-center p-8 border-2 rounded-[32px]"
+              className="w-full bg-white flex flex-col gap-3 items-center justify-center p-8 border-2 rounded-[32px] break-inside-avoid-column mb-8"
             >
               
                 <img
@@ -44,11 +48,13 @@ export default function Projects() {
                   </h2>
                   <div className='w-full flex items-center justify-center gap-4'>
                     <a className='text-l px-8 py-2 rounded-full border-2 font-bold hover:bg-indigo-500 hover:text-white transition-all duration-500' href={project.data.link}>Live Demo</a>
-                    <a className='text-l px-8 py-2 rounded-full border-2 font-bold hover:bg-indigo-500 hover:text-white transition-all duration-500' href={project.data.link}>Code</a>
+                    <a className='text-l px-8 py-2 rounded-full border-2 font-bold hover:bg-indigo-500 hover:text-white transition-all duration-500' href={project.data.githubLink}>Code</a>
                   </div>
                 </div>
             </div>
-          ))}
+          )) :
+          (<Loading dark={null} />)
+          }
         </div>
       </div>
     </section>

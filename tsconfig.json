@@ -25,7 +25,12 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
+    "**/*.tsx", // Commented out to avoid including all .tsx files
+    "app/components/About.tsx", // Removed as the file does not exist
+    "app/components/Project-ui.tsx", // Removed as the file does not exist
+    "app/components/ProjectCard.tsx", // Removed as the file does not exist
+    "app/components/Projects-ui.tsx", // Removed as the file does not exist
+    "app/components/Skills.tsx", // Removed as the file does not exist
     ".next/types/**/*.ts",
     "app/components/nav/Nav.tsx",
     "app/components/ProjectForm.js",

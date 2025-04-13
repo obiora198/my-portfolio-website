@@ -3,6 +3,7 @@
 import React from 'react'
 import { onAuthStateChanged, getAuth } from 'firebase/auth'
 import firebase_app from '../../firebase/config'
+import Loading from '../components/Loading'
 
 const auth = getAuth(firebase_app)
 
@@ -59,9 +60,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   return (
     <AuthContext.Provider value={{ user }}>
       {loading ? (
-        <div className="h-screen w-full bg-transparent flex items-center justify-center">
-          Loading...
-        </div>
+        <Loading dark={null} />
       ) : (
         children
       )}

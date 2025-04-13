@@ -40,9 +40,9 @@ export default function AdminDialog({ anchorEl, setAnchor }: Props) {
             <MenuItem className="mx-2">
               <button onClick={()=>logOut()} className='text-red-500'>Logout</button>
             </MenuItem>
-            <MenuItem className="mx-2">
+            {/* <MenuItem className="mx-2">
               <a href="/auth/admin">New Project</a>
-            </MenuItem>
+            </MenuItem> */}
           </>
         ) : (
           <MenuItem className="mx-2">

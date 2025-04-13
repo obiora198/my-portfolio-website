@@ -2,7 +2,7 @@ export interface ProjectType {
   id: string
   data: {
     title: string
-    description: string
+    githubLink: string
     link: string
     image: string
     createdAt: string

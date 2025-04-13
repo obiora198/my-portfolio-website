@@ -40,11 +40,12 @@ export default function Login() {
 
   return (
     <div
-      id="contact-section"
       className="w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center py-8"
     >
-      <h3 className="text-5xl font-bold mb-8">Admin Login</h3>
-      <div className="min-w-[50%]  bg-amber-50 text-gray-900 flex flex-col gap-4 rounded-lg p-8 relative">
+      <h1 className="text-4xl font-bold text-gray-900 inline-block text-center border-b-2 mb-4">
+        Admin Login
+      </h1>
+      <div className="w-[400px] bg-white flex flex-col gap-4 rounded-[32px] p-8 border-2">
         <form
           className="w-full flex flex-col items-center gap-4"
           method="POST"
@@ -70,7 +71,7 @@ export default function Login() {
           />
           <Button
             variant="contained"
-            className="bg-amber-200 hover:bg-amber-50 text-gray-900 px-4 py-2 text-sm rounded-full mt-4"
+            className="px-4 py-2 text-sm rounded-full mt-4"
             type="submit"
           >
             Submit

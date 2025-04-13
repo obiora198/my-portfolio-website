@@ -27,11 +27,11 @@ export default function Nav({ links }: { links: Links[] }) {
 
   return (
     <>
-      <header className="w-full sticky top-0 bg-white opacity-90 px-32 border-b shadow-sm shadow-indigo-100">
+      <header className="w-full sticky top-0 bg-white opacity-90 px-32 border-b shadow-sm shadow-indigo-100 z-50">
         {/* larger screens start */}
-        <div className="flex sticky top-0 w-full text-2xl pt-6 pb-2  text-black items-center justify-between z-10">
+        <div className="flex sticky top-0 w-full text-2xl pt-6 pb-2  text-black items-center justify-between">
           <Link className="text-4xl" href={'/'}>
-            Emmanuel
+            <span className='text-white bg-indigo-500 rounded-md p-0 px-1'>E</span>mmanuel
           </Link>
 
           <nav className="">
