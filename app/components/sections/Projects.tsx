@@ -4,6 +4,7 @@ import { ProjectType } from '../../configs/tsTypes'
 import fetchProjects from '../../lib/fetchProjects'
 import React from 'react'
 import Loading from '../Loading'
+import Image from 'next/image'
 
 export default function Projects() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
@@ -35,7 +36,7 @@ export default function Projects() {
               className="w-full bg-white flex flex-col gap-3 items-center justify-center p-8 border-2 rounded-[32px] break-inside-avoid-column mb-8"
             >
               
-                <img
+                <Image
                   width={300}
                   height={350}
                   alt="title"

@@ -2,7 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import Footer from './components/sections/Footer'
-import Nav from './components/nav/Nav'
+import Script from 'next/script'
 import { AuthContextProvider } from './context/authContext'
 
 const poppins = Poppins({
@@ -24,7 +24,7 @@ export default async function RootLayout({
     <html lang="en" className="scroll-smooth">
       <head>
         <link rel="shortcut icon" href="/my-logo.png" type="image/x-icon" />
-        <script src="https://kit.fontawesome.com/1b7d41b7e1.js" crossOrigin="anonymous"></script>
+        <Script src="https://kit.fontawesome.com/1b7d41b7e1.js" crossOrigin="anonymous"></Script>
       </head>
       <body
         className={`${poppins.className}`}

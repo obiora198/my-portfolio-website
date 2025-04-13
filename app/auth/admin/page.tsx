@@ -36,7 +36,7 @@ export default function Page() {
     if (!user) {
       router.push('/auth')
     }
-  }, [user])
+  }, [])
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
