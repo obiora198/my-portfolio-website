@@ -36,7 +36,7 @@ export default function Contact() {
 
   return (
     <section id="contact-section">
-      <div className="w-full h-screen flex flex-col items-center justify-center px-40 pt-16 pb-4">
+      <div className="w-full h-screen flex flex-col items-center justify-center px-40 pt-16 pb-8">
         <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 mt-8 mb-4">
           Get in touch
         </h1>

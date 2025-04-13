@@ -10,7 +10,7 @@ export default function Hero() {
       >
         <div className="w-full flex flex-col items-center px-4 gap-4">
           <p className="text-5xl text-black text-center font-bold">
-            Hello, I'am{' '}
+            Hello, I&aposam{' '}
             <span className="text-indigo-500 text-5xl">Emmanuel,</span>{' '}
             fullstack web developer.
           </p>
