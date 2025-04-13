@@ -18,7 +18,7 @@ export default function About() {
             height={300}
           />
           <p className="text-lg text-justify">
-            I’m a self-taught web developer with a passion for building fast,
+            I&aposm a self-taught web developer with a passion for building fast,
             modern, and user-friendly applications. My journey began with
             Next.js, Tailwind CSS, and Firebase, where I crafted responsive
             frontends with sleek designs. As my curiosity grew, I dove into
@@ -29,7 +29,7 @@ export default function About() {
             learning. I thrive on turning ideas into reality, whether it's a
             dynamic full-stack app or an optimized UI. My goal? To join a team
             where I can contribute my skills, grow as a developer, and create
-            impactful digital experiences. Let’s build something amazing
+            impactful digital experiences. Let&aposs build something amazing
             together! 🚀
           </p>
         </div>
