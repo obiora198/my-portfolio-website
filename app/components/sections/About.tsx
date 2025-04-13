@@ -26,7 +26,7 @@ export default function About() {
             Node.js—building robust APIs and ensuring seamless data flow with
             Postman. <br /> 
             What drives me? Problem-solving, clean code, and continuous
-            learning. I thrive on turning ideas into reality, whether it's a
+            learning. I thrive on turning ideas into reality, whether it&aposs a
             dynamic full-stack app or an optimized UI. My goal? To join a team
             where I can contribute my skills, grow as a developer, and create
             impactful digital experiences. Let&aposs build something amazing
