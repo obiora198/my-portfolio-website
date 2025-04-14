@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 export default function Hero() {
@@ -16,9 +17,9 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-col items-center gap-2 sm:gap-4">
-            <button className="sm:px-8 px-4 sm:py-4 py-2 bg-indigo-500 text-white text-lg rounded-md sm:font-bold">
+            <Link href={"/#contact-section"} className="sm:px-8 px-4 sm:py-4 py-2 bg-indigo-500 text-white text-lg rounded-md sm:font-bold">
               Contact me
-            </button>
+            </Link>
 
             <div className="w-full sm:w-[200px] text-indigo-500  flex items-center justify-center gap-4">
               <a href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/">
