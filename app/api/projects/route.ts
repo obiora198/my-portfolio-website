@@ -3,8 +3,9 @@ import getProjects from '../../../firebase/firestore/getProjects'
 
 export async function GET() {
   try {
-    const cdata = await getProjects()
-    return NextResponse.json({ data: cdata, status: 200 })
+    // const cdata = await getProjects()
+    // return NextResponse.json({ data: data, status: 200 })
+    return NextResponse.json({ data: data.data, status: 200 })
   } catch (error) {
     console.error(error)
     return NextResponse.json(

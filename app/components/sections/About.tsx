@@ -4,15 +4,15 @@ import Image from 'next/image'
 export default function About() {
   return (
     <section id="about-section">
-      <div className="w-full h-screen flex flex-col items-center px-40 pt-16">
-        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 mt-8">
+      <div className="w-full md:h-screen flex flex-col gap-8 items-center md:px-40 p-4 md:pt-16">
+        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 md:mt-8">
           About me
         </h1>
 
-        <div className="w-full h-full flex items-center justify-between gap-24 px-4">
+        <div className="w-full h-full flex flex-col md:flex-row items-center justify-between gap-8 md:gap-24 px-4">
           <Image
             src="/profile-img.jpg"
-            className="h-auto rounded-2xl shadow-lg"
+            className="h-auto w-full rounded-2xl shadow-lg"
             alt=""
             width={300}
             height={300}
@@ -30,7 +30,7 @@ export default function About() {
             dynamic full-stack app or an optimized UI. My goal? To join a team
             where I can contribute my skills, grow as a developer, and create
             impactful digital experiences. Let&apos;s build something amazing
-            together! 🚀
+            together!
           </p>
         </div>
       </div>

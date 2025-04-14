@@ -4,12 +4,12 @@ import Image from 'next/image'
 export default function Skills() {
   return (
     <section id="skills-section">
-      <div className="w-full h-screen flex flex-col items-center gap-4 px-40 pt-16 pb-8">
+      <div className="w-full sm:h-screen flex flex-col items-center gap-4 p-4 sm:px-40 sm:pt-16 sm:pb-8">
         <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 mt-8 mb-4">
           Skills & Experience
         </h1>
 
-        <div className="w-full h-full flex items-center gap-8">
+        <div className="w-full h-full flex flex-col sm:flex-row items-center gap-8">
           <div className="w-full h-full bg-white flex flex-col items-center border-2 rounded-[32px] px-8 py-8">
             <h2 className="text-3xl">Frontend Development</h2>
 

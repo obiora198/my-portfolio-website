@@ -9,6 +9,7 @@ import { useRef, useState } from 'react'
 import uploadImage from '../../../firebase/firestore/uploadImage'
 import AdminButton from '@/app/components/buttons/AdminButton'
 import Button from '@mui/material/Button'
+import Link from 'next/link'
 
 export default function Page() {
   const { user } = useAuthContext()
@@ -70,12 +71,12 @@ export default function Page() {
 
   return (
     <>
-      <div className="w-full px-4 pt-4 pb-4 flex flex-col items-center justify-center gap-4">
+      <div className="w-full p-4 flex flex-col items-center justify-center gap-4">
         <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 mt-4 mb-4">
           Upload a project
         </h1>
         <form
-          className="bg-white border-2 w-[400px] mx-auto p-8 mb-8 rounded-[32px]"
+          className="bg-white border-2 w-full md:w-[400px] mx-auto p-8 mb-8 rounded-[32px]"
           onSubmit={(e) => handleFormSubmit(e)}
         >
           <div className="space-y-12">
@@ -227,12 +228,12 @@ export default function Page() {
             </div>
           </div>
           <div className="mt-6 flex items-center justify-end gap-x-6">
-            <button
-              type="button"
+            <Link
+              href="/"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Cancel
-            </button>
+            </Link>
             <Button
               variant="contained"
               disabled={loading}
