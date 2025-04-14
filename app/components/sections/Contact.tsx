@@ -36,11 +36,11 @@ export default function Contact() {
 
   return (
     <section id="contact-section">
-      <div className="w-full h-[calc(100vh-60px)] md:h-screen flex flex-col items-center justify-center md:px-40 md:pt-16 pb-8">
-        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 md:mt-8 mb-8">
+      <div className="w-full h-[calc(100vh-60px)] sm:h-screen flex flex-col items-center justify-center sm:px-40 px-4 sm:pt-16 sm:pb-8">
+        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 sm:mt-8 mb-8">
           Get in touch
         </h1>
-        <div className="w-full max-w-[600px] bg-white flex flex-col gap-4 rounded-[32px] border-2 p-8">
+        <div className="w-full max-w-[600px] bg-white flex flex-col gap-4 rounded-[32px] border-2 sm:p-8 p-4">
           <form
             id="myForm"
             className="w-full flex flex-col items-center gap-4 z-0"

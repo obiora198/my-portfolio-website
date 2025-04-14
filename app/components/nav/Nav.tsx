@@ -21,9 +21,9 @@ export default function Nav({ links }: { links: Links[] }) {
 
   return (
     <>
-      <header className="w-full sticky top-0 bg-white opacity-90 md:px-32 border-b shadow-sm shadow-indigo-100 z-50">
+      <header className="w-full sticky top-0 bg-white opacity-90 sm:px-32 border-b shadow-sm shadow-indigo-100 z-50">
         {/* larger screens start */}
-        <div className="hidden md:flex sticky top-0 w-full text-2xl pt-6 pb-2  text-black items-center justify-between">
+        <div className="hidden sm:flex sticky top-0 w-full text-2xl pt-6 pb-2  text-black items-center justify-between">
           <Link className="text-4xl" href={'/'}>
             <span className='text-white bg-indigo-500 rounded-md p-0 px-1'>E</span>mmanuel
           </Link>
@@ -46,7 +46,7 @@ export default function Nav({ links }: { links: Links[] }) {
         {/* larger screens end  */}
 
         {/* mobile display start */}
-        <div className="md:hidden w-full h-14 text-xl p-4 flex items-center justify-between z-50">
+        <div className="sm:hidden w-full h-14 text-xl p-4 flex items-center justify-between z-50">
         <span className='text-white text-4xl bg-indigo-500 rounded-md p-0 px-1'>E</span>
 
           <nav

@@ -4,8 +4,8 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn'
 export default function Footer() {
   return (
     <>
-      <footer className="bg-gray-900 w-full h-[300px] text-white text-5xl flex flex-col justify-center items-center gap-4">
-        <ul className="flex gap-8">
+      <footer className="bg-gray-900 w-full sm:h-[300px] text-white sm:text-5xl text-2xl flex flex-col justify-center items-center sm:gap-4 gap-2 p-4">
+        <ul className="flex sm:gap-8 gap-2">
           <li>
             <a href="https://github.com/obiora198">
               <i className="fa-brands fa-square-github"></i>

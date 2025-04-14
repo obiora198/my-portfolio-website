@@ -21,16 +21,16 @@ export default function Projects() {
 
   return (
     <section id="projects-section">
-      <div className="min-h-screen w-full flex flex-col items-center gap-8 sm:px-40 sm:pt-16 p-4">
+      <div className="min-h-screen w-full flex flex-col items-center gap-8 sm:px-40 pt-16 p-4">
         <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 my-4">
           Projects
         </h1>
-        <div className="w-full sm:static sm:columns-2 flex flex-col gap-4 sm:gap-8 relative">
+        <div className="w-full sm:columns-2 gap-8">
           {projects ? (
             projects.map((project) => (
               <div
                 key={project.id}
-                className="w-full bg-white flex flex-col gap-3 items-center justify-center p-4 sm:p-8 border-2 rounded-[32px] break-inside-avoid-column sm:mb-8"
+                className="w-full bg-white flex flex-col gap-3 items-center justify-center p-4 sm:p-8 border-2 rounded-[32px] break-inside-avoid-column sm:mb-8 mb-4"
               >
                 <Image
                   width={300}

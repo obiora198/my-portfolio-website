@@ -4,12 +4,12 @@ import Image from 'next/image'
 export default function About() {
   return (
     <section id="about-section">
-      <div className="w-full md:h-screen flex flex-col gap-8 items-center md:px-40 p-4 md:pt-16">
-        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 md:mt-8">
+      <div className="w-full sm:h-screen flex flex-col gap-8 items-center sm:px-40 p-4 pt-16">
+        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 sm:mt-8">
           About me
         </h1>
 
-        <div className="w-full h-full flex flex-col md:flex-row items-center justify-between gap-8 md:gap-24 px-4">
+        <div className="w-full h-full flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-24 px-4">
           <Image
             src="/profile-img.jpg"
             className="h-auto w-full rounded-2xl shadow-lg"
