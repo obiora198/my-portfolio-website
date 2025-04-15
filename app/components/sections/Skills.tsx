@@ -11,16 +11,16 @@ export default function Skills() {
 
         <div className="w-full h-full flex flex-col sm:flex-row items-center gap-8">
           <div className="w-full h-full bg-white flex flex-col items-center border-2 rounded-[32px] px-8 py-8">
-            <h2 className="text-3xl">Frontend Development</h2>
+            <h2 className="text-center text-2xl sm:text-3xl">Frontend Development</h2>
 
-            <div className="grid-cols-2 gap-4 grid w-full h-full mt-8">
+            <div className="grid-cols-2 gap-4 grid w-full h-full sm:text-xl mt-8">
               <div className="w-full flex gap-4 items-center">
                 <span className="fa-stack aligh-top">
                   <i className="fa-solid fa-certificate fa-stack-2x text-indigo-500"></i>
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">React</h3>
+                  <h3 className="font-bold">React</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -30,7 +30,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Next.js</h3>
+                  <h3 className="font-bold">Next.js</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -40,7 +40,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Tailwind CSS</h3>
+                  <h3 className="font-bold">Tailwind CSS</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -50,7 +50,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">CSS</h3>
+                  <h3 className="font-bold">CSS</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -60,7 +60,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">JavaScript</h3>
+                  <h3 className="font-bold">JavaScript</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -70,7 +70,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">HTML</h3>
+                  <h3 className="font-bold">HTML</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -78,16 +78,16 @@ export default function Skills() {
           </div>
 
           <div className="w-full h-full bg-white flex flex-col items-center border-2 rounded-[32px] px-8 py-8">
-            <h2 className="text-3xl">Backend Development</h2>
+            <h2 className="text-center text-2xl sm:text-3xl">Backend Development</h2>
 
-            <div className="grid-cols-2 gap-4 grid w-full h-full mt-8">
+            <div className="grid-cols-2 gap-4 grid w-full h-full sm:text-xl mt-8">
               <div className="w-full flex gap-4 items-center">
                 <span className="fa-stack aligh-top">
                   <i className="fa-solid fa-certificate fa-stack-2x text-indigo-500"></i>
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Nodejs</h3>
+                  <h3 className="font-bold">Nodejs</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -97,7 +97,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Express js</h3>
+                  <h3 className="font-bold">Express js</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -107,7 +107,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Mongo db</h3>
+                  <h3 className="font-bold">Mongo db</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -117,7 +117,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Firebase</h3>
+                  <h3 className="font-bold">Firebase</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Git</h3>
+                  <h3 className="font-bold">Git</h3>
                   <p>Experinced</p>
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function Skills() {
                   <i className="fa-solid fa-check fa-stack-1x fa-inverse"></i>
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xl font-bold">Postman</h3>
+                  <h3 className="font-bold">Postman</h3>
                   <p>Experinced</p>
                 </div>
               </div>
