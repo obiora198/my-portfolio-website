@@ -32,7 +32,7 @@ export default function Hero() {
           </div>
         </div>
         <Image
-          src="/hero-img2.png"
+          src="/hero-img.png"
           className="h-auto mt-8 sm:mt-0 sm:justify-self-end"
           alt=""
           width={400}

@@ -11,7 +11,7 @@ export default function About() {
 
         <div className="w-full h-full flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-24 px-4">
           <Image
-            src="/profile-img.jpg"
+            src="/profile-img.png"
             className="h-auto w-full rounded-2xl shadow-lg"
             alt=""
             width={300}
