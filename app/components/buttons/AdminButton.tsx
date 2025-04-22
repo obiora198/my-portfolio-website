@@ -6,7 +6,7 @@ import addProject from '../../../firebase/firestore/addProject'
 import { PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import uploadImage from '../../../firebase/firestore/uploadImage'
-import { Button } from '../../../components/ui/Button' // Assuming you have a Button component in the Shadcn UI library
+import { Button } from '../../../components/ui/button' // Assuming you have a Button component in the Shadcn UI library
 import {
   Dialog,
   DialogTrigger,
@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from '../../../components/ui/Dialog' // Assuming these are part of Shadcn UI
+} from '../../../components/ui/dialog' // Assuming these are part of Shadcn UI
 
 export default function Page() {
   const { user } = useAuthContext()
