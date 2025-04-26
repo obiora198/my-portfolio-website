@@ -11,11 +11,13 @@ import AdminButton from '../../components/buttons/AdminButton' // Optional: Cust
 import UpdateButton from '../../components/buttons/UpdateButton' // Optional: Custom button component
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import { TrashIcon } from '@heroicons/react/solid'
+import Link from 'next/link'
+import { signOut } from 'firebase/auth'
 
 export default function AdminPage() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
   const [loading, setLoading] = useState(false)
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [projectToDelete, setProjectToDelete] = useState<ProjectType | null>(null)
   const router = useRouter()
 
   const start = async () => {
@@ -33,7 +35,7 @@ export default function AdminPage() {
 
     if (result.status === 200) {
       alert(result.message)
-      setOpenDeleteDialog(false) // Close the delete confirmation dialog
+      setProjectToDelete(null) // Close the delete confirmation dialog
       // Optionally, navigate or refresh the page after deletion
       router.push("/auth/admin")
     } else {
@@ -44,10 +46,18 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="container h-screen mx-auto p-4 pt-4">
-      <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 mt-8 mb-4">
-        Admin Panel
-      </h1>
+    <div className="container h-screen mx-auto px-4 pb-4">
+      <div className="flex items-center justify-between text-indigo-500 py-8">
+        <h1 className="text-4xl font-bold  inline-block text-center border-b-2">
+          Admin Panel
+        </h1>
+
+        <div>
+          <Link href={"/"} className='mr-2 hover:text-indigo-600' >Home</Link>
+          <button onClick={()=>signOut} className='bg-red-600 hover:bg-red-500 text-white text-sm px-2 rounded'>logout</button>
+        </div>
+
+      </div>
 
       
 
@@ -73,7 +83,7 @@ export default function AdminPage() {
                       variant="outlined"
                       color="error"
                       startIcon={<TrashIcon />}
-                      onClick={() => setOpenDeleteDialog(true)}
+                      onClick={() => setProjectToDelete(item)}
                     >
                       Delete
                     </Button>
@@ -81,8 +91,8 @@ export default function AdminPage() {
 
                   {/* Delete Confirmation Dialog */}
                   <Dialog
-                    open={openDeleteDialog}
-                    onClose={() => setOpenDeleteDialog(false)}
+                    open={Boolean(projectToDelete)}
+                    onClose={() => setProjectToDelete(null)}
                   >
                     <DialogTitle>Delete Project</DialogTitle>
                     <DialogContent>
@@ -91,14 +101,14 @@ export default function AdminPage() {
                     <DialogActions>
                       <Button
                         variant='outlined'
-                        onClick={() => setOpenDeleteDialog(false)}
+                        onClick={() => setProjectToDelete(null)}
                         color="info"
                         disabled={loading}
                       >
                         Cancel
                       </Button>
                       <Button
-                        onClick={() => handleDelete(item.id)}
+                         onClick={() => projectToDelete && handleDelete(projectToDelete.id)}
                         variant='contained'
                         color="error"
                         disabled={loading}
