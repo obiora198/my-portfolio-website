@@ -43,6 +43,10 @@ export default function Page() {
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!user) {
+      alert('You must be logged in to upload a project')
+      return
+    }
     try {
       setLoading(true)
       const imageUrl = await uploadImage(image)

@@ -12,7 +12,7 @@ import UpdateButton from '../../components/buttons/UpdateButton' // Optional: Cu
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import { TrashIcon } from '@heroicons/react/solid'
 import Link from 'next/link'
-import { signOut } from 'firebase/auth'
+import logOut from '@/firebase/auth/logout'
 
 export default function AdminPage() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
@@ -54,7 +54,7 @@ export default function AdminPage() {
 
         <div>
           <Link href={"/"} className='mr-2 hover:text-indigo-600' >Home</Link>
-          <button onClick={()=>signOut} className='bg-red-600 hover:bg-red-500 text-white text-sm px-2 rounded'>logout</button>
+          <button onClick={logOut} className='bg-red-600 hover:bg-red-500 active:bg-red-400 text-white text-sm px-2 rounded'>logout</button>
         </div>
 
       </div>
