@@ -64,7 +64,7 @@ export default function Page() {
         setTitle('')
         setGithubLink('')
         setLink('')
-        console.log(res.message)
+        alert(res.message)
         router.push('/#projects')
       }
     } catch (e) {
