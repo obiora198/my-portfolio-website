@@ -15,7 +15,7 @@ import { TrashIcon } from '@heroicons/react/solid'
 export default function AdminPage() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
   const [loading, setLoading] = useState(false)
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [projectToDelete, setProjectToDelete] = useState<ProjectType | null>(null)
   const router = useRouter()
 
   const start = async () => {
@@ -33,7 +33,7 @@ export default function AdminPage() {
 
     if (result.status === 200) {
       alert(result.message)
-      setOpenDeleteDialog(false) // Close the delete confirmation dialog
+      setProjectToDelete(null) // Close the delete confirmation dialog
       // Optionally, navigate or refresh the page after deletion
       router.push("/auth/admin")
     } else {
@@ -44,45 +44,57 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="container h-screen mx-auto p-4 pt-4">
-      <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 mt-8 mb-4">
-        Admin Panel
-      </h1>
+    <div className="h-screen w-full bg-gray-50 relative">
+  {/* Top Navbar */}
+  <nav className="w-full bg-white shadow-md fixed top-0 left-0 z-10 px-6 py-4 flex justify-between items-center">
+    <h2 className="text-xl font-bold text-indigo-600">Admin Panel</h2>
+    <div className="space-x-4">
+      <a href="/" className="text-gray-600 hover:text-indigo-500 font-medium transition">Home</a>
+      <a href="/#projects" className="text-gray-600 hover:text-indigo-500 font-medium transition">Projects</a>
+    </div>
+  </nav>
 
-      
+  <div className="container mx-auto pt-24 px-4">
+    <h1 className="text-4xl font-bold text-indigo-500 text-center border-b-2 mb-8">
+      Manage Projects
+    </h1>
 
-      <table className="min-w-full table-auto border-collapse">
-        <thead>
+    <div className="flex justify-end mb-4">
+      <AdminButton />
+    </div>
+
+    <div className="overflow-x-auto rounded-xl shadow">
+      <table className="min-w-full table-auto border-collapse bg-white">
+        <thead className="bg-gray-100 text-gray-700 text-left">
           <tr>
-            <th className="p-2 text-left">Projects</th>
-            <th className="p-2">
-              <AdminButton />
-            </th>
+            <th className="p-4 font-medium">Project</th>
+            <th className="p-4 font-medium text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {projects.map((item) => (
-            <tr key={item.id} className="group hover:bg-gray-100">
-              <td className="p-2">{item.data.title}</td>
-              <td className="p-2 relative">
-                <div className="group-hover:flex hidden absolute right-2 top-1/2 transform -translate-y-1/2 space-x-2">
+            <tr key={item.id} className="hover:bg-gray-50 border-b transition">
+              <td className="p-4 text-gray-800">{item.data.title}</td>
+              <td className="p-4 text-center">
+                <div className="inline-flex gap-2 items-center">
                   <UpdateButton existingProject={item} />
-                  <div className="flex gap-2">
-                    {/* Delete button */}
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      startIcon={<TrashIcon />}
-                      onClick={() => setOpenDeleteDialog(true)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+
+                  {/* Delete Button */}
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    startIcon={<TrashIcon />}
+                    onClick={() => setProjectToDelete(item)}
+                    className="rounded-full capitalize"
+                  >
+                    Delete
+                  </Button>
 
                   {/* Delete Confirmation Dialog */}
                   <Dialog
-                    open={openDeleteDialog}
-                    onClose={() => setOpenDeleteDialog(false)}
+                    open={projectToDelete?.id === item.id}
+                    onClose={() => setProjectToDelete(null)}
                   >
                     <DialogTitle>Delete Project</DialogTitle>
                     <DialogContent>
@@ -90,8 +102,8 @@ export default function AdminPage() {
                     </DialogContent>
                     <DialogActions>
                       <Button
-                        variant='outlined'
-                        onClick={() => setOpenDeleteDialog(false)}
+                        onClick={() => setProjectToDelete(null)}
+                        variant="outlined"
                         color="info"
                         disabled={loading}
                       >
@@ -99,7 +111,7 @@ export default function AdminPage() {
                       </Button>
                       <Button
                         onClick={() => handleDelete(item.id)}
-                        variant='contained'
+                        variant="contained"
                         color="error"
                         disabled={loading}
                       >
@@ -114,5 +126,7 @@ export default function AdminPage() {
         </tbody>
       </table>
     </div>
+  </div>
+</div>
   )
 }

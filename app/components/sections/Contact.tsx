@@ -35,56 +35,64 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact-section">
-      <div className="w-full h-[calc(100vh-60px)] sm:h-screen flex flex-col items-center justify-center sm:px-40 px-4 sm:pt-16 sm:pb-8">
-        <h1 className="text-4xl font-bold text-indigo-500 inline-block text-center border-b-2 sm:mt-8 mb-8">
-          Get in touch
-        </h1>
-        <div className="w-full max-w-[600px] bg-white flex flex-col gap-4 rounded-[32px] border-2 sm:p-8 p-4">
-          <form
-            id="myForm"
-            className="w-full flex flex-col items-center gap-4 z-0"
-            onSubmit={handleFormSubmit}
+    <section
+      id="contact-section"
+      className="w-full min-h-[calc(100vh-60px)] flex flex-col items-center justify-center sm:px-40 px-4 py-16"
+    >
+      <h1 className="text-4xl font-bold text-indigo-500 text-center border-b-2 mb-12">
+        Get in Touch
+      </h1>
+
+      <div className="w-full max-w-[600px] bg-white rounded-3xl border-2 p-6 sm:p-8 shadow-sm">
+        <form
+          id="contact-form"
+          className="flex flex-col gap-6"
+          onSubmit={handleFormSubmit}
+        >
+          {/* Name Field */}
+          <TextField
+            type="text"
+            name="userName"
+            placeholder="Your Name"
+            variant="outlined"
+            className="w-full"
+            required
+          />
+
+          {/* Email Field */}
+          <TextField
+            type="email"
+            name="userEmail"
+            placeholder="Your Email"
+            variant="outlined"
+            className="w-full"
+            required
+          />
+
+          {/* Message Field */}
+          <TextField
+            multiline
+            name="message"
+            rows={4}
+            placeholder="Your Message..."
+            variant="outlined"
+            className="w-full"
+            required
+          />
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-full border-2 border-indigo-500 text-indigo-500 font-bold hover:bg-indigo-500 hover:text-white transition-all duration-300"
           >
-            <TextField
-              id="outlined-basic"
-              type="text"
-              variant="outlined"
-              name="userName"
-              placeholder="Your Name"
-              className="w-full z-0"
-            />
-            <TextField
-              id="outlined-basic"
-              type="email"
-              name="userEmail"
-              variant="outlined"
-              placeholder="Your Email"
-              className="w-full z-0"
-            />
-            <TextField
-              id="outlined-basic"
-              multiline
-              name="message"
-              variant="outlined"
-              rows={4}
-              placeholder="Message..."
-              className="w-full z-0"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="text-l px-8 py-2 flex items-center justify-center gap-2 rounded-full border-2 font-bold hover:bg-indigo-500 hover:text-white transition-all duration-500"
-            >
-              {loading ? (
-                <div className="w-6 h-6 border-2 border-white rounded-full animate-spin border-t-indigo-600 inline-block"></div>
-              ) : (
-                ''
-              )}
-              Submit
-            </button>
-          </form>
-        </div>
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white rounded-full animate-spin border-t-indigo-600"></div>
+            ) : (
+              'Submit'
+            )}
+          </button>
+        </form>
       </div>
     </section>
   )

@@ -4,8 +4,11 @@ export interface ProjectType {
     title: string
     githubLink: string
     link: string
-    image: string
-    createdAt: string
+    description: string
+    stack: string
+    image?: string
+    createdAt?: number
+    updatedAt?: number
   }
 }
 
