@@ -46,52 +46,56 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="container h-screen mx-auto px-4 pb-4">
-      <div className="flex items-center justify-between text-indigo-500 py-8">
-        <h1 className="text-4xl font-bold  inline-block text-center border-b-2">
-          Admin Panel
-        </h1>
+    <div className="h-screen w-full bg-gray-50 relative">
+  {/* Top Navbar */}
+  <nav className="w-full bg-white shadow-md fixed top-0 left-0 z-10 px-6 py-4 flex justify-between items-center">
+    <h2 className="text-xl font-bold text-indigo-600">Admin Panel</h2>
+    <div className="space-x-4">
+      <a href="/" className="text-gray-600 hover:text-indigo-500 font-medium transition">Home</a>
+      <a href="/#projects" className="text-gray-600 hover:text-indigo-500 font-medium transition">Projects</a>
+    </div>
+  </nav>
 
-        <div>
-          <Link href={"/"} className='mr-2 hover:text-indigo-600' >Home</Link>
-          <button onClick={logOut} className='bg-red-600 hover:bg-red-500 active:bg-red-400 text-white text-sm px-2 rounded'>logout</button>
-        </div>
+  <div className="container mx-auto pt-24 px-4">
+    <h1 className="text-4xl font-bold text-indigo-500 text-center border-b-2 mb-8">
+      Manage Projects
+    </h1>
 
-      </div>
+    <div className="flex justify-end mb-4">
+      <AdminButton />
+    </div>
 
-      
-
-      <table className="min-w-full table-auto border-collapse">
-        <thead>
+    <div className="overflow-x-auto rounded-xl shadow">
+      <table className="min-w-full table-auto border-collapse bg-white">
+        <thead className="bg-gray-100 text-gray-700 text-left">
           <tr>
-            <th className="p-2 text-left">Projects</th>
-            <th className="p-2">
-              <AdminButton />
-            </th>
+            <th className="p-4 font-medium">Project</th>
+            <th className="p-4 font-medium text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {projects.map((item) => (
-            <tr key={item.id} className="group hover:bg-gray-100">
-              <td className="p-2">{item.data.title}</td>
-              <td className="p-2 relative">
-                <div className="group-hover:flex hidden absolute right-2 top-1/2 transform -translate-y-1/2 space-x-2">
+            <tr key={item.id} className="hover:bg-gray-50 border-b transition">
+              <td className="p-4 text-gray-800">{item.data.title}</td>
+              <td className="p-4 text-center">
+                <div className="inline-flex gap-2 items-center">
                   <UpdateButton existingProject={item} />
-                  <div className="flex gap-2">
-                    {/* Delete button */}
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      startIcon={<TrashIcon />}
-                      onClick={() => setProjectToDelete(item)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+
+                  {/* Delete Button */}
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    startIcon={<TrashIcon />}
+                    onClick={() => setProjectToDelete(item)}
+                    className="rounded-full capitalize"
+                  >
+                    Delete
+                  </Button>
 
                   {/* Delete Confirmation Dialog */}
                   <Dialog
-                    open={Boolean(projectToDelete)}
+                    open={projectToDelete?.id === item.id}
                     onClose={() => setProjectToDelete(null)}
                   >
                     <DialogTitle>Delete Project</DialogTitle>
@@ -100,16 +104,16 @@ export default function AdminPage() {
                     </DialogContent>
                     <DialogActions>
                       <Button
-                        variant='outlined'
                         onClick={() => setProjectToDelete(null)}
+                        variant="outlined"
                         color="info"
                         disabled={loading}
                       >
                         Cancel
                       </Button>
                       <Button
-                         onClick={() => projectToDelete && handleDelete(projectToDelete.id)}
-                        variant='contained'
+                        onClick={() => handleDelete(item.id)}
+                        variant="contained"
                         color="error"
                         disabled={loading}
                       >
@@ -124,5 +128,7 @@ export default function AdminPage() {
         </tbody>
       </table>
     </div>
+  </div>
+</div>
   )
 }
