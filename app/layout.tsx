@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import Footer from './components/sections/Footer'
 import Script from 'next/script'
-import { AuthContextProvider } from './context/authContext'
+import { AuthProvider } from './context/authContext'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -29,13 +29,13 @@ export default async function RootLayout({
       <body
         className={`${poppins.className}`}
       >
-        <AuthContextProvider>
+        <AuthProvider>
           {/* <Nav links={links} /> */}
 
           {children}
 
           <Footer />
-        </AuthContextProvider>
+        </AuthProvider>
       </body>
     </html>
   )

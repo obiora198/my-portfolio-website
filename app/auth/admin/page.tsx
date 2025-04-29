@@ -68,7 +68,7 @@ export default function AdminPage() {
     <div className="h-screen w-full bg-gray-50 relative">
       {/* Top Navbar */}
       <nav className="w-full bg-white shadow-md fixed top-0 left-0 z-10 px-6 py-4 flex justify-between items-center">
-        <h2 className="text-xl font-bold text-indigo-600">Admin Panel</h2>
+        <h2 className="text-xl font-bold text-indigo-600 ">Admin Panel</h2>
         <div className="space-x-4">
           <a
             href="/"
@@ -84,7 +84,7 @@ export default function AdminPage() {
           </a>
           <button
             onClick={logOut}
-            className="text-red-600 hover:text-red-500 border border-red-500 rounded font-medium transition"
+            className="text-red-600 hover:text-red-500 border px-2 border-red-500 rounded font-medium transition"
           >
             <i className="fa fa-sign-out" aria-hidden="true"></i>
           </button>
@@ -92,7 +92,7 @@ export default function AdminPage() {
       </nav>
 
       <div className="container mx-auto pt-24 px-4">
-        <h1 className="text-4xl font-bold text-indigo-500 text-center border-b-2 mb-8">
+        <h1 className="text-4xl font-bold text-indigo-500 text-center mb-8">
           Manage Projects
         </h1>
 

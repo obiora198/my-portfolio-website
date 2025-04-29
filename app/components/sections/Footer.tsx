@@ -1,26 +1,39 @@
-import GitHubIcon from '@mui/icons-material/GitHub'
-import LinkedInIcon from '@mui/icons-material/LinkedIn'
-
 export default function Footer() {
   return (
-    <>
-      <footer className="bg-gray-900 w-full sm:h-[300px] text-white sm:text-5xl text-2xl flex flex-col justify-center items-center sm:gap-4 gap-2 p-4">
-        <ul className="flex sm:gap-8 gap-2">
-          <li>
-            <a href="https://github.com/obiora198">
-              <i className="fa-brands fa-square-github"></i>
-            </a>
-          </li>
-          <li>
-            <a href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/">
-              <i className="fa-brands fa-linkedin"></i>
-            </a>
-          </li>
-        </ul>
-        <small className="italic font-extralight text-sm text-center">
-          Copyright © 2023 Created by Obiora Sopuluchukwu Emmanuel
-        </small>
-      </footer>
-    </>
+    <footer className="w-full bg-gray-900 text-white flex flex-col items-center justify-center gap-6 p-6 sm:p-12">
+      
+      {/* Social Links */}
+      <ul className="flex gap-6 text-2xl sm:text-5xl">
+        <li>
+          <a
+            href="https://github.com/obiora198"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-indigo-400 hover:scale-110 transform transition-all duration-300"
+            aria-label="GitHub"
+          >
+            <i className="fab fa-github" aria-hidden="true"></i>
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-indigo-400 hover:scale-110 transform transition-all duration-300"
+            aria-label="LinkedIn"
+          >
+            <i className="fab fa-linkedin" aria-hidden="true"></i>
+          </a>
+        </li>
+      </ul>
+
+      {/* Copyright */}
+      <small className="text-center text-sm font-light italic text-gray-400">
+        © {new Date().getFullYear()} - Created by Obiora Sopuluchukwu Emmanuel
+      </small>
+      
+    </footer>
   )
 }
