@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import AdminButton from '../buttons/AdminButton'
-import { useAuthContext } from '../../context/authContext'
 
 interface Links {
   text: string
@@ -11,7 +9,6 @@ interface Links {
 }
 
 export default function Nav({ links }: { links: Links[] }) {
-  const { user } = useAuthContext()
   const [isOPen, setIsOpen] = useState(false)
 
   const handleClick = () => {

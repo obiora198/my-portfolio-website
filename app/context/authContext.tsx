@@ -1,56 +1,28 @@
 'use client'
 
-import React from 'react'
-import { onAuthStateChanged, getAuth } from 'firebase/auth'
-import firebase_app from '../../firebase/config'
-import Loading from '../components/Loading'
-
-const auth = getAuth(firebase_app)
-
-interface User {
-  uid: string
-  displayName?: string | null
-  email?: string | null
-  // Add other properties as needed
-}
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
+import firebase_app from '@/firebase/config'
 
 interface AuthContextType {
   user: User | null
+  loading: boolean
 }
 
-export const AuthContext = React.createContext<AuthContextType | undefined>(
-  undefined
-)
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+})
 
-export const useAuthContext = () => {
-  const context = React.useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthContextProvider')
-  }
-  return context
-}
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
-interface AuthContextProviderProps {
-  children: React.ReactNode
-}
+  useEffect(() => {
+    const auth = getAuth(firebase_app)
 
-export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
-  children,
-}) => {
-  const [user, setUser] = React.useState<User | null>(null)
-  const [loading, setLoading] = React.useState(true)
-
-  React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser({
-          uid: user.uid,
-          displayName: user.displayName,
-          email: user.email,
-        })
-      } else {
-        setUser(null)
-      }
+      setUser(user)
       setLoading(false)
     })
 
@@ -58,12 +30,13 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user }}>
-      {loading ? (
-        <Loading dark={null} />
-      ) : (
-        children
-      )}
+    <AuthContext.Provider value={{ user, loading }}>
+      {children}
     </AuthContext.Provider>
   )
+}
+
+// Custom hook for easier usage
+export function useAuth() {
+  return useContext(AuthContext)
 }

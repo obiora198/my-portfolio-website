@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   TextField,
@@ -11,6 +11,9 @@ import updateProject from '../../../firebase/firestore/updateProject'
 import { ProjectType } from '@/app/configs/tsTypes'
 import { TrashIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
+import { useAuth } from '@/app/context/authContext'
+import { useRouter } from 'next/navigation'
+
 
 interface ExistingProject {
   id?: string
@@ -36,8 +39,8 @@ export default function ProjectUpdate({
   const [imageUrl, setImageUrl] = useState(existingProject?.data.image || '') // State for image URL
   const [loading, setLoading] = useState(false)
   const [openDialog, setOpenDialog] = useState(false) // State for dialog visibility
-
-  const isUpdate = Boolean(existingProject?.id) // Check if it's an update operation
+  const { user } = useAuth() // Get user from context
+  const router = useRouter() // Get router from Next.js
 
   // Handle form submission
 
@@ -66,6 +69,11 @@ export default function ProjectUpdate({
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!user) {
+      alert('not authorized')
+      router.push('/auth/signin')
+      return
+    }
     setLoading(true)
 
     const projectData: ProjectType['data'] = {

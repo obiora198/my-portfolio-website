@@ -1,6 +1,6 @@
 'use client'
 import React, { ChangeEvent, FormEvent, useState, useRef } from 'react'
-import { useAuthContext } from '../../context/authContext'
+import { useAuth } from '../../context/authContext'
 import { useRouter } from 'next/navigation'
 import addProject from '../../../firebase/firestore/addProject'
 import { PlusIcon, TrashIcon } from '@heroicons/react/solid'
@@ -17,7 +17,7 @@ import {
 } from '../../../components/ui/dialog' // Assuming these are part of Shadcn UI
 
 export default function Page() {
-  const { user } = useAuthContext()
+  const { user } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('')
