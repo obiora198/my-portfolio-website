@@ -149,7 +149,7 @@ export default function Page() {
           {/* Tech Stack */}
           <div className="sm:col-span-2">
             <label htmlFor="stack" className="block text-sm font-medium text-gray-700 mb-1">
-              Tech Stack (separate with "|")
+              Tech Stack (separate with &quot;|&quot;)
             </label>
             <input
               id="stack"
