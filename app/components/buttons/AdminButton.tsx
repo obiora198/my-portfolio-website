@@ -37,12 +37,6 @@ export default function Page() {
     setImage(null)
   }
 
-  React.useEffect(() => {
-    if (!user) {
-      router.push('/auth')
-    }
-  }, [])
-
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!user) {
