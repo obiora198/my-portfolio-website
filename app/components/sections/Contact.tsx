@@ -3,9 +3,11 @@
 import React from 'react'
 import { TextField, Button } from '@mui/material'
 import emailjs from '@emailjs/browser'
+import { toast } from 'react-hot-toast'
 
 export default function Contact() {
   const [loading, setLoading] = React.useState<boolean>(false)
+  const formRef = React.useRef<HTMLFormElement>(null)
 
   const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
   const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
@@ -16,19 +18,23 @@ export default function Contact() {
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setLoading(true)
+  
+    if (!formRef.current) return
+  
+    toast.loading('Sending message...', { id: 'contact-toast' })
+  
     emailjs
-      .sendForm(serviceId, templateId, '#myForm', {
+      .sendForm(serviceId, templateId, formRef.current, {
         publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
       })
       .then(
         (response) => {
-          console.log('SUCCESS!', response.status, response.text)
-          alert('message sent successfully')
+          toast.success('Message sent successfully!', { id: 'contact-toast' })
+          formRef.current?.reset()
           setLoading(false)
         },
         (error) => {
-          console.log('FAILED...', error)
-          alert('Failed to send email')
+          toast.error('Failed to send message. Please try again.', { id: 'contact-toast' })
           setLoading(false)
         }
       )
@@ -45,7 +51,7 @@ export default function Contact() {
 
       <div className="w-full max-w-[600px] bg-white rounded-3xl border-2 p-6 sm:p-8 shadow-sm">
         <form
-          id="contact-form"
+          ref={formRef}
           className="flex flex-col gap-6"
           onSubmit={handleFormSubmit}
         >
