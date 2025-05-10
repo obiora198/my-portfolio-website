@@ -10,6 +10,8 @@ interface Links {
 
 export default function Nav({ links }: { links: Links[] }) {
   const [isOPen, setIsOpen] = useState(false)
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false)
+  const toggleAdminMenu = () => setAdminMenuOpen((prev) => !prev)
 
   const handleClick = () => {
     setIsOpen(!isOPen)
@@ -37,6 +39,28 @@ export default function Nav({ links }: { links: Links[] }) {
                   </Link>
                 </li>
               ))}
+              <li className="relative">
+                <button
+                  onClick={toggleAdminMenu}
+                  className="flex items-center gap-1 text-sm text-gray-400 hover:text-indigo-500 transition-all duration-300"
+                >
+                  Admin
+                  <i className="fas fa-chevron-down text-xs"></i>
+                </button>
+
+                {adminMenuOpen && (
+                  <ul className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-md shadow-md z-20 min-w-[160px]">
+                    <li>
+                      <Link
+                        href="/auth/admin"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 transition"
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+                  </ul>
+                )}
+              </li>
             </ul>
           </nav>
         </div>
@@ -91,6 +115,11 @@ export default function Nav({ links }: { links: Links[] }) {
                   </Link>
                 </li>
               ))}
+              <li className="text-sm text-gray-400 hover:text-indigo-500 transition">
+                <Link href="/auth/admin" onClick={handleClick}>
+                  Admin
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>

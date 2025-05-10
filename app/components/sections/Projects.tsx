@@ -7,11 +7,11 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 
 export default function Projects() {
-  const [loading, setLoading] = React.useState<boolean>(false)
+  const [loading, setLoading] = React.useState<boolean>(true)
   const [projects, setProjects] = React.useState<ProjectType[]>([])
 
   const start = async () => {
-    setLoading(true)
+    // setLoading(true)
     let projectsArray = await fetchProjects()
     setProjects(projectsArray)
     setLoading(false)
@@ -23,7 +23,7 @@ export default function Projects() {
 
   return (
     <>
-      {loading ? (
+      {(loading || (projects.length == 0)) ? (
         <ProjectsSkeleton />
       ) : (
         <section id="projects-section" className="py-20 bg-gray-50">
@@ -32,7 +32,7 @@ export default function Projects() {
               Projects
             </h1>
 
-            <div className="grid gap-8 grid-cols-2">
+            <div className="grid gap-8 sm:grid-cols-2">
               {projects.map((project) => (
                 <motion.div
                   key={project.id}
@@ -100,29 +100,35 @@ function ProjectsSkeleton() {
       </h1>
 
       {/* Skeleton Project Grid */}
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3].map((_, index) => (
-          <div
-            key={index}
-            className="w-full flex flex-col gap-4 items-center justify-center p-1 sm:p-2 bg-white border-2 rounded-3xl break-inside-avoid-column animate-pulse"
-          >
-            {/* Image skeleton */}
-            <div className="w-full h-48 bg-gray-200 rounded-2xl"></div>
+      <div className="w-full grid gap-8 sm:grid-cols-2">
+      {[...Array(4)].map((_, index) => (
+        <div
+          key={index}
+          className="bg-white rounded-3xl shadow-md overflow-hidden flex flex-col animate-pulse"
+        >
+          {/* Image Placeholder */}
+          <div className="w-full h-48 bg-gray-200" />
 
-            {/* Text (Title) */}
-            <div className="w-3/4 h-6 bg-gray-200 rounded-md mt-4"></div>
-
-            {/* Tech Stack */}
-            <div className="w-1/2 h-4 bg-gray-200 rounded-md"></div>
-
+          <div className="p-6 flex flex-col flex-grow">
+            {/* Title */}
+            <div className="h-6 bg-gray-300 rounded w-2/3 mb-2" />
+            {/* Stack */}
+            <div className="h-4 bg-gray-200 rounded w-1/3 mb-4" />
+            {/* Description */}
+            <div className="space-y-2 flex-grow mb-4">
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-5/6" />
+              <div className="h-4 bg-gray-200 rounded w-2/3" />
+            </div>
             {/* Buttons */}
-            <div className="w-full flex items-center justify-center gap-4 mt-4">
-              <div className="w-28 h-10 bg-gray-200 rounded-full"></div>
-              <div className="w-28 h-10 bg-gray-200 rounded-full"></div>
+            <div className="flex gap-4 mt-auto">
+              <div className="w-1/2 h-10 bg-gray-300 rounded-full" />
+              <div className="w-1/2 h-10 bg-gray-300 rounded-full" />
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
+    </div>
     </section>
   )
 }
