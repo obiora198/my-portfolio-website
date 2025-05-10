@@ -18,6 +18,8 @@ import {
 } from '@mui/material'
 import { TrashIcon } from '@heroicons/react/solid'
 import logOut from '@/firebase/auth/logout'
+import Loading from '@/app/components/Loading'
+import {toast} from 'react-hot-toast'
 
 export default function AdminPage() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
@@ -26,7 +28,7 @@ export default function AdminPage() {
     null
   )
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
 
   const start = async () => {
     let projectsArray = await fetchProjects()
@@ -34,12 +36,14 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
+    if (authLoading) return // wait until auth is resolved
+
     if (!user) {
       router.push('/auth/signin')
     } else {
       start()
     }
-  }, [user, router])
+  }, [user, authLoading])
 
   const handleDelete = async (id: String) => {
     if (!user) {
@@ -47,21 +51,23 @@ export default function AdminPage() {
       router.push('/auth/signin')
       return
     }
-    if (!id) {
+    if (projectToDelete && projectToDelete.id) {
       setLoading(true)
       const result = await deleteProject(id)
 
       if (result.status === 200) {
-        alert(result.message)
-        setProjectToDelete(null) // Close the delete confirmation dialog
-        // Optionally, navigate or refresh the page after deletion
-        router.push('/auth/admin')
+        toast.success(result.message)
+        setProjectToDelete(null) 
+        router.refresh()
       } else {
-        alert(result.message)
+        toast.error(result.message)
       }
 
       setLoading(false)
     }
+  }
+  if (authLoading) {
+    return <Loading dark={null} /> 
   }
 
   return (
@@ -133,7 +139,7 @@ export default function AdminPage() {
 
                       {/* Delete Confirmation Dialog */}
                       <Dialog
-                        open={projectToDelete?.id === item.id}
+                        open={Boolean(projectToDelete)}
                         onClose={() => setProjectToDelete(null)}
                       >
                         <DialogTitle>Delete Project</DialogTitle>
@@ -150,7 +156,7 @@ export default function AdminPage() {
                             Cancel
                           </Button>
                           <Button
-                            onClick={() => handleDelete(item.id)}
+                            onClick={() => projectToDelete && handleDelete(projectToDelete.id)}
                             variant="contained"
                             color="error"
                             disabled={loading}
