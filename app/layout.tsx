@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     siteName: 'Emmanuel Obiora Portfolio',
     images: [
       {
-        url: '/og-image.png', // optional: create a custom preview image
+        url: '/og-banner.png',
         width: 1200,
         height: 630,
         alt: 'Emmanuel Obiora Web Developer Portfolio',
