@@ -12,8 +12,43 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: 'Emmanuel Obiora',
-  description: 'A portfolio website created to showcase my work',
+  title: 'Emmanuel Obiora | Web Developer in Abuja',
+  description:
+    'Portfolio website of Emmanuel Obiora, a passionate and results-driven web developer based in Abuja. Explore projects built with React, Next.js, Tailwind CSS, and more.',
+  keywords: [
+    'web developer in Abuja',
+    'frontend developer Abuja',
+    'React developer Abuja',
+    'Next.js developer Abuja',
+    'freelance web developer Abuja',
+    'Emmanuel Obiora developer',
+    'Abuja portfolio website',
+  ],
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
+  openGraph: {
+    title: 'Emmanuel Obiora | Web Developer in Abuja',
+    description:
+      'Visit the portfolio of Emmanuel Obiora, a frontend web developer based in Abuja, Nigeria. View recent projects and get in touch for collaborations.',
+    url: 'https://my-portfolio-website-ashen.vercel.app',
+    siteName: 'Emmanuel Obiora Portfolio',
+    images: [
+      {
+        url: '/og-image.png', // optional: create a custom preview image
+        width: 1200,
+        height: 630,
+        alt: 'Emmanuel Obiora Web Developer Portfolio',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
 }
 
 export default async function RootLayout({
@@ -24,18 +59,50 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <Script src="https://kit.fontawesome.com/1b7d41b7e1.js" crossOrigin="anonymous"></Script>
+        <link
+          rel="canonical"
+          href="https://my-portfolio-website-ashen.vercel.app/"
+        />
+
+        <Script
+          src="https://kit.fontawesome.com/1b7d41b7e1.js"
+          crossOrigin="anonymous"
+        ></Script>
+        <Script
+          id="structured-data"
+          type="application/ld+json"
+          strategy="afterInteractive"
+        >
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: 'Emmanuel Obiora',
+            url: 'https://my-portfolio-website-ashen.vercel.app',
+            image: 'https://my-portfolio-website-ashen.vercel.app/profile.jpg', // replace with your real profile image
+            sameAs: [
+              'https://www.linkedin.com/in/emmanuel-obiora-9b8495192/',
+              'https://github.com/obiora198',
+            ],
+            jobTitle: 'Frontend Web Developer',
+            worksFor: {
+              '@type': 'Organization',
+              name: 'Freelance',
+            },
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Abuja',
+              addressRegion: 'FCT',
+              addressCountry: 'NG',
+            },
+            description:
+              'Emmanuel Obiora is a frontend web developer based in Abuja, Nigeria, specializing in building modern websites with React, Next.js, Tailwind CSS, and TypeScript.',
+          })}
+        </Script>
       </head>
-      <body
-        className={`${poppins.className}`}
-      >
+      <body className={`${poppins.className}`}>
         <AuthProvider>
           {/* <Nav links={links} /> */}
-          
+
           {children}
           <Toaster position="top-right" reverseOrder={false} />
 
