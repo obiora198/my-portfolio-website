@@ -13,24 +13,16 @@ export default function About() {
           <Image
             src="/profile-img.png"
             className="h-auto w-full rounded-2xl shadow-lg"
-            alt=""
+            alt="Profile image"
             width={300}
             height={300}
           />
-          <p className="text-lg text-justify">
-            I&apos;m a self-taught web developer with a passion for building fast,
-            modern, and user-friendly applications. My journey began with
-            Next.js, Tailwind CSS, and Firebase, where I crafted responsive
-            frontends with sleek designs. As my curiosity grew, I dove into
-            backend development, mastering Express.js, MongoDB, and
-            Node.js—building robust APIs and ensuring seamless data flow with
-            Postman. <br /> 
-            What drives me? Problem-solving, clean code, and continuous
-            learning. I thrive on turning ideas into reality, whether it&apos;s a
-            dynamic full-stack app or an optimized UI. My goal? To join a team
-            where I can contribute my skills, grow as a developer, and create
-            impactful digital experiences. Let&apos;s build something amazing
-            together!
+          <p className="text-lg text-justify max-w-xl">
+            I’m a <strong>Full Stack Web Developer</strong> with a passion for building clean, responsive, and user-focused web applications. I specialize in <strong>front-end development</strong> using <strong>React</strong>, <strong>Next.js</strong>, and <strong>Tailwind CSS</strong>, and backend development using <strong>Node.js, express | graphql | Firebase</strong>, and <strong>MongoDB</strong>.
+            <br /><br />
+            Over the past two years, I’ve worked remotely with teams across time zones, building and shipping real-world solutions using modern tools and agile workflows.
+            <br /><br />
+            I’m currently <strong>available for freelance projects</strong> or <strong>remote development roles</strong>. If you're looking for someone who can work independently, communicate clearly, and deliver solid results — let’s connect.
           </p>
         </div>
       </div>
