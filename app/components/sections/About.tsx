@@ -18,11 +18,11 @@ export default function About() {
             height={300}
           />
           <p className="text-lg text-justify max-w-xl">
-            I’m a <strong>Full Stack Web Developer</strong> with a passion for building clean, responsive, and user-focused web applications. I specialize in <strong>front-end development</strong> using <strong>React</strong>, <strong>Next.js</strong>, and <strong>Tailwind CSS</strong>, and backend development using <strong>Node.js, express | graphql | Firebase</strong>, and <strong>MongoDB</strong>.
+            I&apos;m a <strong>Full Stack Web Developer</strong> with a passion for building clean, responsive, and user-focused web applications. I specialize in <strong>front-end development</strong> using <strong>React</strong>, <strong>Next.js</strong>, and <strong>Tailwind CSS</strong>, and backend development using <strong>Node.js, express | graphql | Firebase</strong>, and <strong>MongoDB</strong>.
             <br /><br />
             Over the past two years, I’ve worked remotely with teams across time zones, building and shipping real-world solutions using modern tools and agile workflows.
             <br /><br />
-            I’m currently <strong>available for freelance projects</strong> or <strong>remote development roles</strong>. If you're looking for someone who can work independently, communicate clearly, and deliver solid results — let’s connect.
+            I’m currently <strong>available for freelance projects</strong> or <strong>remote development roles</strong>. If you&apos;re looking for someone who can work independently, communicate clearly, and deliver solid results — let’s connect.
           </p>
         </div>
       </div>
