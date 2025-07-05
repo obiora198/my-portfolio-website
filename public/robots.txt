@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /auth/admin
+Sitemap: https://emmanuel-obiora.vercel.app/sitemap.xml
