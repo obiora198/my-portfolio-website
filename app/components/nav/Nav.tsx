@@ -64,7 +64,7 @@ export default function Nav({ links }: { links: Links[] }) {
                     className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:text-indigo-600 drop-shadow-lg ${
                       scrolled 
                         ? 'text-gray-700' 
-                        : 'text-white/90'
+                        : 'text-white/90 shadow-indigo-50'
                     }`}
                   >
                     <span className="relative z-10">{link.text}</span>

@@ -121,10 +121,11 @@ export const ContactPage = ({ className }: ContactPageProps) => {
 
         <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_center,_rgba(225,225,225,1)_0%,_transparent_100%)]" />
         <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-gray-50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-gray-50 to-transparent" />
       </div>
 
       {/* Content Layer */}
-      <div className="relative z-10 flex flex-col flex-1">
+      <div className="relative z-20 flex flex-col flex-1">
         {/* Main content container */}
         <div className="flex flex-1 flex-col lg:flex-row">
           {/* Center content (contact form) */}
@@ -142,19 +143,29 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                   >
                     {/* Header */}
                     <div className="text-center space-y-2">
-                      <h1 className="text-4xl font-bold text-white">
+                      <motion.h1
+                        className="text-5xl font-bold text-center"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                          Get in Touch
+                        </span>
+                      </motion.h1>
+                      {/* <h1 className="text-4xl font-bold text-indigo-500">
                         Get in Touch
-                      </h1>
-                      <p className="text-lg text-white/70 font-light">
+                      </h1> */}
+                      <p className="text-lg text-indigo-400 font-extralight">
                         Let's start a conversation
                       </p>
                     </div>
 
                     {/* Contact Form */}
-                    <div className="backdrop-blur-sm bg-white/10 rounded-3xl border border-white/20 p-6 sm:p-8 shadow-lg">
+                    <div className="backdrop-blur-sm bg-white rounded-3xl border border-indigo-300 px-6 py-8 shadow-lg">
                       <form
                         ref={formRef}
-                        className="flex flex-col gap-6"
+                        className="flex flex-col gap-4"
                         onSubmit={handleFormSubmit}
                       >
                         {/* Name Field */}
@@ -164,23 +175,23 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                             name="userName"
                             placeholder="Your Name"
                             variant="outlined"
-                            className="w-full"
+                            className="w-full bg-gray-100 rounded-lg"
                             required
                             sx={{
                               '& .MuiOutlinedInput-root': {
                                 color: 'white',
-                                borderRadius: '12px',
+                                borderRadius: '8px',
                                 '& fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                                  borderColor: 'rgba(165 180 252, 0.2)',
                                 },
                                 '&:hover fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                                  borderColor: 'rgba(165 180 252, 0.3)',
                                 },
                                 '&.Mui-focused fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.5)',
+                                  borderColor: 'rgba(165 180 252, 0.5)',
                                 },
                                 '& input::placeholder': {
-                                  color: 'rgba(255, 255, 255, 0.5)',
+                                  color: 'rgba(165 180 252, 0.5)',
                                   opacity: 1,
                                 },
                               },
@@ -195,23 +206,23 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                             name="userEmail"
                             placeholder="Your Email"
                             variant="outlined"
-                            className="w-full"
+                            className="w-full bg-gray-100 rounded-lg"
                             required
                             sx={{
                               '& .MuiOutlinedInput-root': {
                                 color: 'white',
-                                borderRadius: '12px',
+                                borderRadius: '8px',
                                 '& fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                                  borderColor: 'rgba(165 180 252, 0.2)',
                                 },
                                 '&:hover fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                                  borderColor: 'rgba(165 180 252, 0.3)',
                                 },
                                 '&.Mui-focused fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.5)',
+                                  borderColor: 'rgba(165 180 252, 0.5)',
                                 },
                                 '& input::placeholder': {
-                                  color: 'rgba(255, 255, 255, 0.5)',
+                                  color: 'rgba(165 180 252, 0.5)',
                                   opacity: 1,
                                 },
                               },
@@ -227,23 +238,23 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                             rows={4}
                             placeholder="Your Message..."
                             variant="outlined"
-                            className="w-full"
+                            className="w-full bg-gray-100 rounded-lg"
                             required
                             sx={{
                               '& .MuiOutlinedInput-root': {
                                 color: 'white',
-                                borderRadius: '12px',
+                                borderRadius: '8px',
                                 '& fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                                  borderColor: 'rgba(165 180 252, 0.2)',
                                 },
                                 '&:hover fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                                  borderColor: 'rgba(165 180 252, 0.3)',
                                 },
                                 '&.Mui-focused fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.5)',
+                                  borderColor: 'rgba(165 180 252, 0.5)',
                                 },
                                 '& textarea::placeholder': {
-                                  color: 'rgba(255, 255, 255, 0.5)',
+                                  color: 'rgba(165 180 252, 0.5)',
                                   opacity: 1,
                                 },
                               },
@@ -258,7 +269,7 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                           className={`w-full py-3 rounded-full font-medium transition-all duration-300 ${
                             loading
                               ? 'bg-white/20 text-white/50 cursor-not-allowed'
-                              : 'bg-white text-black hover:bg-white/90 hover:scale-[1.02]'
+                              : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:scale-[1.02]'
                           }`}
                           whileTap={{ scale: loading ? 1 : 0.98 }}
                           transition={{ duration: 0.2 }}
@@ -274,11 +285,6 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                         </motion.button>
                       </form>
                     </div>
-                    {/* Footer text */}
-                    {/* <p className="text-xs text-white/40 text-center pt-4">
-                      We'll get back to you as soon as possible
-                    </p> */}
-
                   </motion.div>
                 ) : (
                   <motion.div
@@ -289,10 +295,10 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                     className="space-y-8 text-center"
                   >
                     <div className="space-y-2">
-                      <h1 className="text-4xl font-bold text-white">
+                      <h1 className="text-4xl font-bold text-indigo-500">
                         Message Sent!
                       </h1>
-                      <p className="text-lg text-white/70 font-light">
+                      <p className="text-lg text-indigo/70 font-light">
                         Thank you for reaching out
                       </p>
                     </div>
@@ -320,7 +326,7 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                     </motion.div>
 
                     <div className="space-y-4">
-                      <p className="text-white/60">
+                      <p className="text-indigo-500 font-light">
                         We've received your message and will respond within 24
                         hours.
                       </p>
