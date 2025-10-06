@@ -37,15 +37,15 @@ export default function About() {
             <div className="absolute -inset-4 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 rounded-3xl blur-lg group-hover:blur-xl transition-all duration-500"></div>
               
             <p className="text-gray-700 leading-relaxed font-extralight text-sm text-justify">
-              I'm a <span className="font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Full Stack Web Developer</span> with a passion for building clean, responsive, and user-focused web applications. I specialize in <span className="font-semibold text-indigo-600">front-end development</span> using React, Next.js, and Tailwind CSS, and backend development using Node.js, Express, GraphQL, Firebase, and MongoDB.
+              I&apos;m a <span className="font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Full Stack Web Developer</span> with a passion for building clean, responsive, and user-focused web applications. I specialize in <span className="font-semibold text-indigo-600">front-end development</span> using React, Next.js, and Tailwind CSS, and backend development using Node.js, Express, GraphQL, Firebase, and MongoDB.
                   
               <br /><br />
                   
-              Over the past two years, I've worked remotely with teams across time zones, building and shipping real-world solutions using modern tools and agile workflows.
+              Over the past two years, I&apos;ve worked remotely with teams across time zones, building and shipping real-world solutions using modern tools and agile workflows.
                   
               <br /><br />
                   
-              I'm currently <span className="font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">available for freelance projects</span> or <span className="font-bold bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent">remote development roles</span>. If you're looking for someone who can work independently, communicate clearly, and deliver solid results — let's connect.
+              I&apos;m currently <span className="font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">available for freelance projects</span> or <span className="font-bold bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent">remote development roles</span>. If you&apos;re looking for someone who can work independently, communicate clearly, and deliver solid results — let&apos;s connect.
             </p>
 
             {/* Call to action buttons */}
