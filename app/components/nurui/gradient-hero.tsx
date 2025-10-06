@@ -8,7 +8,7 @@ export default function Hero() {
     <>
       <section
         id="hero-section"
-        className="relative w-full h-screen sm:h-[500px] flex flex-col-reverse items-center justify-center gap-4 sm:grid sm:grid-cols-2 sm:px-32" // Added pt-16 sm:pt-20
+        className="relative w-full h-screen sm:h-[500px] flex flex-col-reverse items-center justify-center gap-4 sm:grid sm:grid-cols-2 sm:px-32 px-4" // Added pt-16 sm:pt-20
       >
         {/* Gradient Grid Background */}
         <div className="absolute inset-0 z-0">
@@ -16,11 +16,11 @@ export default function Hero() {
         </div>
 
         {/* Text content with blur background */}
-        <div className="relative z-10 w-full flex flex-col items-center text-2xl sm:text-5xl px-4 gap-4">
+        <div className="relative z-10 w-full max-w-lg flex flex-col items-center text-2xl sm:text-5xl px-4 gap-4">
           {/* Blur backdrop for text readability */}
-          <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-full -my-10"></div>
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-3xl -my-10 shadow-lg shadow-purple-100"></div>
           
-          <div className="relative z-10">
+          <div className="relative z-10 max-w-lg">
             <p className="text-black text-center font-bold">
               Hello, I&apos;am{' '}
               <span className="text-indigo-500 bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">Emmanuel,</span>{' '}
@@ -39,17 +39,17 @@ export default function Hero() {
               <div className="w-full sm:w-[200px] text-indigo-500 flex items-center justify-center gap-4">
                 <a 
                   href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/" 
-                  className="rounded-full bg-indigo-100 p-3 hover:bg-indigo-200 transition-colors flex items-center justify-center"
+                  className="rounded-lg bg-indigo-100 p-4 hover:bg-indigo-200 transition-colors flex items-center justify-center"
                   aria-label="LinkedIn"
                 >
-                  <i className="fa-brands fa-linkedin text-2xl"></i>
+                  <i className="fa-brands fa-linkedin text-2xl sm:text-5xl"></i>
                 </a>
                 <a 
                   href="https://github.com/obiora198" 
-                  className="rounded-full bg-indigo-100 p-3 hover:bg-indigo-200 transition-colors flex items-center justify-center"
+                  className="rounded-lg bg-indigo-100 p-4 hover:bg-indigo-200 transition-colors flex items-center justify-center"
                   aria-label="GitHub"
                 >
-                  <i className="fa-brands fa-square-github text-2xl"></i>
+                  <i className="fa-brands fa-square-github text-2xl sm:text-5xl"></i>
                 </a>
               </div>
             </div>
