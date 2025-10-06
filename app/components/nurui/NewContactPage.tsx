@@ -157,7 +157,7 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                         Get in Touch
                       </h1> */}
                       <p className="text-lg text-indigo-400 font-extralight">
-                        Let's start a conversation
+                        Let&apos;s start a conversation
                       </p>
                     </div>
 
@@ -327,7 +327,7 @@ export const ContactPage = ({ className }: ContactPageProps) => {
 
                     <div className="space-y-4">
                       <p className="text-indigo-500 font-light">
-                        We've received your message and will respond within 24
+                        We&apos;ve received your message and will respond within 24
                         hours.
                       </p>
 

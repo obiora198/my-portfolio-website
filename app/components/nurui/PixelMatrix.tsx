@@ -244,7 +244,6 @@ const ShaderMaterial = ({
 }) => {
   const { size } = useThree();
   const ref = useRef<THREE.Mesh>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let lastFrameTime = 0;
 
   useFrame(({ clock }: {clock: any}) => {

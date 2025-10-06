@@ -5,6 +5,7 @@ import Footer from './components/sections/Footer'
 import Script from 'next/script'
 import { AuthProvider } from './context/authContext'
 import { Toaster } from 'react-hot-toast'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
     title: 'Emmanuel Obiora | Web Developer in Abuja',
     description:
       'Visit the portfolio of Emmanuel Obiora, a frontend web developer based in Abuja, Nigeria. View recent projects and get in touch for collaborations.',
-    url: 'https://my-portfolio-website-ashen.vercel.app',
+    url: 'https://emmanuel-obiora.vercel.app/',
     siteName: 'Emmanuel Obiora Portfolio',
     images: [
       {
@@ -61,7 +62,7 @@ export default async function RootLayout({
       <head>
         <link
           rel="canonical"
-          href="https://my-portfolio-website-ashen.vercel.app/"
+          href="https://emmanuel-obiora.vercel.app/"
         />
 
         <Script
@@ -77,8 +78,8 @@ export default async function RootLayout({
             '@context': 'https://schema.org',
             '@type': 'Person',
             name: 'Emmanuel Obiora',
-            url: 'https://my-portfolio-website-ashen.vercel.app',
-            image: 'https://my-portfolio-website-ashen.vercel.app/profile.jpg', // replace with your real profile image
+            url: 'https://emmanuel-obiora.vercel.app/',
+            image: 'https://emmanuel-obiora.vercel.app/profile.jpg', // replace with your real profile image
             sameAs: [
               'https://www.linkedin.com/in/emmanuel-obiora-9b8495192/',
               'https://github.com/obiora198',
@@ -105,6 +106,7 @@ export default async function RootLayout({
 
           {children}
           <Toaster position="top-right" reverseOrder={false} />
+          <SpeedInsights />
 
           <Footer />
         </AuthProvider>
