@@ -179,12 +179,12 @@ export function GradientGridHero() {
 
   return (
     <motion.div
-      className="w-full h-full relative overflow-visible"
+      className="w-full relative overflow-visible"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <canvas ref={canvasRef} className="w-full h-full" style={{ display: "block" }} />
+      <canvas ref={canvasRef} className="w-full h-screen" style={{ display: "block" }} />
     </motion.div>
   )
 }

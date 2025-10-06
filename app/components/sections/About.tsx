@@ -5,7 +5,7 @@ export default function About() {
   return (
     <section id="about-section" className="relative overflow-hidden sm:px-16">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-indigo-50/20 to-purple-50/10"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-5% to-white"></div>
       
       {/* Subtle grid pattern */}
       <div className="absolute inset-0 opacity-20">
@@ -15,24 +15,24 @@ export default function About() {
       <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center gap-12 sm:gap-16 px-4 sm:px-8 py-20">
         {/* Enhanced Header */}
         <div className="text-center space-y-4 max-w-2xl">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-sm">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-sm sm:mt-8">
             About Me
           </h1>
           <div className="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full mx-auto shadow-lg shadow-indigo-500/30"></div>
         </div>
 
         {/* Content Container */}
-        <div className="w-full max-w-6xl bg-white/80 backdrop-blur-xl flex flex-col lg:flex-row items-center justify-center  rounded-2xl shadow-2xl shadow-purple-500/20">
+        <div className="w-full max-w-5xl bg-white/80 backdrop-blur-xl flex flex-col lg:flex-row items-center justify-center  rounded-2xl shadow-2xl shadow-purple-500/20">
           <Image
               src="/profile-img.png"
-              className="w-auto h-full rounded-t-lg sm:rounded-l-2xl"
+              className="w-auto h-full rounded-t-lg sm:rounded-l-2xl sm:rounded-none"
               alt="Profile image of Emmanuel - Full Stack Developer"
               width={300}
               height={300}
             />
 
           {/* Text Content */}
-          <div className="group relative p-4 sm:p-6 ">
+          <div className="group relative p-4 sm:p-8 ">
             {/* Text background with glassmorphism */}
             <div className="absolute -inset-4 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 rounded-3xl blur-lg group-hover:blur-xl transition-all duration-500"></div>
               
