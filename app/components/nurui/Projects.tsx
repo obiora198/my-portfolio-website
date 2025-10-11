@@ -10,121 +10,142 @@ export default function Projects() {
   const [loading, setLoading] = React.useState<boolean>(true)
   const [projects, setProjects] = React.useState<ProjectType[]>([])
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   const start = async () => {
-    let projectsArray = await fetchProjects()
+    const projectsArray = await fetchProjects()
     setProjects(projectsArray)
     setLoading(false)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     start()
   }, [])
 
-  // Wave animation effect
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let time = 0;
-    let animationFrameId: number;
+// useEffect(() => {
+//   const canvas = canvasRef.current;
+//   if (!canvas) return;
 
-    const waveData = Array.from({ length: 5 }).map(() => ({
-      value: Math.random() * 0.5 + 0.1,
-      targetValue: Math.random() * 0.5 + 0.1,
-      speed: Math.random() * 0.02 + 0.01,
-    }));
+//   const ctx = canvas.getContext("2d");
+//   if (!ctx) return;
 
-    function resizeCanvas() {
-      if (!canvas) return;
-      const container = canvas.parentElement;
-      if (container) {
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-      }
-    }
+//   let time = 0;
+//   let animationFrameId: number;
+//   let lastFrame = 0;
 
-    function updateWaveData() {
-      waveData.forEach((data) => {
-        if (Math.random() < 0.01) data.targetValue = Math.random() * 0.7 + 0.1;
-        const diff = data.targetValue - data.value;
-        data.value += diff * data.speed;
-      });
-    }
+//   // Fewer waves = less CPU, still smooth
+//   const waveData = Array.from({ length: 3 }).map(() => ({
+//     value: Math.random() * 0.5 + 0.1,
+//     targetValue: Math.random() * 0.5 + 0.1,
+//     speed: Math.random() * 0.02 + 0.01,
+//   }));
 
-    function draw() {
-      if (!canvas || !ctx) return;
+//   const resizeCanvas = () => {
+//     const container = canvas.parentElement;
+//     if (!container) return;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+//     const dpr = Math.min(window.devicePixelRatio, 1.5); // ✅ Limit scaling
+//     const width = container.clientWidth;
+//     const height = container.clientHeight;
 
-      waveData.forEach((data, i) => {
-        const freq = data.value * 7;
-        ctx.beginPath();
-        for (let x = 0; x < canvas.width; x++) {
-          const nx = (x / canvas.width) * 2 - 1;
-          const px = nx + i * 0.04 + freq * 0.03;
-          const py =
-            Math.sin(px * 10 + time) *
-            Math.cos(px * 2) *
-            freq *
-            0.1 *
-            ((i + 1) / 8);
-          const y = ((py + 1) * canvas.height) / 2;
-          if (x === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
-        }
-        const intensity = Math.min(1, freq * 0.3);
-        const r = 99 + intensity * 50;  // indigo-500 base
-        const g = 102 + intensity * 30;
-        const b = 241 + intensity * 20;
-        ctx.lineWidth = 0.5 + i * 0.3;
-        ctx.strokeStyle = `rgba(${r},${g},${b},0.4)`;
-        ctx.shadowColor = `rgba(${r},${g},${b},0.3)`;
-        ctx.shadowBlur = 3;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-      });
-    }
+//     canvas.width = width * dpr;
+//     canvas.height = height * dpr;
 
-    function animate() {
-      time += 0.02;
-      updateWaveData();
-      draw();
-      animationFrameId = requestAnimationFrame(animate);
-    }
+//     ctx.scale(dpr, dpr);
+//   };
 
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-    animate();
+//   const updateWaveData = () => {
+//     for (const data of waveData) {
+//       if (Math.random() < 0.01) data.targetValue = Math.random() * 0.7 + 0.1;
+//       const diff = data.targetValue - data.value;
+//       data.value += diff * data.speed;
+//     }
+//   };
 
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
+//   const draw = () => {
+//     if (!ctx || !canvas) return;
+
+//     const { width, height } = canvas;
+//     ctx.clearRect(0, 0, width, height);
+
+//     waveData.forEach((data, i) => {
+//       const freq = data.value * 7;
+//       ctx.beginPath();
+
+//       // Draw fewer points → huge CPU gain
+//       const step = 3; // pixels per step
+//       for (let x = 0; x < width; x += step) {
+//         const nx = (x / width) * 2 - 1;
+//         const px = nx + i * 0.04 + freq * 0.03;
+//         const py =
+//           Math.sin(px * 10 + time) *
+//           Math.cos(px * 2) *
+//           freq *
+//           0.1 *
+//           ((i + 1) / 8);
+//         const y = ((py + 1) * height) / 2;
+
+//         if (x === 0) ctx.moveTo(x, y);
+//         else ctx.lineTo(x, y);
+//       }
+
+//       const intensity = Math.min(1, freq * 0.3);
+//       const r = 99 + intensity * 50;
+//       const g = 102 + intensity * 30;
+//       const b = 241 + intensity * 20;
+//       ctx.lineWidth = 0.5 + i * 0.3;
+//       ctx.strokeStyle = `rgba(${r},${g},${b},0.4)`;
+//       ctx.shadowColor = `rgba(${r},${g},${b},0.25)`;
+//       ctx.shadowBlur = 2;
+//       ctx.stroke();
+//       ctx.shadowBlur = 0;
+//     });
+//   };
+
+//   const animate = (now: number) => {
+//     const delta = now - lastFrame;
+//     if (delta > 33) { // ~30fps cap
+//       time += 0.02;
+//       updateWaveData();
+//       draw();
+//       lastFrame = now;
+//     }
+//     animationFrameId = requestAnimationFrame(animate);
+//   };
+
+//   window.addEventListener("resize", resizeCanvas);
+//   resizeCanvas();
+//   animationFrameId = requestAnimationFrame(animate);
+
+//   return () => {
+//     window.removeEventListener("resize", resizeCanvas);
+//     cancelAnimationFrame(animationFrameId);
+//   };
+// }, []);
+
 
   return (
     <>
-      {(loading || (projects.length == 0)) ? (
+      {loading || projects.length === 0 ? (
         <ProjectsSkeleton />
       ) : (
-        <section id="projects-section" className="py-16 relative overflow-hidden min-h-screen">
-          {/* Wave Background - Fixed positioning */}
-          <div className="absolute top-0 left-0 w-full h-full  z-0">
+        <section
+          id="projects-section"
+          ref={containerRef}
+          className="py-16 relative overflow-hidden min-h-screen"
+        >
+          {/* Wave Background */}
+          {/* <div className="absolute top-0 left-0 w-full h-full z-0">
             <canvas
               ref={canvasRef}
               className="absolute top-0 left-0 w-full h-full"
-              style={{ background: "transparent" }}
+              style={{ background: 'transparent' }}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/80 to-gray-50/80 backdrop-blur-sm" />
-          </div>
+          </div> */}
 
           <div className="container mx-auto px-4 relative z-10">
-            {/* Fixed title positioning */}
-            <motion.h1 
+            <motion.h1
               className="text-5xl font-bold text-center mb-12"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -159,8 +180,8 @@ export default function Projects() {
                           className="w-full h-full"
                           style={{
                             backgroundImage:
-                              "linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px), linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px)",
-                            backgroundSize: "15px 15px",
+                              'linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px), linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px)',
+                            backgroundSize: '15px 15px',
                           }}
                         />
                       </div>
@@ -171,7 +192,9 @@ export default function Projects() {
                     <span className="inline-block px-3 py-1 bg-indigo-100 text-gray-600 rounded-full text-xs font-medium mb-3 border border-indigo-200">
                       {project.data.stack}
                     </span>
-                    <h3 className="text-lg font-medium text-indigo-600 mb-2">{project.data.title}</h3>
+                    <h3 className="text-lg font-medium text-indigo-600 mb-2">
+                      {project.data.title}
+                    </h3>
                     <p className="text-gray-700 mb-4 leading-relaxed text-sm flex-grow">
                       {project.data.description}
                     </p>
@@ -221,6 +244,7 @@ export default function Projects() {
     </>
   )
 }
+
 
 function ProjectsSkeleton() {
   return (

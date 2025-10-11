@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CanvasRevealEffect } from './PixelMatrix'
 import { TextField } from '@mui/material'
@@ -28,6 +28,10 @@ export const ContactPage = ({ className }: ContactPageProps) => {
   const formRef = useRef<HTMLFormElement>(null)
   const [initialCanvasVisible, setInitialCanvasVisible] = useState(true)
   const [reverseCanvasVisible, setReverseCanvasVisible] = useState(false)
+  
+  // Intersection Observer state
+  const [isInView, setIsInView] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
 
   const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
   const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
@@ -35,6 +39,29 @@ export const ContactPage = ({ className }: ContactPageProps) => {
   if (!serviceId || !templateId) {
     console.error('EmailJS environment variables are not set')
   }
+
+  // Intersection Observer to detect when section is in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting)
+      },
+      {
+        threshold: 0.2, // Trigger when 20% of the section is visible
+        rootMargin: '50px', // Start slightly before entering viewport
+      }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current)
+      }
+    }
+  }, [])
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -54,9 +81,7 @@ export const ContactPage = ({ className }: ContactPageProps) => {
 
           // Trigger success animation
           setReverseCanvasVisible(true)
-          setTimeout(() => {
-            setInitialCanvasVisible(false)
-          }, 50)
+          setInitialCanvasVisible(false) // Immediately hide initial canvas
 
           // Show success state
           setTimeout(() => {
@@ -83,11 +108,12 @@ export const ContactPage = ({ className }: ContactPageProps) => {
 
   return (
     <div
+      ref={sectionRef}
       className={`flex w-full flex-col min-h-screen sm:pb-16 pb-8 relative
         ${className}`}
     >
       <div className="absolute inset-0 z-0">
-        {/* Initial canvas (forward animation) */}
+        {/* Initial canvas (forward animation) - only renders when in view */}
         {initialCanvasVisible && (
           <div className="absolute inset-0">
             <CanvasRevealEffect
@@ -99,6 +125,7 @@ export const ContactPage = ({ className }: ContactPageProps) => {
               ]}
               dotSize={6}
               reverse={false}
+              isVisible={isInView} // Pass visibility state
             />
           </div>
         )}
@@ -115,6 +142,7 @@ export const ContactPage = ({ className }: ContactPageProps) => {
               ]}
               dotSize={6}
               reverse={true}
+              isVisible={isInView} // Pass visibility state
             />
           </div>
         )}
@@ -153,9 +181,6 @@ export const ContactPage = ({ className }: ContactPageProps) => {
                           Get in Touch
                         </span>
                       </motion.h1>
-                      {/* <h1 className="text-4xl font-bold text-indigo-500">
-                        Get in Touch
-                      </h1> */}
                       <p className="text-lg text-indigo-400 font-extralight">
                         Let&apos;s start a conversation
                       </p>

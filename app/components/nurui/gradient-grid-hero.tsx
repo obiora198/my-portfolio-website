@@ -15,7 +15,6 @@ export function GradientGridHero() {
 
     let devicePixelRatio: number
 
-    // Set canvas dimensions
     const setCanvasDimensions = () => {
       devicePixelRatio = window.devicePixelRatio || 1
       const rect = canvas.getBoundingClientRect()
@@ -41,7 +40,6 @@ export function GradientGridHero() {
       targetY = e.clientY - rect.top
     })
 
-    // Particle class
     class Particle {
       x: number
       y: number
@@ -57,18 +55,15 @@ export function GradientGridHero() {
         this.y = y
         this.baseX = x
         this.baseY = y
-        // Reduced size from Math.random() * 5 + 2 to Math.random() * 2 + 1
-        this.size = Math.random() * 2 + 1
+        this.size = Math.random() * 4 + 1.5
         this.density = Math.random() * 30 + 1
         this.distance = 0
 
-        // Create a gradient from purple to pink
-        const hue = Math.random() * 60 + 270 // 270-330 range for purples and pinks
+        const hue = Math.random() * 60 + 270 // purple-pink range
         this.color = `hsl(${hue}, 70%, 60%)`
       }
 
       update() {
-        // Calculate distance between mouse and particle
         const dx = mouseX - this.x
         const dy = mouseY - this.y
         this.distance = Math.sqrt(dx * dx + dy * dy)
@@ -76,29 +71,21 @@ export function GradientGridHero() {
         const forceDirectionX = dx / this.distance
         const forceDirectionY = dy / this.distance
 
-        const maxDistance = 100
+        const maxDistance = 80
         const force = (maxDistance - this.distance) / maxDistance
 
         if (this.distance < maxDistance) {
           const directionX = forceDirectionX * force * this.density
           const directionY = forceDirectionY * force * this.density
-
           this.x -= directionX
           this.y -= directionY
         } else {
-          if (this.x !== this.baseX) {
-            const dx = this.x - this.baseX
-            this.x -= dx / 10
-          }
-          if (this.y !== this.baseY) {
-            const dy = this.y - this.baseY
-            this.y -= dy / 10
-          }
+          if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 10
+          if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 10
         }
       }
 
-      draw(ctx: CanvasRenderingContext2D | null) {
-        if (!ctx) return
+      draw(ctx: CanvasRenderingContext2D) {
         ctx.fillStyle = this.color
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
@@ -107,14 +94,14 @@ export function GradientGridHero() {
       }
     }
 
-    // Create particle grid
+    // Particle grid
     const particlesArray: Particle[] = []
-    const gridSize = 30
+    const gridSize = 40 
 
     function init() {
       particlesArray.length = 0
 
-      if (!canvas) return;
+      if (!canvas) return
 
       const canvasWidth = canvas.width / devicePixelRatio
       const canvasHeight = canvas.height / devicePixelRatio
@@ -133,31 +120,43 @@ export function GradientGridHero() {
 
     init()
 
-    // Animation loop
-    const animate = () => {
+    // Animation loop with throttling (~30fps)
+    let lastTime = 0
+
+    const animate = (time: number) => {
+      if (time - lastTime < 33) {
+        requestAnimationFrame(animate)
+        return
+      }
+      lastTime = time
+
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.globalAlpha = 0.85 // Smooth blending
 
-      // Smooth mouse following
-      mouseX += (targetX - mouseX) * 0.1
-      mouseY += (targetY - mouseY) * 0.1
+      // Smooth mouse follow
+      mouseX += (targetX - mouseX) * 0.08
+      mouseY += (targetY - mouseY) * 0.08
 
-      // Draw connections
       for (let i = 0; i < particlesArray.length; i++) {
-        particlesArray[i].update()
-        particlesArray[i].draw(ctx)
+        const p1 = particlesArray[i]
+        p1.update()
+        p1.draw(ctx)
 
-        // Draw connections
-        for (let j = i; j < particlesArray.length; j++) {
-          const dx = particlesArray[i].x - particlesArray[j].x
-          const dy = particlesArray[i].y - particlesArray[j].y
+        // Only check nearby particles
+        for (let j = i + 1; j < particlesArray.length; j++) {
+          const p2 = particlesArray[j]
+          const dx = p1.x - p2.x
+          if (Math.abs(dx) > 40) continue // quick skip for performance
+          const dy = p1.y - p2.y
+          if (Math.abs(dy) > 40) continue
           const distance = Math.sqrt(dx * dx + dy * dy)
 
-          if (distance < 30) {
+          if (distance < 40) {
             ctx.beginPath()
             ctx.strokeStyle = `rgba(180, 120, 255, ${0.2 - distance / 150})`
             ctx.lineWidth = 0.5
-            ctx.moveTo(particlesArray[i].x, particlesArray[i].y)
-            ctx.lineTo(particlesArray[j].x, particlesArray[j].y)
+            ctx.moveTo(p1.x, p1.y)
+            ctx.lineTo(p2.x, p2.y)
             ctx.stroke()
           }
         }
@@ -166,9 +165,8 @@ export function GradientGridHero() {
       requestAnimationFrame(animate)
     }
 
-    animate()
+    requestAnimationFrame(animate)
 
-    // Handle window resize
     window.addEventListener("resize", init)
 
     return () => {

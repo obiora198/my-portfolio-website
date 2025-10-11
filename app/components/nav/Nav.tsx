@@ -49,7 +49,7 @@ export default function Nav({ links }: { links: Links[] }) {
             <span className={`ml-1 transition-all duration-500 ${
               scrolled 
                 ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent' 
-                : 'text-white  hover:text-indigo-600 drop-shadow-lg'
+                : 'hover:text-indigo-600 drop-shadow-lg'
             }`}>
               mmanuel
             </span>
@@ -64,7 +64,7 @@ export default function Nav({ links }: { links: Links[] }) {
                     className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:text-indigo-600 drop-shadow-lg ${
                       scrolled 
                         ? 'text-gray-700' 
-                        : 'text-white/90 shadow-indigo-50'
+                        : 'shadow-indigo-50'
                     }`}
                   >
                     <span className="relative z-10">{link.text}</span>
@@ -83,7 +83,7 @@ export default function Nav({ links }: { links: Links[] }) {
                   className={`flex items-center gap-2 px-6 py-3 rounded-full drop-shadow-lg transition-all duration-300 group backdrop-blur-sm border hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 ${
                     scrolled 
                       ? 'text-gray-600 border-indigo-200/50' 
-                      : 'text-white/80 border-white/30 shadow-lg'
+                      : 'text-purple-600 border-white/30 shadow-lg'
                   }`}
                 >
                   <i className="fas fa-user-shield text-sm"></i>

@@ -2,8 +2,7 @@
 
 import React, { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-
-import * as THREE from "three"
+import * as THREE from "three";
 
 type Uniforms = {
   [key: string]: {
@@ -21,6 +20,7 @@ interface ShaderProps {
     };
   };
   maxFps?: number;
+  isVisible?: boolean;
 }
 
 export const CanvasRevealEffect = ({
@@ -30,7 +30,8 @@ export const CanvasRevealEffect = ({
   containerClassName,
   dotSize,
   showGradient = true,
-  reverse = false, // This controls the direction
+  reverse = false,
+  isVisible = true,
 }: {
   animationSpeed?: number;
   opacities?: number[];
@@ -38,12 +39,11 @@ export const CanvasRevealEffect = ({
   containerClassName?: string;
   dotSize?: number;
   showGradient?: boolean;
-  reverse?: boolean; // This prop determines the direction
+  reverse?: boolean;
+  isVisible?: boolean;
 }) => {
   return (
     <div className={`h-full relative w-full rounded-2xl ${containerClassName}`}>
-      {" "}
-      {/* Removed bg-white */}
       <div className="h-full w-full">
         <DotMatrix
           colors={colors ?? [[0, 255, 255]]}
@@ -51,17 +51,15 @@ export const CanvasRevealEffect = ({
           opacities={
             opacities ?? [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1]
           }
-          // Pass reverse state and speed via string flags in the empty shader prop
           shader={`
             ${reverse ? "u_reverse_active" : "false"}_;
             animation_speed_factor_${animationSpeed.toFixed(1)}_;
           `}
           center={["x", "y"]}
+          isVisible={isVisible}
         />
       </div>
       {showGradient && (
-        // Adjust gradient colors if needed based on background (was bg-white, now likely uses containerClassName bg)
-        // Example assuming a dark background like the SignInPage uses:
         <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent" />
       )}
     </div>
@@ -75,17 +73,18 @@ interface DotMatrixProps {
   dotSize?: number;
   shader?: string;
   center?: ("x" | "y")[];
+  isVisible?: boolean;
 }
 
 const DotMatrix: React.FC<DotMatrixProps> = ({
   colors = [[0, 0, 0]],
   opacities = [0.04, 0.04, 0.04, 0.04, 0.04, 0.08, 0.08, 0.08, 0.08, 0.14],
-  totalSize = 20,
+  totalSize = 25,
   dotSize = 2,
-  shader = "", // This shader string will now contain the animation logic
+  shader = "",
   center = ["x", "y"],
+  isVisible = true,
 }) => {
-  // ... uniforms calculation remains the same for colors, opacities, etc.
   const uniforms = React.useMemo(() => {
     let colorsArray = [
       colors[0],
@@ -136,15 +135,14 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
         type: "uniform1f",
       },
       u_reverse: {
-        value: shader.includes("u_reverse_active") ? 1 : 0, // Convert boolean to number (1 or 0)
-        type: "uniform1i", // Use 1i for bool in WebGL1/GLSL100, or just bool for GLSL300+ if supported
+        value: shader.includes("u_reverse_active") ? 1 : 0,
+        type: "uniform1i",
       },
     };
-  }, [colors, opacities, totalSize, dotSize, shader]); // Add shader to dependencies
+  }, [colors, opacities, totalSize, dotSize, shader]);
 
   return (
     <Shader
-      // The main animation logic is now built *outside* the shader prop
       source={`
         precision mediump float;
         in vec2 fragCoord;
@@ -155,16 +153,15 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
         uniform float u_total_size;
         uniform float u_dot_size;
         uniform vec2 u_resolution;
-        uniform int u_reverse; // Changed from bool to int
+        uniform int u_reverse;
 
         out vec4 fragColor;
 
         float PHI = 1.61803398874989484820459;
+        
+        // Optimized random function
         float random(vec2 xy) {
-            return fract(tan(distance(xy * PHI, xy) * 0.5) * xy.x);
-        }
-        float map(float value, float min1, float max1, float min2, float max2) {
-            return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+            return fract(sin(dot(xy, vec2(12.9898, 78.233))) * 43758.5453);
         }
 
         void main() {
@@ -180,55 +177,55 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
                 : ""
             }
 
-            float opacity = step(0.0, st.x);
-            opacity *= step(0.0, st.y);
+            // Early exit for out of bounds
+            if (st.x < 0.0 || st.y < 0.0) {
+                fragColor = vec4(0.0);
+                return;
+            }
 
             vec2 st2 = vec2(int(st.x / u_total_size), int(st.y / u_total_size));
 
+            // Simplified frequency
             float frequency = 5.0;
-            float show_offset = random(st2); // Used for initial opacity random pick and color
+            float show_offset = random(st2);
             float rand = random(st2 * floor((u_time / frequency) + show_offset + frequency));
-            opacity *= u_opacities[int(rand * 10.0)];
-            opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.x / u_total_size));
-            opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.y / u_total_size));
+            
+            float opacity = u_opacities[int(rand * 10.0)];
+            
+            // Combine dot checks
+            vec2 dotCheck = step(u_dot_size / u_total_size, fract(st / u_total_size));
+            opacity *= (1.0 - dotCheck.x) * (1.0 - dotCheck.y);
+
+            // Early exit if opacity is zero
+            if (opacity < 0.01) {
+                fragColor = vec4(0.0);
+                return;
+            }
 
             vec3 color = u_colors[int(show_offset * 6.0)];
 
-            // --- Animation Timing Logic ---
-            float animation_speed_factor = 0.5; // Extract speed from shader string
-            vec2 center_grid = u_resolution / 2.0 / u_total_size;
+            // Optimized animation timing
+            float animation_speed_factor = 0.5;
+            vec2 center_grid = u_resolution / (2.0 * u_total_size);
             float dist_from_center = distance(center_grid, st2);
 
-            // Calculate timing offset for Intro (from center)
-            float timing_offset_intro = dist_from_center * 0.01 + (random(st2) * 0.15);
-
-            // Calculate timing offset for Outro (from edges)
-            // Max distance from center to a corner of the grid
-            float max_grid_dist = distance(center_grid, vec2(0.0, 0.0));
-            float timing_offset_outro = (max_grid_dist - dist_from_center) * 0.02 + (random(st2 + 42.0) * 0.2);
-
-
-            float current_timing_offset;
+            float timing_offset;
             if (u_reverse == 1) {
-                current_timing_offset = timing_offset_outro;
-                 // Outro logic: opacity starts high, goes to 0 when time passes offset
-                 opacity *= 1.0 - step(current_timing_offset, u_time * animation_speed_factor);
-                 // Clamp for fade-out transition
-                 opacity *= clamp((step(current_timing_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
+                float max_grid_dist = length(center_grid);
+                timing_offset = (max_grid_dist - dist_from_center) * 0.02 + (random(st2 + 42.0) * 0.2);
+                opacity *= 1.0 - step(timing_offset, u_time * animation_speed_factor);
+                opacity *= clamp((step(timing_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
             } else {
-                current_timing_offset = timing_offset_intro;
-                 // Intro logic: opacity starts 0, goes to base opacity when time passes offset
-                 opacity *= step(current_timing_offset, u_time * animation_speed_factor);
-                 // Clamp for fade-in transition
-                 opacity *= clamp((1.0 - step(current_timing_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
+                timing_offset = dist_from_center * 0.01 + (random(st2) * 0.15);
+                opacity *= step(timing_offset, u_time * animation_speed_factor);
+                opacity *= clamp((1.0 - step(timing_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
             }
 
-
-            fragColor = vec4(color, opacity);
-            fragColor.rgb *= fragColor.a; // Premultiply alpha
+            fragColor = vec4(color * opacity, opacity);
         }`}
       uniforms={uniforms}
-      maxFps={60}
+      maxFps={30}
+      isVisible={isVisible}
     />
   );
 };
@@ -236,25 +233,48 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
 const ShaderMaterial = ({
   source,
   uniforms,
+  maxFps = 30,
+  isVisible = true,
 }: {
   source: string;
   hovered?: boolean;
   maxFps?: number;
   uniforms: Uniforms;
+  isVisible?: boolean;
 }) => {
   const { size } = useThree();
   const ref = useRef<THREE.Mesh>(null);
-  let lastFrameTime = 0;
+  const lastFrameTime = useRef(0);
+  const frameInterval = 1000 / maxFps;
+  const animationStartTime = useRef<number | null>(null);
+  const pausedTime = useRef(0);
 
-  useFrame(({ clock }: {clock: any}) => {
+  useFrame(({ clock }: { clock: any }) => {
     if (!ref.current) return;
-    const timestamp = clock.getElapsedTime();
+    
+    // Don't update if not visible
+    if (!isVisible) {
+      if (animationStartTime.current !== null) {
+        pausedTime.current = clock.getElapsedTime();
+      }
+      return;
+    }
 
-    lastFrameTime = timestamp;
+    // Initialize start time when becoming visible
+    if (animationStartTime.current === null) {
+      animationStartTime.current = clock.getElapsedTime() - pausedTime.current;
+    }
+    
+    const timestamp = clock.getElapsedTime();
+    const now = timestamp * 1000;
+
+    // FPS throttling
+    if (now - lastFrameTime.current < frameInterval) return;
+    lastFrameTime.current = now;
 
     const material = ref.current.material as THREE.ShaderMaterial;
     const timeLocation = material.uniforms.u_time;
-    timeLocation.value = timestamp;
+    timeLocation.value = timestamp - (animationStartTime.current || 0);
   });
 
   const getUniforms = () => {
@@ -305,11 +325,10 @@ const ShaderMaterial = ({
     preparedUniforms["u_time"] = { value: 0, type: "1f" };
     preparedUniforms["u_resolution"] = {
       value: new THREE.Vector2(size.width * 2, size.height * 2),
-    }; // Initialize u_resolution
+    };
     return preparedUniforms;
   };
 
-  // Shader material
   const material = useMemo(() => {
     const materialObject = new THREE.ShaderMaterial({
       vertexShader: `
@@ -345,10 +364,25 @@ const ShaderMaterial = ({
   );
 };
 
-const Shader: React.FC<ShaderProps> = ({ source, uniforms, maxFps = 60 }) => {
+const Shader: React.FC<ShaderProps> = ({ 
+  source, 
+  uniforms, 
+  maxFps = 30,
+  isVisible = true 
+}) => {
   return (
-    <Canvas className="absolute inset-0  h-full w-full">
-      <ShaderMaterial source={source} uniforms={uniforms} maxFps={maxFps} />
+    <Canvas 
+      className="absolute inset-0 h-full w-full"
+      dpr={[1, 1.5]}
+      performance={{ min: 0.5 }}
+      frameloop={isVisible ? "always" : "never"}
+    >
+      <ShaderMaterial 
+        source={source} 
+        uniforms={uniforms} 
+        maxFps={maxFps}
+        isVisible={isVisible}
+      />
     </Canvas>
   );
 };
