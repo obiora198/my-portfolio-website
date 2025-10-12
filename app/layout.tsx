@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import Footer from './components/sections/Footer'
+import { ThemeProvider } from './components/ThemeContext'
 import Script from 'next/script'
 import { AuthProvider } from './context/authContext'
 import { Toaster } from 'react-hot-toast'
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
+  metadataBase: new URL('https://emmanuel-obiora.vercel.app'),
   openGraph: {
     title: 'Emmanuel Obiora | Web Developer in Abuja',
     description:
@@ -58,12 +60,9 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
-        <link
-          rel="canonical"
-          href="https://emmanuel-obiora.vercel.app/"
-        />
+        <link rel="canonical" href="https://emmanuel-obiora.vercel.app/" />
 
         <Script
           src="https://kit.fontawesome.com/1b7d41b7e1.js"
@@ -79,7 +78,7 @@ export default async function RootLayout({
             '@type': 'Person',
             name: 'Emmanuel Obiora',
             url: 'https://emmanuel-obiora.vercel.app/',
-            image: 'https://emmanuel-obiora.vercel.app/profile.jpg', // replace with your real profile image
+            image: 'https://emmanuel-obiora.vercel.app/profile.jpg',
             sameAs: [
               'https://www.linkedin.com/in/emmanuel-obiora-9b8495192/',
               'https://github.com/obiora198',
@@ -99,41 +98,31 @@ export default async function RootLayout({
               'Emmanuel Obiora is a frontend web developer based in Abuja, Nigeria, specializing in building modern websites with React, Next.js, Tailwind CSS, and TypeScript.',
           })}
         </Script>
+         <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const savedTheme = localStorage.getItem('theme');
+                  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const theme = savedTheme || (systemDark ? 'dark' : 'light');
+                  document.documentElement.classList.add(theme);
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={`${poppins.className}`}>
-        <AuthProvider>
-          {/* <Nav links={links} /> */}
-
-          {children}
-          <Toaster position="top-right" reverseOrder={false} />
-          <SpeedInsights />
-
-          <Footer />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
+            <Toaster position="top-right" reverseOrder={false} />
+            <SpeedInsights />
+            <Footer />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
 }
-
-// const links = [
-//   {
-//     text: 'Home',
-//     url: '/',
-//   },
-//   {
-//     text: 'About',
-//     url: '/#about-section',
-//   },
-//   {
-//     text: 'Skills',
-//     url: '/#skills-section',
-//   },
-//   {
-//     text: 'Projects',
-//     url: '/#projects-section',
-//   },
-//   {
-//     text: 'Contact',
-//     url: '/#contact-section',
-//   },
-// ]

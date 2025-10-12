@@ -14,7 +14,7 @@ const inter = Inter({ subsets: ['latin'] })
 export default async function Home() {
   
   return (
-    <main className={`${inter.className} bg-gray-100`}>
+    <main className={`${inter.className} bg-gray-100 dark:bg-slate-900 transition-colors duration-300`}>
       <Nav links={links} />
       <Hero />
       <About />

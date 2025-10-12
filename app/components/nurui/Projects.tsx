@@ -1,5 +1,6 @@
 'use client'
 
+import { useTheme } from '../ThemeContext' 
 import { ProjectType } from '../../configs/tsTypes'
 import fetchProjects from '../../lib/fetchProjects'
 import React, { useEffect, useRef } from 'react'
@@ -9,8 +10,7 @@ import { motion } from 'framer-motion'
 export default function Projects() {
   const [loading, setLoading] = React.useState<boolean>(true)
   const [projects, setProjects] = React.useState<ProjectType[]>([])
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const { theme } = useTheme()
 
   const start = async () => {
     const projectsArray = await fetchProjects()
@@ -22,128 +22,16 @@ export default function Projects() {
     start()
   }, [])
 
-// useEffect(() => {
-//   const canvas = canvasRef.current;
-//   if (!canvas) return;
 
-//   const ctx = canvas.getContext("2d");
-//   if (!ctx) return;
-
-//   let time = 0;
-//   let animationFrameId: number;
-//   let lastFrame = 0;
-
-//   // Fewer waves = less CPU, still smooth
-//   const waveData = Array.from({ length: 3 }).map(() => ({
-//     value: Math.random() * 0.5 + 0.1,
-//     targetValue: Math.random() * 0.5 + 0.1,
-//     speed: Math.random() * 0.02 + 0.01,
-//   }));
-
-//   const resizeCanvas = () => {
-//     const container = canvas.parentElement;
-//     if (!container) return;
-
-//     const dpr = Math.min(window.devicePixelRatio, 1.5); // ✅ Limit scaling
-//     const width = container.clientWidth;
-//     const height = container.clientHeight;
-
-//     canvas.width = width * dpr;
-//     canvas.height = height * dpr;
-
-//     ctx.scale(dpr, dpr);
-//   };
-
-//   const updateWaveData = () => {
-//     for (const data of waveData) {
-//       if (Math.random() < 0.01) data.targetValue = Math.random() * 0.7 + 0.1;
-//       const diff = data.targetValue - data.value;
-//       data.value += diff * data.speed;
-//     }
-//   };
-
-//   const draw = () => {
-//     if (!ctx || !canvas) return;
-
-//     const { width, height } = canvas;
-//     ctx.clearRect(0, 0, width, height);
-
-//     waveData.forEach((data, i) => {
-//       const freq = data.value * 7;
-//       ctx.beginPath();
-
-//       // Draw fewer points → huge CPU gain
-//       const step = 3; // pixels per step
-//       for (let x = 0; x < width; x += step) {
-//         const nx = (x / width) * 2 - 1;
-//         const px = nx + i * 0.04 + freq * 0.03;
-//         const py =
-//           Math.sin(px * 10 + time) *
-//           Math.cos(px * 2) *
-//           freq *
-//           0.1 *
-//           ((i + 1) / 8);
-//         const y = ((py + 1) * height) / 2;
-
-//         if (x === 0) ctx.moveTo(x, y);
-//         else ctx.lineTo(x, y);
-//       }
-
-//       const intensity = Math.min(1, freq * 0.3);
-//       const r = 99 + intensity * 50;
-//       const g = 102 + intensity * 30;
-//       const b = 241 + intensity * 20;
-//       ctx.lineWidth = 0.5 + i * 0.3;
-//       ctx.strokeStyle = `rgba(${r},${g},${b},0.4)`;
-//       ctx.shadowColor = `rgba(${r},${g},${b},0.25)`;
-//       ctx.shadowBlur = 2;
-//       ctx.stroke();
-//       ctx.shadowBlur = 0;
-//     });
-//   };
-
-//   const animate = (now: number) => {
-//     const delta = now - lastFrame;
-//     if (delta > 33) { // ~30fps cap
-//       time += 0.02;
-//       updateWaveData();
-//       draw();
-//       lastFrame = now;
-//     }
-//     animationFrameId = requestAnimationFrame(animate);
-//   };
-
-//   window.addEventListener("resize", resizeCanvas);
-//   resizeCanvas();
-//   animationFrameId = requestAnimationFrame(animate);
-
-//   return () => {
-//     window.removeEventListener("resize", resizeCanvas);
-//     cancelAnimationFrame(animationFrameId);
-//   };
-// }, []);
-
-
-  return (
+ return (
     <>
       {loading || projects.length === 0 ? (
         <ProjectsSkeleton />
       ) : (
         <section
           id="projects-section"
-          ref={containerRef}
-          className="py-16 relative overflow-hidden min-h-screen"
+          className="py-16 relative overflow-hidden min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300"
         >
-          {/* Wave Background */}
-          {/* <div className="absolute top-0 left-0 w-full h-full z-0">
-            <canvas
-              ref={canvasRef}
-              className="absolute top-0 left-0 w-full h-full"
-              style={{ background: 'transparent' }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/80 to-gray-50/80 backdrop-blur-sm" />
-          </div> */}
-
           <div className="container mx-auto px-4 relative z-10">
             <motion.h1
               className="text-5xl font-bold text-center mb-12"
@@ -151,7 +39,7 @@ export default function Projects() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
                 Projects
               </span>
             </motion.h1>
@@ -164,10 +52,10 @@ export default function Projects() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
                   viewport={{ once: true }}
-                  className="relative border border-indigo-300 overflow-hidden rounded-2xl flex flex-col bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="relative border border-indigo-300 dark:border-slate-600 overflow-hidden rounded-2xl flex flex-col bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <div className="p-4 flex justify-center relative">
-                    <div className="w-full h-48 rounded-xl border border-indigo-200 overflow-hidden relative bg-gradient-to-br from-indigo-50 to-purple-50">
+                    <div className="w-full h-48 rounded-xl border border-indigo-200 dark:border-slate-500 overflow-hidden relative bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-600">
                       <Image
                         src={project.data.image as string}
                         alt={project.data.title}
@@ -187,15 +75,15 @@ export default function Projects() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-indigo-200 to-transparent" />
+                  <div className="w-full h-px bg-gradient-to-r from-transparent via-indigo-200 dark:via-slate-500 to-transparent" />
                   <div className="p-4 flex flex-col flex-grow">
-                    <span className="inline-block px-3 py-1 bg-indigo-100 text-gray-600 rounded-full text-xs font-medium mb-3 border border-indigo-200">
+                    <span className="inline-block px-3 py-1 bg-indigo-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 rounded-full text-xs font-medium mb-3 border border-indigo-200 dark:border-slate-600">
                       {project.data.stack}
                     </span>
-                    <h3 className="text-lg font-medium text-indigo-600 mb-2">
+                    <h3 className="text-lg font-medium text-indigo-600 dark:text-indigo-400 mb-2">
                       {project.data.title}
                     </h3>
-                    <p className="text-gray-700 mb-4 leading-relaxed text-sm flex-grow">
+                    <p className="text-gray-700 dark:text-slate-300 mb-4 leading-relaxed text-sm flex-grow">
                       {project.data.description}
                     </p>
                     <div className="flex justify-between items-center mt-auto">
@@ -203,7 +91,7 @@ export default function Projects() {
                         href={project.data.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-indigo-600 hover:text-indigo-700 transition flex items-center text-xs font-medium bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 hover:bg-indigo-200"
+                        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition flex items-center text-xs font-medium bg-indigo-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-slate-600 hover:bg-indigo-200 dark:hover:bg-slate-600"
                       >
                         Live Demo
                         <svg className="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none">
@@ -220,7 +108,7 @@ export default function Projects() {
                         href={project.data.githubLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-indigo-600 hover:text-indigo-700 transition flex items-center text-xs font-medium bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 hover:bg-indigo-200"
+                        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition flex items-center text-xs font-medium bg-indigo-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-slate-600 hover:bg-indigo-200 dark:hover:bg-slate-600"
                       >
                         Code
                         <svg className="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none">
@@ -245,15 +133,15 @@ export default function Projects() {
   )
 }
 
-
+// Also update the ProjectsSkeleton component with dark mode classes
 function ProjectsSkeleton() {
   return (
     <section
       id="projects-section"
-      className="min-h-screen w-full flex flex-col items-center gap-8 sm:px-40 py-16 p-4 relative overflow-hidden"
+      className="min-h-screen w-full flex flex-col items-center gap-8 sm:px-40 py-16 p-4 relative overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-300"
     >
       {/* Skeleton Wave Background */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-gradient-to-b from-indigo-50/80 to-gray-50/80 z-0" />
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-gradient-to-b from-indigo-50/80 to-gray-50/80 dark:from-slate-800/80 dark:to-slate-900/80 z-0" />
       
       {/* Updated skeleton title style */}
       <motion.h1 
@@ -262,7 +150,7 @@ function ProjectsSkeleton() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
           Projects
         </span>
       </motion.h1>
@@ -272,23 +160,23 @@ function ProjectsSkeleton() {
         {[...Array(2)].map((_, index) => (
           <div
             key={index}
-            className="relative border border-indigo-300 overflow-hidden rounded-2xl flex flex-col bg-white/90 backdrop-blur-sm shadow-lg animate-pulse"
+            className="relative border border-indigo-300 dark:border-slate-600 overflow-hidden rounded-2xl flex flex-col bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-lg animate-pulse"
           >
             <div className="p-4 flex justify-center relative">
-              <div className="w-full h-48 rounded-xl border border-indigo-200 overflow-hidden relative bg-gradient-to-br from-indigo-50 to-purple-50 bg-gray-300" />
+              <div className="w-full h-48 rounded-xl border border-indigo-200 dark:border-slate-500 overflow-hidden relative bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 bg-gray-300 dark:bg-slate-600" />
             </div>
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-indigo-200 to-transparent" />
+            <div className="w-full h-px bg-gradient-to-r from-transparent via-indigo-200 dark:via-slate-500 to-transparent" />
             <div className="p-4 flex flex-col flex-grow">
-              <div className="h-6 bg-indigo-100/50 rounded-full w-1/3 mb-3" />
-              <div className="h-5 bg-indigo-100/50 rounded w-2/3 mb-2" />
+              <div className="h-6 bg-indigo-100/50 dark:bg-slate-600/50 rounded-full w-1/3 mb-3" />
+              <div className="h-5 bg-indigo-100/50 dark:bg-slate-600/50 rounded w-2/3 mb-2" />
               <div className="space-y-2 flex-grow mb-4">
-                <div className="h-3 bg-indigo-100/50 rounded w-full" />
-                <div className="h-3 bg-indigo-100/50 rounded w-5/6" />
-                <div className="h-3 bg-indigo-100/50 rounded w-2/3" />
+                <div className="h-3 bg-indigo-100/50 dark:bg-slate-600/50 rounded w-full" />
+                <div className="h-3 bg-indigo-100/50 dark:bg-slate-600/50 rounded w-5/6" />
+                <div className="h-3 bg-indigo-100/50 dark:bg-slate-600/50 rounded w-2/3" />
               </div>
               <div className="flex justify-between items-center mt-auto">
-                <div className="h-8 bg-indigo-100/50 rounded-lg w-2/5" />
-                <div className="h-8 bg-indigo-100/50 rounded-lg w-2/5" />
+                <div className="h-8 bg-indigo-100/50 dark:bg-slate-600/50 rounded-lg w-2/5" />
+                <div className="h-8 bg-indigo-100/50 dark:bg-slate-600/50 rounded-lg w-2/5" />
               </div>
             </div>
           </div>
