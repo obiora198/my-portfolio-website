@@ -31,17 +31,33 @@ const links = [
     url: '/',
   },
   {
-    text: 'About',
-    url: '/#about-section',
+    text: 'Apps',
+    subLinks: [
+      { text: 'Buy Data', url: '/vtu' },
+      { text: 'Blog', url: '/blog' },
+    ],
   },
   {
-    text: 'Skills',
-    url: '/#skills-section',
+    text: 'Quick Navigation',
+    subLinks: [
+      { text: 'About', url: '/#about-section' },
+      { text: 'Skills', url: '/#skills-section' },
+      { text: 'Projects', url: '/#projects-section' },
+    ],
   },
-  {
-    text: 'Projects',
-    url: '/#projects-section',
-  },
+
+  // {
+  //   text: 'About',
+  //   url: '/#about-section',
+  // },
+  // {
+  //   text: 'Skills',
+  //   url: '/#skills-section',
+  // },
+  // {
+  //   text: 'Projects',
+  //   url: '/#projects-section',
+  // },
   {
     text: 'Contact',
     url: '/#contact-section',

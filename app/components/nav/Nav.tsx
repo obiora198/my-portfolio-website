@@ -8,18 +8,22 @@ import {
   FaThLarge,
   FaArrowRight,
 } from 'react-icons/fa'
-import { useTheme } from '../ThemeContext' // Adjust path as needed
+import { useTheme } from '../ThemeContext'
 
 interface Links {
   text: string
-  url: string
+  url?: string
+  subLinks?: Links[]
 }
 
 export default function Nav({ links }: { links: Links[] }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [dropdownOpenIndex, setDropdownOpenIndex] = useState<number | null>(
+    null
+  )
   const [adminMenuOpen, setAdminMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { theme } = useTheme()
+  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30)
@@ -28,7 +32,7 @@ export default function Nav({ links }: { links: Links[] }) {
   }, [])
 
   const toggleAdminMenu = () => setAdminMenuOpen((prev) => !prev)
-  const handleClick = () => setIsOpen(!isOpen)
+  const toggleMobileMenu = () => setIsOpen((prev) => !prev)
   const closeMobileMenu = () => setIsOpen(false)
 
   const headerBg = scrolled
@@ -50,6 +54,7 @@ export default function Nav({ links }: { links: Links[] }) {
       >
         {/* Desktop Nav */}
         <div className="hidden sm:flex items-center justify-between px-8 sm:px-32 py-6">
+          {/* Brand */}
           <Link
             href="/"
             className="text-4xl font-bold hover:scale-105 transition-all duration-300"
@@ -58,24 +63,57 @@ export default function Nav({ links }: { links: Links[] }) {
               E
             </span>
             <span
-              className={`ml-1 transition-all duration-500 text-gray-500 ${brandGradient}`}
+              className={`ml-1 transition-all duration-500 ${brandGradient}`}
             >
               mmanuel
             </span>
           </Link>
 
+          {/* Links */}
           <nav>
             <ul className="flex items-center gap-2 text-lg font-medium">
               {links?.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    href={link.url}
-                    className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg ${textColor}`}
-                  >
-                    <span className="relative z-10">{link.text}</span>
-                    <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-500/20 dark:via-purple-500/20 dark:to-pink-500/20 border border-indigo-200/50 dark:border-indigo-500/30"></span>
-                    <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover:w-3/4 transition-all duration-300 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400"></span>
-                  </Link>
+                <li key={index} className="relative">
+                  {!link.url ? (
+                    <div
+                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg ${textColor}`}
+                      onMouseEnter={() => setDropdownOpenIndex(index)}
+                      onMouseLeave={() => setDropdownOpenIndex(null)}
+                    >
+                      <span className="relative z-10">{link.text}</span>
+
+                      {/* Dropdown menu */}
+                      {link.subLinks && (
+                        <ul
+                          className={`absolute left-0 top-full min-w-full rounded-2xl bg-white dark:bg-slate-800 shadow-lg border border-indigo-200/30 dark:border-slate-600 transition-all duration-300 ease-out origin-top transform ${
+                            dropdownOpenIndex === index
+                              ? 'opacity-100 translate-y-0 pointer-events-auto'
+                              : 'opacity-0 -translate-y-3 pointer-events-none'
+                          }`}
+                        >
+                          {link.subLinks.map((sublink, subIndex) => (
+                            <li key={subIndex}>
+                              <Link
+                                href={sublink.url || '#'}
+                                className="block px-5 py-2.5 text-gray-700 dark:text-slate-300 hover:bg-indigo-50/80 dark:hover:bg-indigo-900/40 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-md transition-colors duration-200"
+                              >
+                                {sublink.text}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      href={link.url}
+                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg ${textColor}`}
+                    >
+                      <span className="relative z-10">{link.text}</span>
+                      <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-500/20 dark:via-purple-500/20 dark:to-pink-500/20 border border-indigo-200/50 dark:border-indigo-500/30"></span>
+                      <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover:w-3/4 transition-all duration-300 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400"></span>
+                    </Link>
+                  )}
                 </li>
               ))}
 
@@ -94,14 +132,6 @@ export default function Nav({ links }: { links: Links[] }) {
                   <FaChevronDown
                     className={`text-xs transition-transform duration-300 ${adminMenuOpen ? 'rotate-180' : ''}`}
                   />
-                  {/* Glow effect */}
-                  <span
-                    className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                      scrolled
-                        ? 'shadow-lg shadow-indigo-500/20 dark:shadow-indigo-500/10'
-                        : 'shadow-lg shadow-white/20 dark:shadow-slate-400/20'
-                    }`}
-                  ></span>
                 </button>
 
                 {adminMenuOpen && (
@@ -110,7 +140,6 @@ export default function Nav({ links }: { links: Links[] }) {
                       className="fixed inset-0 z-10"
                       onClick={() => setAdminMenuOpen(false)}
                     ></div>
-
                     <ul className="absolute top-full right-0 mt-4 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-indigo-100/50 dark:border-slate-600 rounded-2xl shadow-2xl shadow-indigo-500/10 dark:shadow-slate-900/20 z-20 min-w-[180px] overflow-hidden">
                       <li>
                         <Link
@@ -141,19 +170,14 @@ export default function Nav({ links }: { links: Links[] }) {
               E
             </span>
             <span
-              className={`ml-1 transition-all duration-500 ${
-                scrolled
-                  ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent'
-                  : 'text-white dark:text-white drop-shadow-lg'
-              }`}
+              className={`ml-1 transition-all duration-500 ${scrolled ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent' : 'text-white dark:text-white drop-shadow-lg'}`}
             >
               mmanuel
             </span>
           </Link>
 
-          {/* Hamburger */}
           <button
-            onClick={handleClick}
+            onClick={toggleMobileMenu}
             aria-label="Toggle Navigation"
             className={`relative w-12 h-12 rounded-full transition-all duration-300 flex items-center justify-center group ${
               scrolled
@@ -163,31 +187,13 @@ export default function Nav({ links }: { links: Links[] }) {
           >
             <div className="flex flex-col justify-between w-5 h-4">
               <span
-                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${
-                  isOpen
-                    ? 'rotate-45 translate-y-1.5 bg-indigo-500 dark:bg-indigo-400'
-                    : scrolled
-                      ? 'bg-indigo-500 dark:bg-slate-400'
-                      : 'bg-white dark:bg-slate-300'
-                }`}
+                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${isOpen ? 'rotate-45 translate-y-1.5 bg-indigo-500 dark:bg-indigo-400' : scrolled ? 'bg-indigo-500 dark:bg-slate-400' : 'bg-white dark:bg-slate-300'}`}
               ></span>
               <span
-                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${
-                  isOpen
-                    ? 'opacity-0 scale-0'
-                    : scrolled
-                      ? 'bg-indigo-500 dark:bg-slate-400'
-                      : 'bg-white dark:bg-slate-300'
-                }`}
+                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${isOpen ? 'opacity-0 scale-0' : scrolled ? 'bg-indigo-500 dark:bg-slate-400' : 'bg-white dark:bg-slate-300'}`}
               ></span>
               <span
-                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${
-                  isOpen
-                    ? '-rotate-45 -translate-y-1.5 bg-indigo-500 dark:bg-indigo-400'
-                    : scrolled
-                      ? 'bg-indigo-500 dark:bg-slate-400'
-                      : 'bg-white dark:bg-slate-300'
-                }`}
+                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${isOpen ? '-rotate-45 -translate-y-1.5 bg-indigo-500 dark:bg-indigo-400' : scrolled ? 'bg-indigo-500 dark:bg-slate-400' : 'bg-white dark:bg-slate-300'}`}
               ></span>
             </div>
           </button>
@@ -200,7 +206,6 @@ export default function Nav({ links }: { links: Links[] }) {
               className="fixed inset-0 bg-black/30 dark:bg-black/50 backdrop-blur-sm z-40 sm:hidden"
               onClick={closeMobileMenu}
             ></div>
-
             <nav className="absolute top-full left-0 right-0 sm:hidden bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border-b border-indigo-100/50 dark:border-slate-600 shadow-2xl shadow-indigo-500/10 dark:shadow-slate-900/20 z-50">
               <ul className="flex flex-col py-4 text-lg font-medium">
                 {links?.map((link, index) => (
@@ -208,17 +213,24 @@ export default function Nav({ links }: { links: Links[] }) {
                     key={index}
                     className="transform transition-all duration-300 hover:scale-105 origin-left"
                   >
-                    <Link
-                      href={link.url}
-                      onClick={closeMobileMenu}
-                      className="flex items-center px-8 py-4 text-gray-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-50 hover:via-purple-50 hover:to-pink-50 dark:hover:from-indigo-900/50 dark:hover:via-purple-900/50 dark:hover:to-pink-900/50 transition-all duration-300 border-l-4 border-transparent hover:border-indigo-500 dark:hover:border-indigo-400 group"
-                    >
-                      <span>{link.text}</span>
-                      <FaArrowRight className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 text-sm" />
-                    </Link>
+                    {link.url ? (
+                      <Link
+                        href={link.url}
+                        onClick={closeMobileMenu}
+                        className="flex items-center px-8 py-4 text-gray-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-50 hover:via-purple-50 hover:to-pink-50 dark:hover:from-indigo-900/50 dark:hover:via-purple-900/50 dark:hover:to-pink-900/50 transition-all duration-300 border-l-4 border-transparent hover:border-indigo-500 dark:hover:border-indigo-400 group"
+                      >
+                        <span>{link.text}</span>
+                        <FaArrowRight className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 text-sm" />
+                      </Link>
+                    ) : (
+                      <div className="px-8 py-4 border-l-4 border-transparent">
+                        <span className="text-gray-700 dark:text-slate-300 cursor-default">
+                          {link.text}
+                        </span>
+                      </div>
+                    )}
                   </li>
                 ))}
-
                 <li className="border-t border-indigo-100/50 dark:border-slate-600 mt-2 pt-2 transform transition-all duration-300 hover:scale-105 origin-left">
                   <Link
                     href="/auth/admin"
@@ -236,6 +248,7 @@ export default function Nav({ links }: { links: Links[] }) {
         )}
       </header>
 
+      {/* Spacer to prevent content jump */}
       <div className="h-20 sm:h-24"></div>
     </>
   )
