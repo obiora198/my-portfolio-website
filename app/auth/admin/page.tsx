@@ -15,7 +15,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material'
-import { TrashIcon } from '@heroicons/react/solid'
+import { FaSignOutAlt, FaFolderOpen, FaTrash } from 'react-icons/fa'
 import logOut from '@/firebase/auth/logout'
 import Loading from '@/app/components/Loading'
 import { toast } from 'react-hot-toast'
@@ -24,7 +24,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 export default function AdminPage() {
   const [projects, setProjects] = React.useState<ProjectType[]>([])
   const [loading, setLoading] = useState(false)
-  const [projectToDelete, setProjectToDelete] = useState<ProjectType | null>(null)
+  const [projectToDelete, setProjectToDelete] = useState<ProjectType | null>(
+    null
+  )
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
 
@@ -55,7 +57,7 @@ export default function AdminPage() {
 
       if (result.status === 200) {
         toast.success(result.message)
-        setProjectToDelete(null) 
+        setProjectToDelete(null)
         router.refresh()
       } else {
         toast.error(result.message)
@@ -66,21 +68,21 @@ export default function AdminPage() {
   }
 
   if (authLoading) {
-    return <Loading dark={null} /> 
+    return <Loading dark={null} />
   }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
       {/* Top Navbar */}
       <nav className="w-full bg-white dark:bg-slate-800 shadow-md fixed top-0 left-0 z-10 px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent"
         >
           Admin Panel
         </motion.h2>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
@@ -101,7 +103,7 @@ export default function AdminPage() {
             onClick={logOut}
             className="text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 border border-red-500 dark:border-red-400 px-3 py-1 rounded-lg font-medium transition-colors duration-300 flex items-center gap-2"
           >
-            <i className="fa fa-sign-out" aria-hidden="true"></i>
+            <FaSignOutAlt className="text-base" aria-hidden="true" />
             <span>Logout</span>
           </button>
         </motion.div>
@@ -168,7 +170,7 @@ export default function AdminPage() {
                           variant="outlined"
                           color="error"
                           size="small"
-                          startIcon={<TrashIcon className="w-4 h-4" />}
+                          startIcon={<FaTrash className="w-4 h-4" />}
                           onClick={() => setProjectToDelete(item)}
                           className="rounded-full capitalize font-medium"
                           sx={{
@@ -176,8 +178,8 @@ export default function AdminPage() {
                             color: '#ef4444',
                             '&:hover': {
                               borderColor: '#dc2626',
-                              backgroundColor: 'rgba(239, 68, 68, 0.04)'
-                            }
+                              backgroundColor: 'rgba(239, 68, 68, 0.04)',
+                            },
                           }}
                         >
                           Delete
@@ -190,8 +192,7 @@ export default function AdminPage() {
                           PaperProps={{
                             sx: {
                               borderRadius: '16px',
-                              backgroundColor: 'background.paper'
-                            }
+                            },
                           }}
                         >
                           <DialogTitle className="bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent font-bold">
@@ -199,7 +200,9 @@ export default function AdminPage() {
                           </DialogTitle>
                           <DialogContent>
                             <p className="text-gray-700 dark:text-slate-300 py-4">
-                              Are you sure you want to delete &quot;{projectToDelete?.data.title}&quot;? This action cannot be undone.
+                              Are you sure you want to delete &quot;
+                              {projectToDelete?.data.title}&quot;? This action
+                              cannot be undone.
                             </p>
                           </DialogContent>
                           <DialogActions className="gap-2 p-4">
@@ -211,20 +214,23 @@ export default function AdminPage() {
                               sx={{
                                 borderRadius: '12px',
                                 textTransform: 'none',
-                                fontWeight: 600
+                                fontWeight: 600,
                               }}
                             >
                               Cancel
                             </Button>
                             <Button
-                              onClick={() => projectToDelete && handleDelete(projectToDelete.id)}
+                              onClick={() =>
+                                projectToDelete &&
+                                handleDelete(projectToDelete.id)
+                              }
                               variant="contained"
                               color="error"
                               disabled={loading}
                               sx={{
                                 borderRadius: '12px',
                                 textTransform: 'none',
-                                fontWeight: 600
+                                fontWeight: 600,
                               }}
                             >
                               {loading ? (
@@ -252,9 +258,11 @@ export default function AdminPage() {
               animate={{ opacity: 1 }}
               className="text-center py-12 text-gray-500 dark:text-slate-400"
             >
-              <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
+              <FaFolderOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="text-lg">No projects found</p>
-              <p className="text-sm mt-2">Add your first project to get started</p>
+              <p className="text-sm mt-2">
+                Add your first project to get started
+              </p>
             </motion.div>
           )}
         </motion.div>

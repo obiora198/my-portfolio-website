@@ -63,11 +63,6 @@ export default async function RootLayout({
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <link rel="canonical" href="https://emmanuel-obiora.vercel.app/" />
-
-        <Script
-          src="https://kit.fontawesome.com/1b7d41b7e1.js"
-          crossOrigin="anonymous"
-        ></Script>
         <Script
           id="structured-data"
           type="application/ld+json"

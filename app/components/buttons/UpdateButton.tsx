@@ -9,7 +9,7 @@ import {
 } from '@mui/material'
 import updateProject from '../../../firebase/firestore/updateProject'
 import { ProjectType } from '@/app/configs/tsTypes'
-import { TrashIcon } from '@heroicons/react/solid'
+import { FaTrash } from "react-icons/fa";
 import Image from 'next/image'
 import { useAuth } from '@/app/context/authContext'
 import { useRouter } from 'next/navigation'
@@ -212,7 +212,7 @@ export default function ProjectUpdate({
                       onClick={deleteImage}
                       className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full"
                     >
-                      <TrashIcon className="w-5 h-5" />
+                      <FaTrash className="w-5 h-5" />
                     </button>
                   </div>
                 )}

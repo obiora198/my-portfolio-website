@@ -3,7 +3,7 @@ import React, { ChangeEvent, FormEvent, useState, useRef } from 'react'
 import { useAuth } from '../../context/authContext'
 import { useRouter } from 'next/navigation'
 import addProject from '../../../firebase/firestore/addProject'
-import { PlusIcon, TrashIcon } from '@heroicons/react/solid'
+import { FaPlus, FaTrash } from "react-icons/fa";
 import Image from 'next/image'
 import uploadImage from '../../../firebase/firestore/uploadImage'
 import { Button } from '../../../components/ui/button' // Assuming you have a Button component in the Shadcn UI library
@@ -79,7 +79,7 @@ export default function Page() {
     <DialogTrigger asChild>
       <Button
         variant="default"
-        className="w-full sm:w-auto rounded-full px-8 py-3 font-semibold bg-indigo-500 hover:bg-indigo-600 transition-colors duration-300"
+        className="w-full sm:w-auto rounded-full px-8 py-3 font-semibold bg-indigo-500 hover:bg-indigo-600 text-white transition-colors duration-300"
       >
         Create Project
       </Button>
@@ -197,7 +197,7 @@ export default function Page() {
                     onClick={deleteImage}
                     className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full"
                   >
-                    <TrashIcon className="w-5 h-5" />
+                    <FaTrash className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
@@ -205,7 +205,7 @@ export default function Page() {
                   htmlFor="upload-image"
                   className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-400 rounded-xl p-8 cursor-pointer hover:border-indigo-500 transition"
                 >
-                  <PlusIcon className="w-12 h-12 text-gray-400" />
+                  <FaPlus className="w-12 h-12 text-gray-400" />
                   <p className="mt-2 text-gray-500">Upload Screenshot</p>
                 </label>
               )}

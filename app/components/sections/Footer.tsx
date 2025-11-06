@@ -1,6 +1,8 @@
 'use client'
 
 import { useTheme } from '../../components/ThemeContext'
+import { FaGithub, FaLinkedin } from 'react-icons/fa'
+import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi2'
 
 export default function Footer() {
   const { theme, toggleTheme } = useTheme()
@@ -23,14 +25,20 @@ export default function Footer() {
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {theme === 'light' ? (
-              <i className="fas fa-moon text-2xl sm:text-3xl" aria-hidden="true"></i>
+              <HiOutlineMoon
+                className="text-2xl sm:text-3xl"
+                aria-hidden="true"
+              />
             ) : (
-              <i className="fas fa-sun text-2xl sm:text-3xl" aria-hidden="true"></i>
+              <HiOutlineSun
+                className="text-2xl sm:text-3xl"
+                aria-hidden="true"
+              />
             )}
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-yellow-400/30 via-orange-400/30 to-red-400/30 opacity-0 group-hover:opacity-100 transition-all duration-500 blur-sm group-hover:blur-0"></span>
           </button>
 
-          {/* Social Links */}
+          {/* GitHub */}
           <a
             href="https://github.com/obiora198"
             target="_blank"
@@ -38,10 +46,11 @@ export default function Footer() {
             className="group relative p-5 rounded-2xl bg-white/15 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-500 hover:scale-110 hover:bg-white/20 hover:shadow-2xl hover:shadow-indigo-500/30"
             aria-label="GitHub"
           >
-            <i className="fab fa-github text-2xl sm:text-3xl" aria-hidden="true"></i>
+            <FaGithub className="text-2xl sm:text-3xl" aria-hidden="true" />
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-400/30 via-purple-400/30 to-pink-400/30 opacity-0 group-hover:opacity-100 transition-all duration-500 blur-sm group-hover:blur-0"></span>
           </a>
 
+          {/* LinkedIn */}
           <a
             href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/"
             target="_blank"
@@ -49,7 +58,7 @@ export default function Footer() {
             className="group relative p-5 rounded-2xl bg-white/15 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-500 hover:scale-110 hover:bg-white/20 hover:shadow-2xl hover:shadow-purple-500/30"
             aria-label="LinkedIn"
           >
-            <i className="fab fa-linkedin text-2xl sm:text-3xl" aria-hidden="true"></i>
+            <FaLinkedin className="text-2xl sm:text-3xl" aria-hidden="true" />
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-400/30 via-purple-400/30 to-pink-400/30 opacity-0 group-hover:opacity-100 transition-all duration-500 blur-sm group-hover:blur-0"></span>
           </a>
         </div>
@@ -57,7 +66,8 @@ export default function Footer() {
         {/* Enhanced copyright with better gradient */}
         <div className="text-center space-y-3">
           <small className="text-lg font-medium bg-gradient-to-r from-white via-indigo-100 to-purple-200 bg-clip-text text-transparent drop-shadow-lg">
-            © {new Date().getFullYear()} - Created by Obiora Sopuluchukwu Emmanuel
+            © {new Date().getFullYear()} - Created by Obiora Sopuluchukwu
+            Emmanuel
           </small>
 
           {/* Additional tagline */}

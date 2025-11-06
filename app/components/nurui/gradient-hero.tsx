@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { FaLinkedin, FaGithubSquare } from "react-icons/fa";
 import { GradientGridHero } from './gradient-grid-hero'
 
 export default function Hero() {
@@ -13,10 +14,10 @@ export default function Hero() {
         {/* Text content with blur background */}
         <div className="relative z-10 w-full max-w-lg sm:h-3/5 flex flex-col items-center text-2xl sm:text-5xl px-4 gap-4">
           {/* Blur backdrop for text readability */}
-          <div className="absolute inset-0 sm:bg-white/80 dark:sm:bg-slate-800/80 backdrop-blur-md rounded-3xl -my-10 shadow-lg shadow-black/10 dark:shadow-slate-900/20"></div>
+          <div className="absolute inset-0 sm:bg-white/80 dark:sm:bg-slate-800/80 backdrop-blur-md rounded-3xl -my-10"></div>
 
           <div className="relative z-10">
-            <p className="text-black dark:text-white text-center font-bold transition-colors duration-300">
+            <p className="text-gray-500 dark:text-white text-center font-bold transition-colors duration-300">
               Hello, I&apos;am{' '}
               <span className="text-indigo-500 dark:text-indigo-400 bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500">
                 Emmanuel,
@@ -34,19 +35,26 @@ export default function Hero() {
               </Link>
 
               <div className="w-full sm:w-[200px] text-indigo-500 dark:text-indigo-400 flex items-center justify-center gap-4">
+                {/* LinkedIn */}
                 <a
                   href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/"
-                  className="rounded-lg bg-white dark:bg-slate-800 p-4 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center border border-purple-500 dark:border-purple-400"
+                  className="rounded-lg bg-white dark:bg-slate-800 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center"
                   aria-label="LinkedIn"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <i className="fa-brands fa-linkedin text-2xl sm:text-5xl text-indigo-500 dark:text-indigo-400"></i>
+                  <FaLinkedin className="h-10 w-10 sm:h-16 sm:w-16 text-indigo-500 dark:text-indigo-400" />
                 </a>
+
+                {/* GitHub */}
                 <a
                   href="https://github.com/obiora198"
-                  className="rounded-lg bg-white dark:bg-slate-800 p-4 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center border border-purple-500 dark:border-purple-400"
+                  className="rounded-lg bg-white dark:bg-slate-800 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center"
                   aria-label="GitHub"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <i className="fa-brands fa-square-github text-2xl sm:text-5xl text-indigo-500 dark:text-indigo-400"></i>
+                  <FaGithubSquare className="h-10 w-10 sm:h-16 sm:w-16 text-indigo-500 dark:text-indigo-400" />
                 </a>
               </div>
             </div>
