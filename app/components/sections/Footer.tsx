@@ -31,7 +31,7 @@ export default function Footer() {
               />
             ) : (
               <HiOutlineSun
-                className="h-5 w-5 sm:h-10 sm:w-10l"
+                className="h-5 w-5 sm:h-10 sm:w-10"
                 aria-hidden="true"
               />
             )}
