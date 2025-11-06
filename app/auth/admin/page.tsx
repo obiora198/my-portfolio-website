@@ -68,7 +68,7 @@ export default function AdminPage() {
   }
 
   if (authLoading) {
-    return <Loading dark={null} />
+    return <Loading />
   }
 
   return (

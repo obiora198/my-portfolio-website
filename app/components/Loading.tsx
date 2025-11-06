@@ -1,11 +1,8 @@
 import * as React from 'react'
 import Image from 'next/image'
 
-interface Theme {
-  dark: true | null
-}
 
-export default function Loading({ dark }: Theme) {
+export default function Loading() {
   return (
     <div className="w-full h-screen opacity-75 flex items-center justify-center animate-pulse rounded-lg z-50">
       <div className="relative">

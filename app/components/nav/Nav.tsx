@@ -7,6 +7,7 @@ import {
   FaChevronDown,
   FaThLarge,
   FaArrowRight,
+  FaChevronRight,
 } from 'react-icons/fa'
 import { useTheme } from '../ThemeContext'
 
@@ -16,11 +17,36 @@ interface Links {
   subLinks?: Links[]
 }
 
-export default function Nav({ links }: { links: Links[] }) {
+const links = [
+  {
+    text: 'Home',
+    url: '/',
+  },
+  {
+    text: 'Apps',
+    subLinks: [
+      { text: 'Buy Data', url: '/vtu' },
+      { text: 'Blog', url: '/blog' },
+    ],
+  },
+  {
+    text: 'Quick Navigation',
+    subLinks: [
+      { text: 'About', url: '/#about-section' },
+      { text: 'Skills', url: '/#skills-section' },
+      { text: 'Projects', url: '/#projects-section' },
+    ],
+  },
+  {
+    text: 'Contact',
+    url: '/#contact-section',
+  },
+]
+
+export default function Nav() {
   const [isOpen, setIsOpen] = useState(false)
-  const [dropdownOpenIndex, setDropdownOpenIndex] = useState<number | null>(
-    null
-  )
+  const [dropdownOpenIndex, setDropdownOpenIndex] = useState<number | null>(null)
+  const [mobileDropdownOpenIndex, setMobileDropdownOpenIndex] = useState<number | null>(null)
   const [adminMenuOpen, setAdminMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { theme, toggleTheme } = useTheme()
@@ -33,7 +59,14 @@ export default function Nav({ links }: { links: Links[] }) {
 
   const toggleAdminMenu = () => setAdminMenuOpen((prev) => !prev)
   const toggleMobileMenu = () => setIsOpen((prev) => !prev)
-  const closeMobileMenu = () => setIsOpen(false)
+  const closeMobileMenu = () => {
+    setIsOpen(false)
+    setMobileDropdownOpenIndex(null)
+  }
+
+  const toggleMobileDropdown = (index: number) => {
+    setMobileDropdownOpenIndex(mobileDropdownOpenIndex === index ? null : index)
+  }
 
   const headerBg = scrolled
     ? 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-indigo-200/30 dark:border-slate-700 shadow-lg shadow-indigo-500/10 dark:shadow-slate-900/20'
@@ -209,10 +242,7 @@ export default function Nav({ links }: { links: Links[] }) {
             <nav className="absolute top-full left-0 right-0 sm:hidden bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border-b border-indigo-100/50 dark:border-slate-600 shadow-2xl shadow-indigo-500/10 dark:shadow-slate-900/20 z-50">
               <ul className="flex flex-col py-4 text-lg font-medium">
                 {links?.map((link, index) => (
-                  <li
-                    key={index}
-                    className="transform transition-all duration-300 hover:scale-105 origin-left"
-                  >
+                  <li key={index} className="border-b border-indigo-100/30 dark:border-slate-600/50 last:border-b-0">
                     {link.url ? (
                       <Link
                         href={link.url}
@@ -223,15 +253,47 @@ export default function Nav({ links }: { links: Links[] }) {
                         <FaArrowRight className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 text-sm" />
                       </Link>
                     ) : (
-                      <div className="px-8 py-4 border-l-4 border-transparent">
-                        <span className="text-gray-700 dark:text-slate-300 cursor-default">
-                          {link.text}
-                        </span>
+                      <div className="border-l-4 border-transparent">
+                        <button
+                          onClick={() => toggleMobileDropdown(index)}
+                          className="flex items-center justify-between w-full px-8 py-4 text-gray-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-50 hover:via-purple-50 hover:to-pink-50 dark:hover:from-indigo-900/50 dark:hover:via-purple-900/50 dark:hover:to-pink-900/50 transition-all duration-300 group"
+                        >
+                          <span>{link.text}</span>
+                          <FaChevronDown
+                            className={`text-xs transition-transform duration-300 ${
+                              mobileDropdownOpenIndex === index ? 'rotate-180 text-indigo-500' : ''
+                            }`}
+                          />
+                        </button>
+                        
+                        {/* Mobile Dropdown Menu */}
+                        {link.subLinks && (
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-out ${
+                              mobileDropdownOpenIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                            }`}
+                          >
+                            <ul className="bg-indigo-50/30 dark:bg-slate-700/30 ml-8 mr-4 mb-2 rounded-lg border border-indigo-100/50 dark:border-slate-600/50">
+                              {link.subLinks.map((sublink, subIndex) => (
+                                <li key={subIndex} className="border-b border-indigo-100/30 dark:border-slate-600/30 last:border-b-0">
+                                  <Link
+                                    href={sublink.url || '#'}
+                                    onClick={closeMobileMenu}
+                                    className="flex items-center px-6 py-3 text-sm text-gray-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white/50 dark:hover:bg-slate-600/50 transition-all duration-200 group"
+                                  >
+                                    <FaChevronRight className="mr-3 text-xs opacity-60 group-hover:opacity-100 group-hover:text-indigo-500 transition-all duration-200" />
+                                    <span>{sublink.text}</span>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     )}
                   </li>
                 ))}
-                <li className="border-t border-indigo-100/50 dark:border-slate-600 mt-2 pt-2 transform transition-all duration-300 hover:scale-105 origin-left">
+                <li className="border-t border-indigo-100/50 dark:border-slate-600 mt-2 pt-2">
                   <Link
                     href="/auth/admin"
                     onClick={closeMobileMenu}
