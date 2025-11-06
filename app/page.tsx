@@ -15,7 +15,7 @@ export default async function Home() {
   
   return (
     <main className={`${inter.className} bg-gray-100 dark:bg-slate-900 transition-colors duration-300`}>
-      <Nav links={links} />
+      <Nav />
       <Hero />
       <About />
       <Skills />
@@ -25,41 +25,3 @@ export default async function Home() {
   )
 }
 
-const links = [
-  {
-    text: 'Home',
-    url: '/',
-  },
-  {
-    text: 'Apps',
-    subLinks: [
-      { text: 'Buy Data', url: '/vtu' },
-      { text: 'Blog', url: '/blog' },
-    ],
-  },
-  {
-    text: 'Quick Navigation',
-    subLinks: [
-      { text: 'About', url: '/#about-section' },
-      { text: 'Skills', url: '/#skills-section' },
-      { text: 'Projects', url: '/#projects-section' },
-    ],
-  },
-
-  // {
-  //   text: 'About',
-  //   url: '/#about-section',
-  // },
-  // {
-  //   text: 'Skills',
-  //   url: '/#skills-section',
-  // },
-  // {
-  //   text: 'Projects',
-  //   url: '/#projects-section',
-  // },
-  {
-    text: 'Contact',
-    url: '/#contact-section',
-  },
-]

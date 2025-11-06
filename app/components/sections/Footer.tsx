@@ -17,7 +17,7 @@ export default function Footer() {
 
       <div className="relative z-10 flex flex-col items-center justify-center gap-10 p-8 sm:p-16">
         {/* Theme Toggle and Social Links */}
-        <div className="flex flex-col sm:flex-row items-center gap-8">
+        <div className="flex flex-row items-center gap-8">
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
@@ -26,12 +26,12 @@ export default function Footer() {
           >
             {theme === 'light' ? (
               <HiOutlineMoon
-                className="text-2xl sm:text-3xl"
+                className="h-5 w-5 sm:h-10 sm:w-10"
                 aria-hidden="true"
               />
             ) : (
               <HiOutlineSun
-                className="text-2xl sm:text-3xl"
+                className="h-5 w-5 sm:h-10 sm:w-10l"
                 aria-hidden="true"
               />
             )}
@@ -46,7 +46,7 @@ export default function Footer() {
             className="group relative p-5 rounded-2xl bg-white/15 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-500 hover:scale-110 hover:bg-white/20 hover:shadow-2xl hover:shadow-indigo-500/30"
             aria-label="GitHub"
           >
-            <FaGithub className="text-2xl sm:text-3xl" aria-hidden="true" />
+            <FaGithub className="h-5 w-5 sm:h-10 sm:w-10" aria-hidden="true" />
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-400/30 via-purple-400/30 to-pink-400/30 opacity-0 group-hover:opacity-100 transition-all duration-500 blur-sm group-hover:blur-0"></span>
           </a>
 
@@ -58,7 +58,7 @@ export default function Footer() {
             className="group relative p-5 rounded-2xl bg-white/15 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-500 hover:scale-110 hover:bg-white/20 hover:shadow-2xl hover:shadow-purple-500/30"
             aria-label="LinkedIn"
           >
-            <FaLinkedin className="text-2xl sm:text-3xl" aria-hidden="true" />
+            <FaLinkedin className="h-5 w-5 sm:h-10 sm:w-10" aria-hidden="true" />
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-400/30 via-purple-400/30 to-pink-400/30 opacity-0 group-hover:opacity-100 transition-all duration-500 blur-sm group-hover:blur-0"></span>
           </a>
         </div>
