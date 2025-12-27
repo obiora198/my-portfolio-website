@@ -9,6 +9,7 @@ import {
   FaArrowRight,
   FaChevronRight,
 } from 'react-icons/fa'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '../ThemeContext'
 
 interface Links {
@@ -45,8 +46,12 @@ const links = [
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false)
-  const [dropdownOpenIndex, setDropdownOpenIndex] = useState<number | null>(null)
-  const [mobileDropdownOpenIndex, setMobileDropdownOpenIndex] = useState<number | null>(null)
+  const [dropdownOpenIndex, setDropdownOpenIndex] = useState<number | null>(
+    null
+  )
+  const [mobileDropdownOpenIndex, setMobileDropdownOpenIndex] = useState<
+    number | null
+  >(null)
   const [adminMenuOpen, setAdminMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { theme, toggleTheme } = useTheme()
@@ -109,33 +114,74 @@ export default function Nav() {
                 <li key={index} className="relative">
                   {!link.url ? (
                     <div
-                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg ${textColor}`}
+                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group/nav backdrop-blur-sm hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg ${textColor}`}
                       onMouseEnter={() => setDropdownOpenIndex(index)}
                       onMouseLeave={() => setDropdownOpenIndex(null)}
                     >
                       <span className="relative z-10">{link.text}</span>
 
                       {/* Dropdown menu */}
-                      {link.subLinks && (
-                        <ul
-                          className={`absolute left-0 top-full min-w-full rounded-2xl bg-white dark:bg-slate-800 shadow-lg border border-indigo-200/30 dark:border-slate-600 transition-all duration-300 ease-out origin-top transform ${
-                            dropdownOpenIndex === index
-                              ? 'opacity-100 translate-y-0 pointer-events-auto'
-                              : 'opacity-0 -translate-y-3 pointer-events-none'
-                          }`}
-                        >
-                          {link.subLinks.map((sublink, subIndex) => (
-                            <li key={subIndex}>
-                              <Link
-                                href={sublink.url || '#'}
-                                className="block px-5 py-2.5 text-gray-700 dark:text-slate-300 hover:bg-indigo-50/80 dark:hover:bg-indigo-900/40 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-md transition-colors duration-200"
-                              >
-                                {sublink.text}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      <AnimatePresence>
+                        {link.subLinks && dropdownOpenIndex === index && (
+                          <motion.div
+                            initial={{ opacity: 0, scaleY: 0.9, y: -10 }}
+                            animate={{ opacity: 1, scaleY: 1, y: 0 }}
+                            exit={{ opacity: 0, scaleY: 0.9, y: -10 }}
+                            transition={{
+                              duration: 0.4,
+                              ease: [0.22, 1, 0.36, 1], // Quintic out easing
+                            }}
+                            className="absolute left-0 top-full pt-4 origin-top z-50 min-w-max"
+                          >
+                            <motion.div
+                              className="p-2 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl border border-indigo-100/50 dark:border-slate-700 overflow-hidden"
+                              initial="closed"
+                              animate="open"
+                              variants={{
+                                open: {
+                                  transition: {
+                                    staggerChildren: 0.05,
+                                    delayChildren: 0.1,
+                                  },
+                                },
+                                closed: {
+                                  transition: {
+                                    staggerChildren: 0.03,
+                                    staggerDirection: -1,
+                                  },
+                                },
+                              }}
+                            >
+                              <ul className="flex flex-col gap-1">
+                                {link.subLinks?.map((sublink, subIndex) => (
+                                  <motion.li
+                                    key={subIndex}
+                                    variants={{
+                                      open: { opacity: 1, y: 0 },
+                                      closed: { opacity: 0, y: -5 },
+                                    }}
+                                    transition={{
+                                      duration: 0.3,
+                                      ease: 'easeOut',
+                                    }}
+                                  >
+                                    <Link
+                                      href={sublink.url || '#'}
+                                      className="relative block px-6 py-3.5 rounded-xl transition-all duration-300 group/sub hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-slate-300 overflow-hidden text-center whitespace-nowrap"
+                                    >
+                                      <span className="relative z-10 font-medium">
+                                        {sublink.text}
+                                      </span>
+                                      <span className="absolute inset-0 rounded-xl opacity-0 group-hover/sub:opacity-100 transition-all duration-400 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 dark:from-indigo-500/10 dark:via-purple-500/10 dark:to-pink-500/10 border border-indigo-200/30 dark:border-indigo-500/20"></span>
+                                      <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover/sub:w-3/4 transition-all duration-500 ease-out bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400"></span>
+                                    </Link>
+                                  </motion.li>
+                                ))}
+                              </ul>
+                            </motion.div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   ) : (
                     <Link
@@ -242,7 +288,10 @@ export default function Nav() {
             <nav className="absolute top-full left-0 right-0 sm:hidden bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border-b border-indigo-100/50 dark:border-slate-600 shadow-2xl shadow-indigo-500/10 dark:shadow-slate-900/20 z-50">
               <ul className="flex flex-col py-4 text-lg font-medium">
                 {links?.map((link, index) => (
-                  <li key={index} className="border-b border-indigo-100/30 dark:border-slate-600/50 last:border-b-0">
+                  <li
+                    key={index}
+                    className="border-b border-indigo-100/30 dark:border-slate-600/50 last:border-b-0"
+                  >
                     {link.url ? (
                       <Link
                         href={link.url}
@@ -261,21 +310,28 @@ export default function Nav() {
                           <span>{link.text}</span>
                           <FaChevronDown
                             className={`text-xs transition-transform duration-300 ${
-                              mobileDropdownOpenIndex === index ? 'rotate-180 text-indigo-500' : ''
+                              mobileDropdownOpenIndex === index
+                                ? 'rotate-180 text-indigo-500'
+                                : ''
                             }`}
                           />
                         </button>
-                        
+
                         {/* Mobile Dropdown Menu */}
                         {link.subLinks && (
                           <div
                             className={`overflow-hidden transition-all duration-300 ease-out ${
-                              mobileDropdownOpenIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                              mobileDropdownOpenIndex === index
+                                ? 'max-h-96 opacity-100'
+                                : 'max-h-0 opacity-0'
                             }`}
                           >
                             <ul className="bg-indigo-50/30 dark:bg-slate-700/30 ml-8 mr-4 mb-2 rounded-lg border border-indigo-100/50 dark:border-slate-600/50">
                               {link.subLinks.map((sublink, subIndex) => (
-                                <li key={subIndex} className="border-b border-indigo-100/30 dark:border-slate-600/30 last:border-b-0">
+                                <li
+                                  key={subIndex}
+                                  className="border-b border-indigo-100/30 dark:border-slate-600/30 last:border-b-0"
+                                >
                                   <Link
                                     href={sublink.url || '#'}
                                     onClick={closeMobileMenu}

@@ -1,0 +1,479 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import AxiosInstance from '../utils/axiosInstance'
+import Nav from '../components/nav/Nav'
+import Loading from '../components/Loading'
+import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const VTUPage = () => {
+  const [serviceCategories, setServiceCategories] = useState<any[]>([])
+  const [isPaused, setIsPaused] = useState(false)
+
+  const getServiceCategories = async () => {
+    try {
+      const response = await AxiosInstance.get('/service-categories')
+      setServiceCategories(response.data.content)
+    } catch (error) {
+      console.error('Error fetching service categories:', error)
+    }
+  }
+
+  useEffect(() => {
+    getServiceCategories()
+  }, [])
+
+  const getServiceImage = (identifier: string) => {
+    const imageMap: { [key: string]: string } = {
+      airtime: '/images/airtime.jpg',
+      data: '/images/data.png',
+      'tv-subscription': '/images/tv-subscription.png',
+      'electricity-bill': '/images/electricity-bill.jpg',
+      education: '/images/education.png',
+      insurance: '/images/insurance.png',
+      'other-services': '/images/default-service.png',
+    }
+
+    return imageMap[identifier] || '/images/default-service.png'
+  }
+
+  // Filter to only show airtime, data, and electricity services
+  const allowedServices = ['airtime', 'data', 'electricity-bill']
+  const filteredServices = serviceCategories.filter((category) =>
+    allowedServices.includes(category.identifier)
+  )
+  const gridItems = filteredServices.slice(0, 7)
+  const isLoading = serviceCategories.length === 0
+
+  return (
+    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-slate-900 dark:to-slate-950 transition-colors duration-300 min-h-screen">
+      <Nav />
+
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          {/* Hero Section */}
+          <div className="pt-28 px-6 sm:px-16 md:px-24 lg:px-32 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            {/* Left side */}
+            <div className="flex flex-col space-y-8">
+              <div className="space-y-6">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800">
+                  <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2 animate-pulse"></span>
+                  <span className="text-indigo-700 dark:text-indigo-300 text-sm font-medium">
+                    Fast & Reliable VTU Services
+                  </span>
+                </div>
+
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+                  Instant
+                  <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    {' '}
+                    VTU
+                  </span>
+                  <br />
+                  Services
+                </h1>
+
+                <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg">
+                  Buy airtime, data, and pay electricity bills instantly.
+                  <span className="text-indigo-600 dark:text-indigo-400 font-semibold">
+                    {' '}
+                    Best rates guaranteed.
+                  </span>
+                </p>
+              </div>
+
+              {/* Stats */}
+              <div className="flex flex-wrap gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    50k+
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Happy Customers
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    24/7
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Service Available
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Instant
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Delivery
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  href="/auth/register"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-center"
+                >
+                  Get Started Now
+                </Link>
+                <Link
+                  href="/services"
+                  className="border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:border-indigo-500 dark:hover:border-indigo-500 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg text-center"
+                >
+                  View All Services
+                </Link>
+              </div>
+            </div>
+
+            {/* Right side - Refined Revolving Services Orbit */}
+            <div className="relative h-[500px] w-full flex items-center justify-center">
+              {/* Refined Background - Incomplete circle lines in opposite directions */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <svg
+                  className="absolute w-[800px] h-[800px] opacity-40 dark:opacity-25"
+                  viewBox="0 0 200 200"
+                >
+                  <defs>
+                    <linearGradient
+                      id="arcGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stopColor="#6366f1" />
+                      <stop offset="100%" stopColor="#a855f7" />
+                    </linearGradient>
+                  </defs>
+                  {[...Array(6)].map((_, i) => (
+                    <motion.circle
+                      key={i}
+                      cx="100"
+                      cy="100"
+                      r={30 + i * 12} // Brought closer (reduced from 35 + 15i)
+                      fill="none"
+                      stroke="url(#arcGradient)"
+                      strokeWidth="0.6"
+                      strokeDasharray={`${30 + i * 15} ${120 + i * 10}`}
+                      strokeLinecap="round"
+                      animate={isPaused ? {} : { rotate: i % 2 === 0 ? 360 : -360 }}
+                      transition={{
+                        duration: 15 + i * 8, // Sped up (from 30 + 10i)
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+                  ))}
+                </svg>
+              </div>
+
+              {/* Orbiting Cards Container */}
+              <motion.div
+                className="relative w-full h-full flex items-center justify-center"
+                animate={isPaused ? {} : { rotate: 360 }}
+                transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
+              >
+                {filteredServices.map((category, index) => {
+                  const total = filteredServices.length
+                  const angle = (index / total) * 360
+                  const radius = 260 // Increased radius
+
+                  return (
+                    <motion.div
+                      key={category.identifier}
+                      className="absolute"
+                      style={{
+                        x: radius * Math.cos((angle * Math.PI) / 180),
+                        y: radius * Math.sin((angle * Math.PI) / 180),
+                      }}
+                    >
+                      <motion.div
+                        animate={isPaused ? {} : { rotate: -360 }}
+                        transition={{
+                          duration: 120,
+                          repeat: Infinity,
+                          ease: 'linear',
+                        }}
+                        onMouseEnter={() => setIsPaused(true)}
+                        onMouseLeave={() => setIsPaused(false)}
+                        whileHover={{ scale: 1.1, zIndex: 10 }}
+                        className="relative"
+                      >
+                        <Link
+                          href={`/services/${category.identifier}`}
+                          className="block w-52 h-52 rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-white/50 dark:border-slate-700/80 bg-white dark:bg-slate-900 group"
+                        >
+                          {/* Card Content - CLEAR IMAGES */}
+                          <div className="absolute inset-0">
+                            <img
+                              src={getServiceImage(category.identifier)}
+                              alt={category.name}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                            {/* Minimal shadow at bottom for text readability */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80" />
+                          </div>
+
+                          <div className="absolute inset-x-0 bottom-0 p-6 text-center">
+                            <h3 className="text-white font-black text-base tracking-tight drop-shadow-lg">
+                              {category.name}
+                            </h3>
+                          </div>
+
+                          {/* Minimal Detail on Hover */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="bg-white/20 backdrop-blur-md border border-white/40 text-white text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-full shadow-2xl">
+                              Explore
+                            </div>
+                          </div>
+                        </Link>
+                      </motion.div>
+                    </motion.div>
+                  )
+                })}
+              </motion.div>
+
+              {/* Center Focus Glow */}
+              <div className="absolute w-40 h-40 bg-indigo-500/10 rounded-full blur-[80px] animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Features Section */}
+          <section className="py-16 bg-white dark:bg-slate-800/50 border-y border-gray-200 dark:border-slate-700 mt-16">
+            <div className="px-6 sm:px-16 md:px-24 lg:px-32">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  Why Choose Our VTU Services?
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  Experience the fastest and most reliable VTU services with
+                  unbeatable prices
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-900/20 dark:to-slate-800">
+                  <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">⚡</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    Instant Delivery
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Get your airtime, data, and bills paid instantly after
+                    payment confirmation
+                  </p>
+                </div>
+
+                <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-slate-800">
+                  <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">💰</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    Best Prices
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Enjoy the most competitive rates in the market with no
+                    hidden charges
+                  </p>
+                </div>
+
+                <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-slate-800">
+                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">🛡️</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    Secure & Reliable
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Your transactions are secure with our advanced encryption
+                    technology
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Popular Services Section */}
+          <section className="py-16">
+            <div className="px-6 sm:px-16 md:px-24 lg:px-32">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  Our Services
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300">
+                  Explore our VTU services
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                {filteredServices.map((category) => (
+                  <Link
+                    key={category.identifier}
+                    href={`/services/${category.identifier}`}
+                    className="group"
+                  >
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-slate-700 group-hover:border-indigo-300 dark:group-hover:border-indigo-600 text-center">
+                      <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <img
+                          src={getServiceImage(category.identifier)}
+                          alt={category.name}
+                          className="w-10 h-10 object-contain"
+                        />
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                        {category.name}
+                      </h3>
+                      <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                        Get Started →
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* CTA Section */}
+          <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-600">
+            <div className="px-6 sm:px-16 md:px-24 lg:px-32 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Ready to Get Started?
+              </h2>
+              <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+                Join thousands of satisfied customers enjoying instant VTU
+                services at unbeatable prices
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/auth/register"
+                  className="bg-white text-indigo-600 hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  Create Account
+                </Link>
+                <Link
+                  href="/contact"
+                  className="border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300"
+                >
+                  Contact Support
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="bg-gray-900 text-white py-12">
+            <div className="px-6 sm:px-16 md:px-24 lg:px-32">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                  <h3 className="text-xl font-bold mb-4">VTU Services</h3>
+                  <p className="text-gray-400">
+                    Your trusted partner for instant airtime, data, and bill
+                    payments.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-4">Services</h4>
+                  <ul className="space-y-2 text-gray-400">
+                    <li>
+                      <Link
+                        href="/services/airtime"
+                        className="hover:text-white transition-colors"
+                      >
+                        Airtime
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/services/data"
+                        className="hover:text-white transition-colors"
+                      >
+                        Data
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/services/electricity-bill"
+                        className="hover:text-white transition-colors"
+                      >
+                        Electricity Bills
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-4">Support</h4>
+                  <ul className="space-y-2 text-gray-400">
+                    <li>
+                      <Link
+                        href="/contact"
+                        className="hover:text-white transition-colors"
+                      >
+                        Contact Us
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/faq"
+                        className="hover:text-white transition-colors"
+                      >
+                        FAQ
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/support"
+                        className="hover:text-white transition-colors"
+                      >
+                        Help Center
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-4">Legal</h4>
+                  <ul className="space-y-2 text-gray-400">
+                    <li>
+                      <Link
+                        href="/privacy"
+                        className="hover:text-white transition-colors"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/terms"
+                        className="hover:text-white transition-colors"
+                      >
+                        Terms of Service
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/refund"
+                        className="hover:text-white transition-colors"
+                      >
+                        Refund Policy
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 VTU Services. All rights reserved.</p>
+              </div>
+            </div>
+          </footer>
+        </>
+      )}
+    </div>
+  )
+}
+
+export default VTUPage
