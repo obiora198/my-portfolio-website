@@ -7,6 +7,7 @@ import Script from 'next/script'
 import { AuthProvider } from './context/authContext'
 import { Toaster } from 'react-hot-toast'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import QueryProvider from '@/components/providers/QueryProvider'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -93,7 +94,7 @@ export default async function RootLayout({
               'Emmanuel Obiora is a frontend web developer based in Abuja, Nigeria, specializing in building modern websites with React, Next.js, Tailwind CSS, and TypeScript.',
           })}
         </Script>
-         <script
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -109,14 +110,16 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${poppins.className}`}>
-        <ThemeProvider>
-          <AuthProvider>
-            {children}
-            <Toaster position="top-right" reverseOrder={false} />
-            <SpeedInsights />
-            <Footer />
-          </AuthProvider>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              {children}
+              <Toaster position="top-right" reverseOrder={false} />
+              <SpeedInsights />
+              <Footer />
+            </AuthProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   )

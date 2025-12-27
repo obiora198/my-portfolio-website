@@ -5,6 +5,7 @@ import AxiosInstance from '../utils/axiosInstance'
 import Nav from '../components/nav/Nav'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 import {
   BsLightningCharge,
   BsShieldCheck,
@@ -24,8 +25,20 @@ import {
 } from 'react-icons/md'
 import { BiSupport } from 'react-icons/bi'
 
+interface Service {
+  serviceID: string
+  name: string
+  image: string
+}
+
 const VTUPage = () => {
   const [activeTab, setActiveTab] = useState('airtime')
+  const [selectedServiceId, setSelectedServiceId] = useState('')
+  const [amount, setAmount] = useState('')
+  const [phone, setPhone] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const tabs = [
     {
@@ -41,13 +54,24 @@ const VTUPage = () => {
     },
   ]
 
-  const [services, setServices] = useState<any[]>([])
-  const [selectedServiceId, setSelectedServiceId] = useState('')
-  const [amount, setAmount] = useState('')
-  const [phone, setPhone] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const {
+    data: services = [],
+    isLoading: isServicesLoading,
+    error: servicesError,
+  } = useQuery<Service[]>({
+    queryKey: ['services', activeTab],
+    queryFn: async () => {
+      const identifierMap: { [key: string]: string } = {
+        airtime: 'airtime',
+        data: 'data',
+        electricity: 'electricity-bill',
+      }
+      const response = await AxiosInstance.get(
+        `/services?identifier=${identifierMap[activeTab]}`
+      )
+      return response.data.content
+    },
+  })
 
   const generateRequestId = () => {
     const now = new Date()
@@ -71,34 +95,12 @@ const VTUPage = () => {
     return `${requestIdBase}${randomStr}`
   }
 
-  const fetchServices = async (identifier: string) => {
-    setLoading(true)
-    setError('')
-    try {
-      const response = await AxiosInstance.get(
-        `/services?identifier=${identifier}`
-      )
-      setServices(response.data.content)
-      // Remove auto-selection to force user TO select a network
-    } catch (err) {
-      console.error('Error fetching services:', err)
-      setError('Failed to load services. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    const identifierMap: { [key: string]: string } = {
-      airtime: 'airtime',
-      data: 'data',
-      electricity: 'electricity-bill',
-    }
-    fetchServices(identifierMap[activeTab])
     setError('')
     setSuccess('')
     setAmount('')
     setPhone('')
+    setSelectedServiceId('')
   }, [activeTab])
 
   const checkTransactionStatus = async (requestId: string) => {
@@ -248,14 +250,16 @@ const VTUPage = () => {
 
             {/* Feedback Messages */}
             <AnimatePresence>
-              {error && (
+              {(error || (servicesError as any)) && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-400 rounded-2xl font-bold text-center"
                 >
-                  {error}
+                  {error ||
+                    (servicesError as any)?.message ||
+                    'Failed to load services.'}
                 </motion.div>
               )}
               {success && (
@@ -272,7 +276,7 @@ const VTUPage = () => {
 
             {/* Tab Content */}
             <div className="min-h-[300px]">
-              {loading && services.length === 0 ? (
+              {isServicesLoading ? (
                 <div className="flex items-center justify-center h-48">
                   <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
                 </div>
@@ -309,6 +313,19 @@ const VTUPage = () => {
                               <img
                                 src={service.image}
                                 alt={service.name}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement
+                                  const fallbackMap: { [key: string]: string } =
+                                    {
+                                      airtime: '/images/airtime.jpg',
+                                      data: '/images/data.png',
+                                      electricity:
+                                        '/images/electricity-bill.jpg',
+                                    }
+                                  target.src =
+                                    fallbackMap[activeTab] ||
+                                    '/images/default-service.png'
+                                }}
                                 className="w-8 h-8 rounded-full object-contain"
                               />
                               <span className="text-xs">
@@ -404,6 +421,19 @@ const VTUPage = () => {
                               <img
                                 src={service.image}
                                 alt={service.name}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement
+                                  const fallbackMap: { [key: string]: string } =
+                                    {
+                                      airtime: '/images/airtime.jpg',
+                                      data: '/images/data.png',
+                                      electricity:
+                                        '/images/electricity-bill.jpg',
+                                    }
+                                  target.src =
+                                    fallbackMap[activeTab] ||
+                                    '/images/default-service.png'
+                                }}
                                 className="w-8 h-8 rounded-full object-contain"
                               />
                               <span className="text-xs">
@@ -499,6 +529,19 @@ const VTUPage = () => {
                               <img
                                 src={service.image}
                                 alt={service.name}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement
+                                  const fallbackMap: { [key: string]: string } =
+                                    {
+                                      airtime: '/images/airtime.jpg',
+                                      data: '/images/data.png',
+                                      electricity:
+                                        '/images/electricity-bill.jpg',
+                                    }
+                                  target.src =
+                                    fallbackMap[activeTab] ||
+                                    '/images/default-service.png'
+                                }}
                                 className="w-8 h-8 rounded-full object-contain"
                               />
                               <span className="text-[10px] leading-tight">
