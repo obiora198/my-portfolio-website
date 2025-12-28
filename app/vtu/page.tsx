@@ -6,6 +6,7 @@ import Nav from '../components/nav/Nav'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import {
   BsLightningCharge,
   BsShieldCheck,
@@ -22,8 +23,10 @@ import {
   MdOutlineMobileFriendly,
   MdOutlineTv,
   MdOutlinePower,
+  MdErrorOutline,
 } from 'react-icons/md'
 import { BiSupport } from 'react-icons/bi'
+import { IoCloseOutline } from 'react-icons/io5'
 
 interface Service {
   serviceID: string
@@ -36,9 +39,27 @@ const VTUPage = () => {
   const [selectedServiceId, setSelectedServiceId] = useState('')
   const [amount, setAmount] = useState('')
   const [phone, setPhone] = useState('')
+  const [billersCode, setBillersCode] = useState('')
+  const [variationCode, setVariationCode] = useState('')
+  const [email, setEmail] = useState('')
+  const [selectedCountryCode, setSelectedCountryCode] = useState('')
+  const [selectedProductTypeId, setSelectedProductTypeId] = useState<
+    number | null
+  >(null)
+  const [selectedOperatorId, setSelectedOperatorId] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [modalType, setModalType] = useState<
+    'success' | 'error' | 'pending' | null
+  >(null)
+  const [modalMessage, setModalMessage] = useState('')
+  const [showModal, setShowModal] = useState(false)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+
+  useEffect(() => {
+    // Artificial delay for premium loader feel
+    const timer = setTimeout(() => setIsInitialLoading(false), 1500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const tabs = [
     {
@@ -51,6 +72,11 @@ const VTUPage = () => {
       id: 'electricity',
       label: 'Electricity',
       icon: <MdOutlinePower size={22} />,
+    },
+    {
+      id: 'international',
+      label: 'International',
+      icon: <BsPlusCircle size={18} />,
     },
   ]
 
@@ -69,8 +95,96 @@ const VTUPage = () => {
       const response = await AxiosInstance.get(
         `/services?identifier=${identifierMap[activeTab]}`
       )
-      return response.data.content
+      // Sanitize image URLs and filter out international from airtime list
+      const filteredAndSanitized = response.data.content
+        .filter((service: any) => service.serviceID !== 'foreign-airtime')
+        .map((service: any) => ({
+          ...service,
+          image: service.image,
+        }))
+      return filteredAndSanitized
     },
+    enabled: activeTab !== 'international',
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 20, // 20 minutes
+  })
+
+  // Fetch Variations for Data/Electricity/International
+  const { data: variations = [], isLoading: isVariationsLoading } = useQuery({
+    queryKey: [
+      'variations',
+      selectedServiceId,
+      selectedOperatorId,
+      selectedProductTypeId,
+    ],
+    queryFn: async () => {
+      if (activeTab === 'airtime') return []
+
+      if (activeTab === 'international') {
+        if (!selectedOperatorId || !selectedProductTypeId) return []
+        const response = await AxiosInstance.get(
+          `/service-variations?serviceID=foreign-airtime&operator_id=${selectedOperatorId}&product_type_id=${selectedProductTypeId}`
+        )
+        return response.data.content.variations || []
+      }
+
+      if (!selectedServiceId) return []
+      const response = await AxiosInstance.get(
+        `/service-variations?serviceID=${selectedServiceId}`
+      )
+      return response.data.content.varations || []
+    },
+    enabled:
+      activeTab !== 'airtime' &&
+      (activeTab === 'international'
+        ? !!selectedOperatorId && !!selectedProductTypeId
+        : !!selectedServiceId),
+    staleTime: 1000 * 60 * 30, // 30 minutes
+  })
+
+  // Fetch International Countries
+  const { data: countriesList = [], isLoading: isCountriesLoading } = useQuery({
+    queryKey: ['countries'],
+    queryFn: async () => {
+      const response = await AxiosInstance.get(
+        '/get-international-airtime-countries'
+      )
+      return response.data.content.countries || []
+    },
+    enabled: activeTab === 'international',
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
+  })
+
+  // Fetch Product Types for Country
+  const { data: productTypes = [], isLoading: isProductTypesLoading } =
+    useQuery({
+      queryKey: ['productTypes', selectedCountryCode],
+      queryFn: async () => {
+        if (!selectedCountryCode) return []
+        const response = await AxiosInstance.get(
+          `/get-international-airtime-product-types?code=${selectedCountryCode}`
+        )
+        return response.data.content || []
+      },
+      enabled: activeTab === 'international' && !!selectedCountryCode,
+      staleTime: 1000 * 60 * 60, // 1 hour
+    })
+
+  // Fetch Operators for Product Type
+  const { data: operators = [], isLoading: isOperatorsLoading } = useQuery({
+    queryKey: ['operators', selectedCountryCode, selectedProductTypeId],
+    queryFn: async () => {
+      if (!selectedCountryCode || !selectedProductTypeId) return []
+      const response = await AxiosInstance.get(
+        `/get-international-airtime-operators?code=${selectedCountryCode}&product_type_id=${selectedProductTypeId}`
+      )
+      return response.data.content || []
+    },
+    enabled:
+      activeTab === 'international' &&
+      !!selectedCountryCode &&
+      !!selectedProductTypeId,
+    staleTime: 1000 * 60 * 60, // 1 hour
   })
 
   const generateRequestId = () => {
@@ -96,40 +210,76 @@ const VTUPage = () => {
   }
 
   useEffect(() => {
-    setError('')
-    setSuccess('')
     setAmount('')
     setPhone('')
+    setBillersCode('')
+    setVariationCode('')
     setSelectedServiceId('')
+    setSelectedCountryCode('')
+    setSelectedProductTypeId(null)
+    setSelectedOperatorId('')
+    setEmail('')
   }, [activeTab])
 
   const checkTransactionStatus = async (requestId: string) => {
     try {
-      const response = await AxiosInstance.post('/requery', {
+      const response = await axios.post('/api/vtu/requery', {
         request_id: requestId,
       })
 
-      if (response.data.code === '000') {
-        const status = response.data.content.transactions.status
+      const code = response.data.code
+      const description = response.data.response_description
+
+      // 000 = TRANSACTION PROCESSED - Check internal status
+      if (code === '000') {
+        const transactions = response.data.content?.transactions
+        const status = transactions?.status
+
         if (status === 'delivered' || status === 'successful') {
-          setSuccess('Transaction was successful!')
+          setModalType('success')
+          setModalMessage('Transaction successful and delivered!')
+          setShowModal(true)
+          setAmount('')
+          setPhone('')
           return true
-        } else if (status === 'pending' || status === 'processing') {
-          setError(
-            'Transaction is still pending. Please check back in a moment.'
-          )
+        } else if (
+          status === 'pending' ||
+          status === 'initiated' ||
+          status === 'processing'
+        ) {
+          setModalType('pending')
+          setModalMessage('Transaction is still pending. Retrying...')
+          setShowModal(true)
+          setTimeout(() => checkTransactionStatus(requestId), 5000)
           return false
         } else {
-          setError(`Transaction failed: ${status}`)
+          setModalType('error')
+          setModalMessage(`Transaction failure: ${status || 'Unknown failure'}`)
+          setShowModal(true)
           return false
         }
-      } else {
-        setError(response.data.response_description || 'Requery failed.')
+      }
+      // 099 or 089 = PROCESSING - Retry
+      else if (code === '099' || code === '089') {
+        setModalType('pending')
+        setModalMessage('System is processing. Please wait...')
+        setShowModal(true)
+        setTimeout(() => checkTransactionStatus(requestId), 5000)
+        return false
+      }
+      // Any other code is a failure for requery
+      else {
+        setModalType('error')
+        setModalMessage(description || `Verification failed (Code: ${code})`)
+        setShowModal(true)
         return false
       }
     } catch (err: any) {
       console.error('Requery error:', err)
-      setError('Failed to check transaction status.')
+      setModalType('error')
+      setModalMessage('Connection error during status check. Retrying...')
+      setShowModal(true)
+      setTimeout(() => checkTransactionStatus(requestId), 10000)
       return false
     }
   }
@@ -137,43 +287,83 @@ const VTUPage = () => {
   const handlePurchase = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
-    setSuccess('')
 
     try {
       const requestId = generateRequestId()
-      const payload = {
+      const payload: any = {
         request_id: requestId,
-        serviceID: selectedServiceId,
+        serviceID:
+          activeTab === 'international' ? 'foreign-airtime' : selectedServiceId,
         amount: Number(amount),
         phone: phone,
+        variation_code: variationCode,
+        billersCode: activeTab === 'international' ? phone : billersCode,
       }
 
-      const response = await AxiosInstance.post('/pay', payload)
+      if (activeTab === 'international') {
+        payload.operator_id = selectedOperatorId
+        payload.country_code = selectedCountryCode
+        payload.product_type_id = selectedProductTypeId
+        payload.email = email
+      }
 
-      if (response.data.code === '000') {
-        setSuccess(
-          'Transaction successful! You will receive your service shortly.'
+      // Use internal API proxy
+      const response = await axios.post('/api/vtu/pay', payload)
+
+      const code = response.data.code
+      const description = response.data.response_description
+
+      // 000 = TRANSACTION PROCESSED - Check status
+      if (code === '000') {
+        const transactions = response.data.content?.transactions
+        const status = transactions?.status
+
+        if (status === 'delivered' || status === 'successful') {
+          setModalType('success')
+          setModalMessage('Transaction successful!')
+          setShowModal(true)
+          setAmount('')
+          setPhone('')
+        } else {
+          // If 000 but NOT delivered, treat as pending and requery
+          setModalType('pending')
+          setModalMessage('Transaction initiated. Verifying status...')
+          setShowModal(true)
+          setTimeout(() => checkTransactionStatus(requestId), 5000)
+        }
+      }
+      // 099 or 089 = PROCESSING - Requery
+      else if (code === '099' || code === '089') {
+        setModalType('pending')
+        setModalMessage('Transaction is processing. Please wait...')
+        setShowModal(true)
+        setTimeout(() => checkTransactionStatus(requestId), 5000)
+      }
+      // Specific Failure Codes (011-087 etc)
+      else if (
+        ['016', '013', '017', '018', '019', '010', '012'].includes(code)
+      ) {
+        setModalType('error')
+        setModalMessage(
+          description || 'Transaction failed. Please check details.'
         )
-        setAmount('')
-        setPhone('')
-      } else if (response.data.code === '099') {
-        // Processing/Pending
-        setSuccess('Transaction is being processed. Checking status...')
-        // Wait a few seconds then check status
-        setTimeout(() => checkTransactionStatus(requestId), 3000)
-      } else {
-        setError(
-          response.data.response_description ||
-            'Transaction failed. Please try again.'
-        )
+        setShowModal(true)
+      }
+      // Any other unexpected response - Treat as pending (as per docs)
+      else {
+        setModalType('pending')
+        setModalMessage('Status unclear. Verifying with provider...')
+        setShowModal(true)
+        setTimeout(() => checkTransactionStatus(requestId), 5000)
       }
     } catch (err: any) {
       console.error('Purchase error:', err)
-      setError(
-        err.response?.data?.response_description ||
-          'An unexpected error occurred.'
+      // Treatment for timeout/network error as per docs: treat as pending
+      setModalType('error')
+      setModalMessage(
+        'Network error. If you were charged, please check your history.'
       )
+      setShowModal(true)
     } finally {
       setLoading(false)
     }
@@ -181,7 +371,111 @@ const VTUPage = () => {
 
   return (
     <div className="bg-[#f8fafc] dark:bg-slate-950 transition-colors duration-300 min-h-screen font-sans">
+      <AnimatePresence>
+        {isInitialLoading && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-white dark:bg-slate-950 flex flex-col items-center justify-center gap-6"
+          >
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 180, 360],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-center"
+            >
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                Stay Connected
+              </h2>
+              <p className="text-slate-500 font-medium">
+                Preparing your dashboard...
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Nav />
+
+      {/* Transaction Result Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800"
+            >
+              <button
+                onClick={() => setShowModal(false)}
+                className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+              >
+                <IoCloseOutline size={24} />
+              </button>
+
+              <div className="text-center space-y-6 pt-4">
+                <div className="flex justify-center">
+                  {modalType === 'success' ? (
+                    <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+                      <BsCheckCircleFill size={48} />
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                      <MdErrorOutline size={48} />
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <h3
+                    className={`text-2xl font-bold ${modalType === 'success' ? 'text-slate-900 dark:text-white' : 'text-orange-600 dark:text-orange-400'}`}
+                  >
+                    {modalType === 'success'
+                      ? 'Great News!'
+                      : modalType === 'pending'
+                        ? 'Processing...'
+                        : 'Action Required'}
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 font-bold leading-relaxed">
+                    {modalMessage}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setShowModal(false)}
+                  className={`w-full py-5 rounded-2xl font-bold text-xl transition-all active:scale-[0.98] ${
+                    modalType === 'success'
+                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/20'
+                      : 'bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-600/20'
+                  }`}
+                >
+                  {modalType === 'success' ? 'Perfect, Thanks' : 'Got it'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-6 sm:px-16 md:px-24 text-center max-w-5xl mx-auto">
@@ -190,7 +484,7 @@ const VTUPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight mb-8">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight mb-8">
             Everything You Need to{' '}
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Stay Connected
@@ -248,55 +542,78 @@ const VTUPage = () => {
               </div>
             </div>
 
-            {/* Feedback Messages */}
+            {/* Feedback Messages (Services Load Errors Only) */}
             <AnimatePresence>
-              {(error || (servicesError as any)) && (
+              {(servicesError as any) && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-400 rounded-2xl font-bold text-center"
                 >
-                  {error ||
-                    (servicesError as any)?.message ||
+                  {(servicesError as any)?.message ||
                     'Failed to load services.'}
-                </motion.div>
-              )}
-              {success && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mb-8 p-4 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 text-green-600 dark:text-green-400 rounded-2xl font-bold text-center"
-                >
-                  {success}
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Tab Content */}
+            {/* Unified Dynamic Form */}
             <div className="min-h-[300px]">
               {isServicesLoading ? (
-                <div className="flex items-center justify-center h-48">
-                  <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="flex flex-col items-center justify-center h-64 gap-4">
+                  <div className="w-10 h-10 border-[3px] border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-slate-400 font-bold animate-pulse">
+                    Loading Services...
+                  </p>
                 </div>
               ) : (
                 <AnimatePresence mode="wait">
-                  {activeTab === 'airtime' && (
-                    <motion.form
-                      key="airtime"
-                      onSubmit={handlePurchase}
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-8"
-                    >
-                      <div className="space-y-4">
-                        <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
-                          Select Network
-                        </label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <motion.form
+                    key={activeTab}
+                    onSubmit={handlePurchase}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-8"
+                  >
+                    <div className="space-y-4">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">
+                        Select{' '}
+                        {activeTab === 'electricity'
+                          ? 'Provider'
+                          : activeTab === 'international'
+                            ? 'Country'
+                            : 'Network'}
+                      </label>
+                      {activeTab === 'international' ? (
+                        <div className="relative">
+                          <select
+                            value={selectedCountryCode}
+                            onChange={(e) =>
+                              setSelectedCountryCode(e.target.value)
+                            }
+                            className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold appearance-none cursor-pointer"
+                            required
+                          >
+                            <option value="">Choose a country...</option>
+                            {countriesList.map((c: any) => (
+                              <option key={c.code} value={c.code}>
+                                {c.name} ({c.currency})
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <BsChevronDown size={14} />
+                          </div>
+                          {isCountriesLoading && (
+                            <p className="absolute -bottom-5 left-0 text-[10px] text-indigo-500 font-bold animate-pulse">
+                              Loading countries...
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                           {services.map((service) => (
                             <button
                               key={service.serviceID}
@@ -304,309 +621,249 @@ const VTUPage = () => {
                               onClick={() =>
                                 setSelectedServiceId(service.serviceID)
                               }
-                              className={`py-4 border rounded-2xl transition-all font-bold group flex flex-col items-center gap-2 ${
+                              className={`py-3.5 border rounded-2xl transition-all font-bold group flex flex-col items-center gap-2 ${
                                 selectedServiceId === service.serviceID
                                   ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
-                                  : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:border-indigo-400'
+                                  : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 hover:border-indigo-400'
                               }`}
                             >
                               <img
                                 src={service.image}
                                 alt={service.name}
+                                className="w-7 h-7 rounded-full object-contain"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement
-                                  const fallbackMap: { [key: string]: string } =
-                                    {
-                                      airtime: '/images/airtime.jpg',
-                                      data: '/images/data.png',
-                                      electricity:
-                                        '/images/electricity-bill.jpg',
-                                    }
-                                  target.src =
-                                    fallbackMap[activeTab] ||
-                                    '/images/default-service.png'
+                                  target.src = '/images/airtime.jpg'
                                 }}
-                                className="w-8 h-8 rounded-full object-contain"
                               />
-                              <span className="text-xs">
+                              <span className="text-[10px] uppercase tracking-wider truncate px-2 w-full text-center">
                                 {service.name.split(' ')[0]}
                               </span>
                             </button>
                           ))}
                         </div>
-                      </div>
-                      <AnimatePresence>
-                        {selectedServiceId && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="space-y-8 overflow-hidden"
-                          >
-                            <div className="space-y-4">
-                              <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
-                                Phone Number
-                              </label>
-                              <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder="08011111111 (Sandbox Success)"
-                                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-2xl py-5 px-6 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xl font-bold"
-                                required
-                              />
-                            </div>
-                            <div className="space-y-4">
-                              <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
-                                Amount
-                              </label>
-                              <div className="relative">
-                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-bold text-slate-400">
-                                  ₦
-                                </span>
-                                <input
-                                  type="number"
-                                  value={amount}
-                                  onChange={(e) => setAmount(e.target.value)}
-                                  placeholder="Enter Amount"
-                                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-2xl py-5 pl-12 pr-6 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xl font-bold"
-                                  required
-                                />
-                              </div>
-                            </div>
-                            <button
-                              type="submit"
-                              disabled={loading}
-                              className="w-full py-5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-2xl font-black text-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-3"
-                            >
-                              {loading && (
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                              )}
-                              {loading ? 'Processing...' : 'Buy Now'}
-                            </button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.form>
-                  )}
+                      )}
+                    </div>
 
-                  {activeTab === 'data' && (
-                    <motion.form
-                      key="data"
-                      onSubmit={handlePurchase}
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-8"
-                    >
-                      <div className="space-y-4">
-                        <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
-                          Select Network
-                        </label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                          {services.map((service) => (
-                            <button
-                              key={service.serviceID}
-                              type="button"
-                              onClick={() =>
-                                setSelectedServiceId(service.serviceID)
-                              }
-                              className={`py-4 border rounded-2xl transition-all font-bold group flex flex-col items-center gap-2 ${
-                                selectedServiceId === service.serviceID
-                                  ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
-                                  : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:border-indigo-400'
-                              }`}
-                            >
-                              <img
-                                src={service.image}
-                                alt={service.name}
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement
-                                  const fallbackMap: { [key: string]: string } =
-                                    {
-                                      airtime: '/images/airtime.jpg',
-                                      data: '/images/data.png',
-                                      electricity:
-                                        '/images/electricity-bill.jpg',
+                    <AnimatePresence>
+                      {(selectedServiceId ||
+                        (activeTab === 'international' &&
+                          selectedCountryCode)) && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="space-y-6 overflow-hidden pt-2"
+                        >
+                          {/* International Product Type */}
+                          {activeTab === 'international' && (
+                            <div className="space-y-3">
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                Service Type
+                              </label>
+                              <div className="flex gap-3">
+                                {productTypes.map((type: any) => (
+                                  <button
+                                    key={type.product_type_id}
+                                    type="button"
+                                    onClick={() =>
+                                      setSelectedProductTypeId(
+                                        type.product_type_id
+                                      )
                                     }
-                                  target.src =
-                                    fallbackMap[activeTab] ||
-                                    '/images/default-service.png'
-                                }}
-                                className="w-8 h-8 rounded-full object-contain"
-                              />
-                              <span className="text-xs">
-                                {service.name.replace('Data', '').trim()}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <AnimatePresence>
-                        {selectedServiceId && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="space-y-8 overflow-hidden"
-                          >
-                            <div className="space-y-4">
-                              <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
-                                Phone Number
-                              </label>
-                              <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder="Enter Phone Number"
-                                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-2xl py-5 px-6 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xl font-bold"
-                                required
-                              />
-                            </div>
-                            <div className="space-y-4">
-                              <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
-                                Select Data Plan
-                              </label>
-                              <div className="relative">
-                                <select
-                                  className="w-full py-5 px-6 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-between text-slate-900 dark:text-white font-bold appearance-none outline-none focus:ring-2 focus:ring-indigo-500/50"
-                                  onChange={(e) => setAmount(e.target.value)}
-                                  required
-                                >
-                                  <option value="">Choose a plan</option>
-                                  <option value="500">1GB - ₦500</option>
-                                  <option value="1200">2.5GB - ₦1200</option>
-                                  <option value="2500">5GB - ₦2500</option>
-                                </select>
-                                <BsChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                    className={`flex-1 py-3 border rounded-xl font-bold text-xs transition-all ${
+                                      selectedProductTypeId ===
+                                      type.product_type_id
+                                        ? 'border-indigo-600 bg-indigo-50 text-indigo-600'
+                                        : 'border-slate-200 dark:border-slate-800 text-slate-500'
+                                    }`}
+                                  >
+                                    {type.name}
+                                  </button>
+                                ))}
                               </div>
-                            </div>
-                            <button
-                              type="submit"
-                              disabled={loading}
-                              className="w-full py-5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-2xl font-black text-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-3"
-                            >
-                              {loading && (
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              {isProductTypesLoading && (
+                                <p className="text-[10px] text-indigo-500 font-bold animate-pulse">
+                                  Loading categories...
+                                </p>
                               )}
-                              {loading ? 'Processing...' : 'Buy Now'}
-                            </button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.form>
-                  )}
+                            </div>
+                          )}
 
-                  {activeTab === 'electricity' && (
-                    <motion.form
-                      key="electricity"
-                      onSubmit={handlePurchase}
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-8"
-                    >
-                      <div className="space-y-4">
-                        <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
-                          Select Provider
-                        </label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                          {services.slice(0, 4).map((service) => (
-                            <button
-                              key={service.serviceID}
-                              type="button"
-                              onClick={() =>
-                                setSelectedServiceId(service.serviceID)
-                              }
-                              className={`py-4 px-2 border rounded-2xl transition-all font-bold group flex flex-col items-center gap-2 text-center ${
-                                selectedServiceId === service.serviceID
-                                  ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
-                                  : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:border-indigo-400'
-                              }`}
-                            >
-                              <img
-                                src={service.image}
-                                alt={service.name}
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement
-                                  const fallbackMap: { [key: string]: string } =
-                                    {
-                                      airtime: '/images/airtime.jpg',
-                                      data: '/images/data.png',
-                                      electricity:
-                                        '/images/electricity-bill.jpg',
-                                    }
-                                  target.src =
-                                    fallbackMap[activeTab] ||
-                                    '/images/default-service.png'
-                                }}
-                                className="w-8 h-8 rounded-full object-contain"
-                              />
-                              <span className="text-[10px] leading-tight">
-                                {service.name
-                                  .replace('Electricity Payment', '')
-                                  .trim()}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <AnimatePresence>
-                        {selectedServiceId && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="space-y-8 overflow-hidden"
-                          >
-                            <div className="space-y-4">
-                              <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
+                          {/* International Operator */}
+                          {activeTab === 'international' &&
+                            selectedProductTypeId && (
+                              <div className="space-y-3">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                  Network Operator
+                                </label>
+                                <div className="grid grid-cols-2 gap-3">
+                                  {operators.map((op: any) => (
+                                    <button
+                                      key={op.operator_id}
+                                      type="button"
+                                      onClick={() =>
+                                        setSelectedOperatorId(op.operator_id)
+                                      }
+                                      className={`py-3 border rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                                        selectedOperatorId === op.operator_id
+                                          ? 'border-indigo-600 bg-indigo-50 text-indigo-600'
+                                          : 'border-slate-200 dark:border-slate-800 text-slate-500'
+                                      }`}
+                                    >
+                                      {op.operator_image && (
+                                        <img
+                                          src={op.operator_image}
+                                          className="w-4 h-4 rounded-full"
+                                          onError={(e) => {
+                                            const target =
+                                              e.target as HTMLImageElement
+                                            target.src = '/images/airtime.jpg'
+                                          }}
+                                        />
+                                      )}
+                                      {op.name}
+                                    </button>
+                                  ))}
+                                </div>
+                                {isOperatorsLoading && (
+                                  <p className="text-[10px] text-indigo-500 font-bold animate-pulse">
+                                    Loading operators...
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          {/* Electricity Meter Number */}
+                          {activeTab === 'electricity' && (
+                            <div className="space-y-3">
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
                                 Meter Number
                               </label>
                               <input
                                 type="text"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder="Enter Meter Number"
-                                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-2xl py-5 px-6 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xl font-bold"
+                                value={billersCode}
+                                onChange={(e) => setBillersCode(e.target.value)}
+                                placeholder="Enter meter number"
+                                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold"
                                 required
                               />
                             </div>
-                            <div className="space-y-4">
-                              <label className="block text-sm font-bold text-slate-500 uppercase tracking-widest">
+                          )}
+
+                          {/* Variation Selection (Data or Electricity type) */}
+                          {(activeTab === 'data' ||
+                            activeTab === 'electricity') && (
+                            <div className="space-y-3">
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                Select Plan
+                              </label>
+                              <div className="relative">
+                                <select
+                                  value={variationCode}
+                                  onChange={(e) =>
+                                    setVariationCode(e.target.value)
+                                  }
+                                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold appearance-none cursor-pointer"
+                                  required
+                                >
+                                  <option value="">Choose a plan...</option>
+                                  {variations.map((v: any) => (
+                                    <option
+                                      key={v.variation_code}
+                                      value={v.variation_code}
+                                    >
+                                      {v.name} - ₦{v.variation_amount}
+                                    </option>
+                                  ))}
+                                </select>
+                                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                  <BsChevronDown size={14} />
+                                </div>
+                              </div>
+                              {isVariationsLoading && (
+                                <p className="text-[10px] text-indigo-500 font-bold animate-pulse">
+                                  Loading plans...
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Phone Number (for Airtime/Data/International) */}
+                          <div className="space-y-3">
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                              {activeTab === 'international'
+                                ? 'Recipient Phone'
+                                : 'Phone Number'}
+                            </label>
+                            <input
+                              type="tel"
+                              value={phone}
+                              onChange={(e) => setPhone(e.target.value)}
+                              placeholder={
+                                activeTab === 'international'
+                                  ? 'Include country code'
+                                  : '08011111111'
+                              }
+                              className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold"
+                              required
+                            />
+                          </div>
+
+                          {/* Email Address (for International) */}
+                          {activeTab === 'international' && (
+                            <div className="space-y-3">
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                Your Email Address
+                              </label>
+                              <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="customer@example.com"
+                                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold"
+                                required
+                              />
+                            </div>
+                          )}
+
+                          {/* Amount (Only for Airtime or Electricity manual entry) */}
+                          {(activeTab === 'airtime' ||
+                            activeTab === 'electricity') && (
+                            <div className="space-y-3">
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
                                 Amount
                               </label>
                               <div className="relative">
-                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-bold text-slate-400">
+                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
                                   ₦
                                 </span>
                                 <input
                                   type="number"
                                   value={amount}
                                   onChange={(e) => setAmount(e.target.value)}
-                                  placeholder="Enter Amount"
-                                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-2xl py-5 pl-12 pr-6 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-xl font-bold"
+                                  placeholder="0.00"
+                                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 pl-10 pr-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold"
                                   required
                                 />
                               </div>
                             </div>
-                            <button
-                              type="submit"
-                              disabled={loading}
-                              className="w-full py-5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-2xl font-black text-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-3"
-                            >
-                              {loading && (
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                              )}
-                              {loading ? 'Processing...' : 'Buy Now'}
-                            </button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.form>
-                  )}
+                          )}
+
+                          <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-semibold text-lg shadow-lg shadow-indigo-600/10 transition-all flex items-center justify-center gap-3 active:scale-[0.99] mt-4`}
+                          >
+                            {loading ? (
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            ) : (
+                              'Pay Securely'
+                            )}
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.form>
                 </AnimatePresence>
               )}
             </div>
@@ -619,7 +876,7 @@ const VTUPage = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row gap-16 items-center">
             <div className="flex-1 space-y-8">
-              <h2 className="text-3xl md:text-5xl font-black leading-tight">
+              <h2 className="text-3xl md:text-5xl font-bold leading-tight">
                 🚀 Why Choose Our VTU Platform
               </h2>
               <div className="space-y-6">
@@ -723,10 +980,10 @@ const VTUPage = () => {
           </div>
           <div className="flex-1 space-y-8">
             <div>
-              <h4 className="text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-[0.3em] text-sm mb-4">
+              <h4 className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-[0.3em] text-sm mb-4">
                 🎯 Benefits
               </h4>
-              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
                 What Changes When You Use Our VTU Platform
               </h2>
             </div>
@@ -755,10 +1012,10 @@ const VTUPage = () => {
       {/* How It Works */}
       <section className="py-24 px-6 sm:px-16 md:px-24 bg-slate-50 dark:bg-slate-950">
         <div className="max-w-6xl mx-auto text-center">
-          <h4 className="text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-[0.3em] text-sm mb-4">
+          <h4 className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-[0.3em] text-sm mb-4">
             ⚙️ How It Works
           </h4>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-16">
             Get Started in 3 Easy Steps
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
