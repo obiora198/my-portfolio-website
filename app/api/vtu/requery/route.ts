@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import axios from 'axios'
+import dbConnect from '@/lib/mongodb'
+import Transaction from '@/models/Transaction'
 
 export async function POST(request: Request) {
   try {
+    await dbConnect()
     const body = await request.json()
     const { request_id } = body
 
@@ -25,6 +28,21 @@ export async function POST(request: Request) {
     )
 
     console.log('VTpass Requery Response:', response.data)
+
+    // Update MongoDB status if transaction exists
+    try {
+      if (response.data.content?.transactions?.status) {
+        await Transaction.findOneAndUpdate(
+          { requestId: request_id },
+          {
+            status: response.data.content.transactions.status,
+            description: response.data.response_description,
+          }
+        )
+      }
+    } catch (dbError) {
+      console.error('MongoDB Update Error:', dbError)
+    }
 
     return NextResponse.json(response.data)
   } catch (error: any) {

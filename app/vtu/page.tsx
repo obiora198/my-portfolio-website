@@ -53,6 +53,12 @@ const VTUPage = () => {
   >(null)
   const [modalMessage, setModalMessage] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [whatsappNumber, setWhatsappNumber] = useState('')
+  const [useTransactionNumber, setUseTransactionNumber] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<any[]>([])
+
   const [isInitialLoading, setIsInitialLoading] = useState(true)
 
   useEffect(() => {
@@ -80,6 +86,18 @@ const VTUPage = () => {
     },
   ]
 
+  // Fetch History from MongoDB with auto-refresh for status tracking
+  const { data: transactionHistory = [], refetch: refetchHistory } = useQuery({
+    queryKey: ['history'],
+    queryFn: async () => {
+      const response = await axios.get('/api/vtu/history')
+      return response.data
+    },
+    enabled: true,
+    refetchInterval: 10000, // Refresh every 10s to sync status
+    staleTime: 120000, // Keep data fresh for 2 mins unless refetched
+  })
+
   const {
     data: services = [],
     isLoading: isServicesLoading,
@@ -100,7 +118,7 @@ const VTUPage = () => {
         .filter((service: any) => service.serviceID !== 'foreign-airtime')
         .map((service: any) => ({
           ...service,
-          image: service.image,
+          image: service.image.replace('-VTU', ''),
         }))
       return filteredAndSanitized
     },
@@ -241,21 +259,24 @@ const VTUPage = () => {
           setShowModal(true)
           setAmount('')
           setPhone('')
+          refetchHistory()
           return true
         } else if (
           status === 'pending' ||
           status === 'initiated' ||
           status === 'processing'
         ) {
+          // If still pending, only update message but DON'T force modal open
+          // This allows users to close the modal and stay on the dashboard
           setModalType('pending')
           setModalMessage('Transaction is still pending. Retrying...')
-          setShowModal(true)
           setTimeout(() => checkTransactionStatus(requestId), 5000)
           return false
         } else {
           setModalType('error')
           setModalMessage(`Transaction failure: ${status || 'Unknown failure'}`)
           setShowModal(true)
+          refetchHistory()
           return false
         }
       }
@@ -263,7 +284,6 @@ const VTUPage = () => {
       else if (code === '099' || code === '089') {
         setModalType('pending')
         setModalMessage('System is processing. Please wait...')
-        setShowModal(true)
         setTimeout(() => checkTransactionStatus(requestId), 5000)
         return false
       }
@@ -278,7 +298,6 @@ const VTUPage = () => {
       console.error('Requery error:', err)
       setModalType('error')
       setModalMessage('Connection error during status check. Retrying...')
-      setShowModal(true)
       setTimeout(() => checkTransactionStatus(requestId), 10000)
       return false
     }
@@ -307,6 +326,10 @@ const VTUPage = () => {
         payload.email = email
       }
 
+      // Metadata for MongoDB
+      payload.whatsappNumber = useTransactionNumber ? phone : whatsappNumber
+      payload.activeTab = activeTab
+
       // Use internal API proxy
       const response = await axios.post('/api/vtu/pay', payload)
 
@@ -320,10 +343,15 @@ const VTUPage = () => {
 
         if (status === 'delivered' || status === 'successful') {
           setModalType('success')
-          setModalMessage('Transaction successful!')
+          setModalMessage(
+            `Transaction successful! A receipt will be sent to ${
+              useTransactionNumber ? phone : whatsappNumber
+            } via WhatsApp.`
+          )
           setShowModal(true)
           setAmount('')
           setPhone('')
+          refetchHistory()
         } else {
           // If 000 but NOT delivered, treat as pending and requery
           setModalType('pending')
@@ -448,17 +476,30 @@ const VTUPage = () => {
 
                 <div className="space-y-2">
                   <h3
-                    className={`text-2xl font-bold ${modalType === 'success' ? 'text-slate-900 dark:text-white' : 'text-orange-600 dark:text-orange-400'}`}
+                    className={`text-2xl font-bold ${
+                      modalType === 'success'
+                        ? 'text-slate-900 dark:text-white'
+                        : modalType === 'pending'
+                          ? 'text-indigo-600 dark:text-indigo-400'
+                          : 'text-orange-600 dark:text-orange-400'
+                    }`}
                   >
                     {modalType === 'success'
-                      ? 'Great News!'
+                      ? 'Payment Confirmed!'
                       : modalType === 'pending'
-                        ? 'Processing...'
+                        ? 'Securely Processing'
                         : 'Action Required'}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-400 font-bold leading-relaxed">
                     {modalMessage}
                   </p>
+                  {modalType === 'pending' && (
+                    <p className="text-xs text-slate-400 font-medium italic mt-2">
+                      You can safely close this window. We'll continue
+                      processing in the background. Check the History tab for
+                      real-time updates.
+                    </p>
+                  )}
                 </div>
 
                 <button
@@ -466,10 +507,16 @@ const VTUPage = () => {
                   className={`w-full py-5 rounded-2xl font-bold text-xl transition-all active:scale-[0.98] ${
                     modalType === 'success'
                       ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/20'
-                      : 'bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-600/20'
+                      : modalType === 'pending'
+                        ? 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-white'
+                        : 'bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-600/20'
                   }`}
                 >
-                  {modalType === 'success' ? 'Perfect, Thanks' : 'Got it'}
+                  {modalType === 'success'
+                    ? 'Perfect, Thanks'
+                    : modalType === 'pending'
+                      ? 'Track in History'
+                      : 'Got it'}
                 </button>
               </div>
             </motion.div>
@@ -495,13 +542,16 @@ const VTUPage = () => {
             Top up airtime, buy data, and settle bills in seconds — no stress,
             no delays.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
-              href="/auth/register"
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+            <button
+              onClick={() => {
+                const element = document.getElementById('services-form')
+                element?.scrollIntoView({ behavior: 'smooth' })
+              }}
               className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl shadow-indigo-600/20 transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto text-lg"
             >
               Get Started Now
-            </Link>
+            </button>
             <Link
               href="#learn-more"
               className="px-8 py-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl font-bold transition-all duration-300 w-full sm:w-auto text-lg"
@@ -558,7 +608,7 @@ const VTUPage = () => {
             </AnimatePresence>
 
             {/* Unified Dynamic Form */}
-            <div className="min-h-[300px]">
+            <div id="services-form">
               {isServicesLoading ? (
                 <div className="flex flex-col items-center justify-center h-64 gap-4">
                   <div className="w-10 h-10 border-[3px] border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
@@ -789,24 +839,87 @@ const VTUPage = () => {
                           )}
 
                           {/* Phone Number (for Airtime/Data/International) */}
-                          <div className="space-y-3">
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
-                              {activeTab === 'international'
-                                ? 'Recipient Phone'
-                                : 'Phone Number'}
-                            </label>
-                            <input
-                              type="tel"
-                              value={phone}
-                              onChange={(e) => setPhone(e.target.value)}
-                              placeholder={
-                                activeTab === 'international'
-                                  ? 'Include country code'
-                                  : '08011111111'
-                              }
-                              className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold"
-                              required
-                            />
+                          <div className="space-y-4">
+                            <div className="space-y-3">
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                {activeTab === 'international'
+                                  ? 'Recipient Phone'
+                                  : 'Phone Number'}
+                              </label>
+                              <input
+                                type="tel"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder={
+                                  activeTab === 'international'
+                                    ? 'Include country code'
+                                    : '08011111111'
+                                }
+                                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold"
+                                required
+                              />
+                            </div>
+
+                            {/* WhatsApp Receipt Toggle */}
+                            <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/50 space-y-4">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                  WhatsApp Receipt
+                                </span>
+                                <div className="flex bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setUseTransactionNumber(true)
+                                    }
+                                    className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${
+                                      useTransactionNumber
+                                        ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm'
+                                        : 'text-slate-500'
+                                    }`}
+                                  >
+                                    SAME NO
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setUseTransactionNumber(false)
+                                    }
+                                    className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${
+                                      !useTransactionNumber
+                                        ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm'
+                                        : 'text-slate-500'
+                                    }`}
+                                  >
+                                    OTHER
+                                  </button>
+                                </div>
+                              </div>
+                              <AnimatePresence>
+                                {!useTransactionNumber && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="pt-2"
+                                  >
+                                    <input
+                                      type="tel"
+                                      value={whatsappNumber}
+                                      onChange={(e) =>
+                                        setWhatsappNumber(e.target.value)
+                                      }
+                                      placeholder="WhatsApp number"
+                                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm font-bold"
+                                    />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                              <p className="text-[10px] text-slate-400 font-medium italic">
+                                We will send your transaction receipt to this
+                                number on WhatsApp.
+                              </p>
+                            </div>
                           </div>
 
                           {/* Email Address (for International) */}
@@ -865,6 +978,167 @@ const VTUPage = () => {
                     </AnimatePresence>
                   </motion.form>
                 </AnimatePresence>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* History & Search Section */}
+      <section className="px-6 sm:px-16 md:px-24 pb-24">
+        <div className="max-w-3xl mx-auto space-y-8">
+          {/* Search Box */}
+          <div className="relative group">
+            <input
+              type="text"
+              placeholder="Search by Transaction ID or Phone No..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] py-5 px-6 pl-14 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold text-slate-900 dark:text-white shadow-xl shadow-indigo-600/5"
+            />
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400">
+              <BsClockHistory size={20} />
+            </div>
+            <button
+              onClick={async () => {
+                if (!searchQuery) return
+                setIsSearching(true)
+                try {
+                  const response = await axios.get(
+                    `/api/vtu/search?q=${searchQuery}`
+                  )
+                  setSearchResults(response.data)
+                } catch (err) {
+                  console.error('Search error:', err)
+                } finally {
+                  setIsSearching(false)
+                }
+              }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-bold transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
+            >
+              {isSearching ? '...' : 'SEARCH'}
+            </button>
+          </div>
+
+          {/* History List */}
+          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-10 shadow-2xl shadow-indigo-600/5 border border-slate-100 dark:border-slate-800/50">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                <BsClockHistory className="text-indigo-600" />
+                Transaction History
+              </h3>
+              {searchResults.length > 0 && (
+                <button
+                  onClick={() => setSearchResults([])}
+                  className="text-xs font-bold text-indigo-600 hover:underline px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg"
+                >
+                  Clear Search
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              {(searchResults.length > 0 ? searchResults : transactionHistory)
+                .length === 0 ? (
+                <div className="text-center py-16 bg-slate-50 dark:bg-slate-800/30 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-800">
+                  <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center mx-auto mb-4">
+                    <BsClockHistory size={32} className="text-slate-300" />
+                  </div>
+                  <p className="text-slate-500 font-bold">
+                    No transactions found yet.
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Your recent activities will appear here.
+                  </p>
+                </div>
+              ) : (
+                (searchResults.length > 0
+                  ? searchResults
+                  : transactionHistory
+                ).map((tx: any) => (
+                  <div
+                    key={tx.requestId}
+                    className="group bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6 transition-all hover:bg-white dark:hover:bg-slate-800 hover:shadow-xl hover:shadow-indigo-600/5 hover:-translate-y-1"
+                  >
+                    <div className="flex items-start gap-5">
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
+                          tx.status === 'delivered' ||
+                          tx.status === 'successful'
+                            ? 'bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400'
+                            : tx.status === 'failed'
+                              ? 'bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400'
+                              : 'bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400'
+                        }`}
+                      >
+                        {tx.activeTab === 'airtime' ? (
+                          <MdOutlineMobileFriendly size={24} />
+                        ) : tx.activeTab === 'data' ? (
+                          <BsPlusCircle size={22} />
+                        ) : tx.activeTab === 'electricity' ? (
+                          <MdOutlinePower size={24} />
+                        ) : (
+                          <MdOutlineTv size={24} />
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {tx.activeTab}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${
+                              tx.status === 'delivered' ||
+                              tx.status === 'successful'
+                                ? 'bg-green-500 text-white'
+                                : tx.status === 'failed'
+                                  ? 'bg-red-500 text-white'
+                                  : 'bg-orange-500 text-white'
+                            }`}
+                          >
+                            {tx.status}
+                          </span>
+                        </div>
+                        <h4 className="text-base font-bold text-slate-900 dark:text-white uppercase leading-tight">
+                          {tx.serviceID.replace('-', ' ')} • ₦{tx.amount}
+                        </h4>
+                        <p className="text-[11px] text-slate-500 font-bold flex items-center gap-2">
+                          <span className="bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">
+                            {tx.billersCode || tx.phone}
+                          </span>
+                          <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                          {new Date(tx.timestamp).toLocaleString(undefined, {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {tx.status !== 'failed' && (
+                        <a
+                          href={`https://wa.me/${tx.whatsappNumber}?text=${encodeURIComponent(
+                            `*TRANSACTION RECEIPT*\n\nID: ${tx.requestId}\nService: ${tx.serviceID}\nAmount: ₦${tx.amount}\nTarget: ${tx.billersCode || tx.phone}\nStatus: ${tx.status}\nDate: ${new Date(tx.timestamp).toLocaleString()}\n\nThank you for choosing our platform!`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-[11px] font-black flex items-center gap-2 transition-all shadow-md shadow-green-500/10 active:scale-95"
+                        >
+                          <BsWhatsapp size={14} /> RECEIPT
+                        </a>
+                      )}
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(tx.requestId)
+                        }}
+                        className="p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95"
+                        title="Copy Request ID"
+                      >
+                        <BsShieldCheck size={20} />
+                      </button>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
           </div>
