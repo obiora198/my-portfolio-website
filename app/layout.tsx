@@ -1,7 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
-import Footer from './components/sections/Footer'
+import dynamic from 'next/dynamic'
 import { ThemeProvider } from './components/ThemeContext'
 import Script from 'next/script'
 import { AuthProvider } from './context/authContext'
@@ -9,9 +9,17 @@ import { Toaster } from 'react-hot-toast'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import QueryProvider from '@/components/providers/QueryProvider'
 
+// Dynamic import for Footer to reduce initial bundle size
+const Footer = dynamic(() => import('./components/sections/Footer'), {
+  ssr: true,
+})
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['200', '400', '700', '800'],
+  display: 'swap', // Optimize font loading
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 })
 
 export const metadata: Metadata = {
@@ -64,6 +72,12 @@ export default async function RootLayout({
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <link rel="canonical" href="https://emmanuel-obiora.vercel.app/" />
+        {/* Preconnect to external domains for better performance */}
+        <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
+        <link
+          rel="dns-prefetch"
+          href="https://firebasestorage.googleapis.com"
+        />
         <Script
           id="structured-data"
           type="application/ld+json"

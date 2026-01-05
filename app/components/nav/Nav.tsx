@@ -240,7 +240,7 @@ export default function Nav() {
         </div>
 
         {/* Mobile Nav */}
-        <div className="sm:hidden flex items-center justify-between px-6 py-4">
+        <div className="sm:hidden flex items-center justify-between px-4 py-4">
           <Link
             href="/"
             className="text-3xl font-bold hover:scale-105 transition-all duration-300"
@@ -255,26 +255,27 @@ export default function Nav() {
             </span>
           </Link>
 
+          {/* Mobile Menu Button - Improved Touch Target */}
           <button
             onClick={toggleMobileMenu}
-            aria-label="Toggle Navigation"
-            className={`relative w-12 h-12 rounded-full transition-all duration-300 flex items-center justify-center group ${
-              scrolled
-                ? 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-indigo-200/50 dark:border-slate-600 shadow-lg shadow-indigo-500/10 dark:shadow-slate-900/20'
-                : 'bg-white/20 dark:bg-slate-800/20 backdrop-blur-sm border border-white/30 dark:border-slate-500 shadow-lg'
-            }`}
+            aria-label="Toggle menu"
+            className="w-12 h-12 flex flex-col items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95"
           >
-            <div className="flex flex-col justify-between w-5 h-4">
-              <span
-                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${isOpen ? 'rotate-45 translate-y-1.5 bg-indigo-500 dark:bg-indigo-400' : scrolled ? 'bg-indigo-500 dark:bg-slate-400' : 'bg-white dark:bg-slate-300'}`}
-              ></span>
-              <span
-                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${isOpen ? 'opacity-0 scale-0' : scrolled ? 'bg-indigo-500 dark:bg-slate-400' : 'bg-white dark:bg-slate-300'}`}
-              ></span>
-              <span
-                className={`block h-0.5 w-full rounded transition-all duration-300 ease-out ${isOpen ? '-rotate-45 -translate-y-1.5 bg-indigo-500 dark:bg-indigo-400' : scrolled ? 'bg-indigo-500 dark:bg-slate-400' : 'bg-white dark:bg-slate-300'}`}
-              ></span>
-            </div>
+            <span
+              className={`w-6 h-0.5 bg-slate-700 dark:bg-slate-300 transition-all duration-300 ${
+                isOpen ? 'rotate-45 translate-y-2' : ''
+              }`}
+            />
+            <span
+              className={`w-6 h-0.5 bg-slate-700 dark:bg-slate-300 transition-all duration-300 ${
+                isOpen ? 'opacity-0' : ''
+              }`}
+            />
+            <span
+              className={`w-6 h-0.5 bg-slate-700 dark:bg-slate-300 transition-all duration-300 ${
+                isOpen ? '-rotate-45 -translate-y-2' : ''
+              }`}
+            />
           </button>
         </div>
 

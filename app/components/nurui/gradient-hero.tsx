@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { FaLinkedin, FaGithubSquare } from "react-icons/fa";
+import { FaLinkedin, FaGithubSquare } from 'react-icons/fa'
 import { GradientGridHero } from './gradient-grid-hero'
 
 export default function Hero() {
@@ -61,12 +61,12 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="h-full relative z-10 flex justify-center items-center overflow-hidden">
+        <div className="h-full w-full relative flex justify-center items-center overflow-hidden">
           {/* Gradient Grid Background */}
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 pointer-events-none">
             <GradientGridHero />
           </div>
-          <div className="relative">
+          <div className="relative z-10">
             <Image
               src="/hero-img.png"
               className="h-auto mt-8 sm:mt-0 sm:justify-self-end"
