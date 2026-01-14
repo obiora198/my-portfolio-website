@@ -1,18 +1,18 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
-import dynamic from 'next/dynamic'
 import { ThemeProvider } from './components/ThemeContext'
 import Script from 'next/script'
 import { AuthProvider } from './context/authContext'
 import { Toaster } from 'react-hot-toast'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import QueryProvider from '@/components/providers/QueryProvider'
+import ThemeScript from './components/ThemeScript'
 
 // Dynamic import for Footer to reduce initial bundle size
-const Footer = dynamic(() => import('./components/sections/Footer'), {
-  ssr: true,
-})
+// const Footer = dynamic(() => import('./components/sections/Footer'), {
+//   ssr: true,
+// })
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -108,29 +108,15 @@ export default async function RootLayout({
               'Emmanuel Obiora is a frontend web developer based in Abuja, Nigeria, specializing in building modern websites with React, Next.js, Tailwind CSS, and TypeScript.',
           })}
         </Script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const savedTheme = localStorage.getItem('theme');
-                  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  const theme = savedTheme || (systemDark ? 'dark' : 'light');
-                  document.documentElement.classList.add(theme);
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
       </head>
       <body className={`${poppins.className}`}>
+        <ThemeScript />
         <QueryProvider>
           <ThemeProvider>
             <AuthProvider>
               {children}
               <Toaster position="top-right" reverseOrder={false} />
               <SpeedInsights />
-              <Footer />
             </AuthProvider>
           </ThemeProvider>
         </QueryProvider>
