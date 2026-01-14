@@ -2,33 +2,66 @@
  * Migration Script: Firebase to MongoDB Projects
  *
  * This script migrates projects from Firebase to MongoDB.
+ * It imports real Firebase data from apires.js and transforms it to MongoDB schema.
  * Run with: node scripts/migrateProjects.js
  */
 
 const mongoose = require('mongoose')
+require('dotenv').config()
 
-// Sample projects based on your Firebase data structure
-const sampleProjects = [
+// Import real Firebase data
+const firebaseData = require('./apires.js')
+
+/**
+ * Transform Firebase project data to MongoDB schema format
+ * @param {Object} firebaseProject - Firebase project with id and data fields
+ * @param {Number} index - Project index for ordering
+ * @returns {Object} MongoDB-compatible project object
+ */
+function transformFirebaseToMongo(firebaseProject, index) {
+  const { data } = firebaseProject
+
+  return {
+    title: data.title,
+    description: data.description,
+    longDescription: data.description, // Use description as longDescription if not provided
+    image: data.image,
+    // Transform pipe-separated stack string to technologies array
+    technologies: data.stack
+      ? data.stack.split('|').map((tech) => tech.trim())
+      : [],
+    liveUrl: data.link || '',
+    githubUrl: data.githubLink || '',
+    featured: true, // Mark all imported projects as featured
+    category: 'fullstack', // Default category, can be customized per project
+    order: index + 1,
+    // Preserve original timestamps if available
+    createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
+    updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date(),
+  }
+}
+
+// Additional projects to include
+const additionalProjects = [
   {
     title: 'VTU Platform',
     description:
       'A modern virtual top-up platform for airtime, data, and bill payments with real-time transaction tracking',
     longDescription:
       'Full-featured VTU platform built with Next.js, featuring instant airtime and data purchases, electricity bill payments, and international top-ups. Includes transaction history, WhatsApp receipts, and admin dashboard.',
-    image:
-      'https://firebasestorage.googleapis.com/v0/b/my-portfolio-website-436a8.appspot.com/o/images%2Ftree-736885_1280.jpg?alt=media&token=38b8d9b3-aa7c-4fe3-9f56-8c87ce59a83a',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800',
     technologies: [
       'Next.js',
       'TypeScript',
       'MongoDB',
-      'Tailwind CSS',
+      'TailwindCSS',
       'React Query',
     ],
     liveUrl: '/vtu',
     githubUrl: '',
     featured: true,
     category: 'fullstack',
-    order: 1,
+    order: 100, // Will be adjusted after Firebase projects
   },
   {
     title: 'Blog Platform',
@@ -36,39 +69,53 @@ const sampleProjects = [
       'Modern blog with markdown support, syntax highlighting, and comment system',
     longDescription:
       'Feature-rich blog platform with GitHub-flavored markdown, code syntax highlighting, tag filtering, search functionality, and moderated comment system.',
-    image:
-      'https://firebasestorage.googleapis.com/v0/b/my-portfolio-website-436a8.appspot.com/o/images%2Ftree-736885_1280.jpg?alt=media&token=38b8d9b3-aa7c-4fe3-9f56-8c87ce59a83a',
-    technologies: ['Next.js', 'MongoDB', 'React Markdown', 'Tailwind CSS'],
+    image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800',
+    technologies: ['Next.js', 'MongoDB', 'React Markdown', 'TailwindCSS'],
     liveUrl: '/blog',
     githubUrl: '',
     featured: true,
     category: 'fullstack',
-    order: 2,
+    order: 101,
   },
   {
-    title: 'Portfolio Website',
+    title: 'Alorpedia - Cultural Heritage Platform',
     description:
-      'Personal portfolio showcasing projects, skills, and blog posts with modern UI/UX',
+      'A comprehensive digital platform for preserving and celebrating Alor cultural heritage. Features include a living archive for biographies and articles, village dialogue forums, interactive family tree visualization (Osisi Ndụ), global directory of community members, private messaging, and a notification system.',
     longDescription:
-      'Responsive portfolio website with dark mode, smooth animations, project showcase, skills section, and integrated blog. Built with performance and accessibility in mind.',
-    image:
-      'https://firebasestorage.googleapis.com/v0/b/my-portfolio-website-436a8.appspot.com/o/images%2Ftree-736885_1280.jpg?alt=media&token=38b8d9b3-aa7c-4fe3-9f56-8c87ce59a83a',
-    technologies: ['Next.js', 'TypeScript', 'Framer Motion', 'Tailwind CSS'],
-    liveUrl: '/',
-    githubUrl: 'https://github.com/obiora198/my-portfolio-website',
+      'Alorpedia is a full-featured cultural heritage platform built to preserve and celebrate the rich traditions of Alor. It includes a living archive system for documenting biographies and historical articles, village-based dialogue forums for community engagement, an interactive family tree visualization tool called Osisi Ndụ, a comprehensive global directory of community members, secure private messaging, and a real-time notification system. Built with modern technologies for scalability and performance.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
+    technologies: [
+      'Next.js',
+      'React.js',
+      'TypeScript',
+      'TailwindCSS',
+      'Prisma ORM',
+      'PostgreSQL',
+      'NextAuth.js',
+      'Cloudinary',
+      'Supabase',
+    ],
+    liveUrl: '',
+    githubUrl: 'https://github.com/obiora198/alorpedia',
     featured: true,
-    category: 'frontend',
-    order: 3,
+    category: 'fullstack',
+    order: 102,
   },
 ]
 
 async function migrateProjects() {
   try {
+    console.log('🚀 Starting MongoDB Migration...\n')
+
     // Connect to MongoDB
-    const MONGODB_URI = process.env.MONGODB_URI || 'your-mongodb-uri-here'
+    const MONGODB_URI = process.env.MONGODB_URI
+
+    if (!MONGODB_URI) {
+      throw new Error('❌ MONGODB_URI not found in .env file')
+    }
 
     await mongoose.connect(MONGODB_URI)
-    console.log('✅ Connected to MongoDB')
+    console.log('✅ Connected to MongoDB\n')
 
     // Define Project schema (same as in models/Project.ts)
     const ProjectSchema = new mongoose.Schema(
@@ -90,24 +137,57 @@ async function migrateProjects() {
     const Project =
       mongoose.models.Project || mongoose.model('Project', ProjectSchema)
 
-    // Clear existing projects (optional - comment out if you want to keep existing data)
+    // Clear existing projects
     await Project.deleteMany({})
-    console.log('🗑️  Cleared existing projects')
+    console.log('🗑️  Cleared existing projects\n')
 
-    // Insert sample projects
-    const result = await Project.insertMany(sampleProjects)
-    console.log(`✅ Migrated ${result.length} projects successfully!`)
+    // Transform Firebase data
+    console.log('🔄 Transforming Firebase data...')
+    const transformedFirebaseProjects = firebaseData.data.map(
+      (project, index) => transformFirebaseToMongo(project, index)
+    )
+    console.log(
+      `   ✓ Transformed ${transformedFirebaseProjects.length} Firebase projects\n`
+    )
+
+    // Adjust order for additional projects
+    const firebaseProjectCount = transformedFirebaseProjects.length
+    const adjustedAdditionalProjects = additionalProjects.map(
+      (project, index) => ({
+        ...project,
+        order: firebaseProjectCount + index + 1,
+      })
+    )
+
+    // Combine all projects
+    const allProjects = [
+      ...transformedFirebaseProjects,
+      ...adjustedAdditionalProjects,
+    ]
+
+    // Insert all projects
+    console.log('💾 Inserting projects into MongoDB...')
+    const result = await Project.insertMany(allProjects)
+    console.log(`✅ Successfully migrated ${result.length} projects!\n`)
 
     // Display migrated projects
-    console.log('\n📦 Migrated Projects:')
+    console.log('📦 Migrated Projects:')
+    console.log('─'.repeat(70))
     result.forEach((project, index) => {
-      console.log(`${index + 1}. ${project.title} (${project.category})`)
+      console.log(`${index + 1}. ${project.title}`)
+      console.log(`   Category: ${project.category}`)
+      console.log(`   Technologies: ${project.technologies.join(', ')}`)
+      console.log(`   Live URL: ${project.liveUrl || 'N/A'}`)
+      console.log(`   GitHub: ${project.githubUrl || 'N/A'}`)
+      console.log('─'.repeat(70))
     })
 
     await mongoose.connection.close()
     console.log('\n✅ Migration complete! Database connection closed.')
+    console.log('\n🎉 You can now view your projects at http://localhost:3000')
   } catch (error) {
-    console.error('❌ Migration failed:', error)
+    console.error('\n❌ Migration failed:', error.message)
+    console.error('Stack trace:', error.stack)
     process.exit(1)
   }
 }

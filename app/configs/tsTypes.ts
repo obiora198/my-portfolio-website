@@ -12,6 +12,23 @@ export interface ProjectType {
   }
 }
 
+// MongoDB Project Type (new schema)
+export interface MongoProjectType {
+  _id: string
+  title: string
+  description: string
+  longDescription?: string
+  image: string
+  technologies: string[]
+  liveUrl?: string
+  githubUrl?: string
+  featured: boolean
+  category: string
+  order: number
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface DialogPropsType {
   anchorEl: HTMLElement | null
   id: string

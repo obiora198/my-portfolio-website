@@ -54,7 +54,7 @@ export default function Nav() {
   >(null)
   const [adminMenuOpen, setAdminMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { theme, toggleTheme } = useTheme()
+  const { theme, toggleTheme, currentTheme } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30)

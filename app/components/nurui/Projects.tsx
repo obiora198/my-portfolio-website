@@ -1,7 +1,7 @@
 'use client'
 
-import { useTheme } from '../ThemeContext' 
-import { ProjectType } from '../../configs/tsTypes'
+import { useTheme } from '../ThemeContext'
+import { MongoProjectType } from '../../configs/tsTypes'
 import fetchProjects from '../../lib/fetchProjects'
 import React, { useEffect, useRef } from 'react'
 import Image from 'next/image'
@@ -9,24 +9,54 @@ import { motion } from 'framer-motion'
 
 export default function Projects() {
   const [loading, setLoading] = React.useState<boolean>(true)
-  const [projects, setProjects] = React.useState<ProjectType[]>([])
-  const { theme } = useTheme()
+  const [projects, setProjects] = React.useState<MongoProjectType[]>([])
+  const { currentTheme } = useTheme()
 
   const start = async () => {
-    const projectsArray = await fetchProjects()
-    setProjects(projectsArray)
-    setLoading(false)
+    try {
+      const projectsArray = await fetchProjects()
+      // Ensure we have a valid array
+      const validProjects = Array.isArray(projectsArray)
+        ? projectsArray.filter((p) => p && p.title && p.image)
+        : []
+      setProjects(validProjects)
+    } catch (error) {
+      console.error('Error loading projects:', error)
+      setProjects([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    start()
+    let isMounted = true
+    const timeoutId = setTimeout(() => {
+      if (isMounted && loading) {
+        console.warn('Project fetch timed out')
+        setLoading(false)
+      }
+    }, 8000)
+
+    start().then(() => {
+      if (isMounted) clearTimeout(timeoutId)
+    })
+
+    return () => {
+      isMounted = false
+      clearTimeout(timeoutId)
+    }
   }, [])
 
-
- return (
+  return (
     <>
-      {loading || projects.length === 0 ? (
+      {loading ? (
         <ProjectsSkeleton />
+      ) : projects.length === 0 ? (
+        <div className="py-20 text-center bg-white dark:bg-slate-900">
+          <p className="text-gray-500 dark:text-slate-400">
+            No projects found.
+          </p>
+        </div>
       ) : (
         <section
           id="projects-section"
@@ -39,92 +69,126 @@ export default function Projects() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+              <span
+                className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
+              >
                 Projects
               </span>
             </motion.h1>
 
             <div className="grid gap-8 sm:grid-cols-2">
-              {projects.map((project) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, ease: 'easeOut' }}
-                  viewport={{ once: true }}
-                  className="relative border border-indigo-300 dark:border-slate-600 overflow-hidden rounded-2xl flex flex-col bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="p-4 flex justify-center relative">
-                    <div className="w-full h-48 rounded-xl border border-indigo-200 dark:border-slate-500 overflow-hidden relative bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-600">
-                      <Image
-                        src={project.data.image as string}
-                        alt={project.data.title}
-                        fill
-                        className="object-cover"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 opacity-20">
-                        <div
-                          className="w-full h-full"
-                          style={{
-                            backgroundImage:
-                              'linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px), linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px)',
-                            backgroundSize: '15px 15px',
-                          }}
-                        />
+              {projects
+                .filter((project) => project && project.image && project.title)
+                .map((project) => (
+                  <motion.div
+                    key={project._id}
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    viewport={{ once: true }}
+                    className="relative border border-indigo-300 dark:border-slate-600 overflow-hidden rounded-2xl flex flex-col bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="p-4 flex justify-center relative">
+                      <div className="w-full h-48 rounded-xl border border-indigo-200 dark:border-slate-500 overflow-hidden relative bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-600">
+                        {project.image ? (
+                          <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            className="object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-indigo-400 dark:text-slate-400">
+                            <svg
+                              className="w-16 h-16"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 opacity-20">
+                          <div
+                            className="w-full h-full"
+                            style={{
+                              backgroundImage:
+                                'linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px), linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px)',
+                              backgroundSize: '15px 15px',
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-indigo-200 dark:via-slate-500 to-transparent" />
-                  <div className="p-4 flex flex-col flex-grow">
-                    <span className="inline-block px-3 py-1 bg-indigo-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 rounded-full text-xs font-medium mb-3 border border-indigo-200 dark:border-slate-600">
-                      {project.data.stack}
-                    </span>
-                    <h3 className="text-lg font-medium text-indigo-600 dark:text-indigo-400 mb-2">
-                      {project.data.title}
-                    </h3>
-                    <p className="text-gray-700 dark:text-slate-300 mb-4 leading-relaxed text-sm flex-grow">
-                      {project.data.description}
-                    </p>
-                    <div className="flex justify-between items-center mt-auto">
-                      <a
-                        href={project.data.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition flex items-center text-xs font-medium bg-indigo-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-slate-600 hover:bg-indigo-200 dark:hover:bg-slate-600"
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-indigo-200 dark:via-slate-500 to-transparent" />
+                    <div className="p-4 flex flex-col flex-grow">
+                      <span
+                        className={`inline-block px-3 py-1 bg-gradient-to-br ${currentTheme.badgeBg} ${currentTheme.badgeText} rounded-full text-xs font-medium mb-3 border ${currentTheme.badgeBorder}`}
                       >
-                        Live Demo
-                        <svg className="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none">
-                          <path
-                            d="M5 12H19M19 12L12 5M19 12L12 19"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </a>
-                      <a
-                        href={project.data.githubLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition flex items-center text-xs font-medium bg-indigo-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-slate-600 hover:bg-indigo-200 dark:hover:bg-slate-600"
+                        {project.technologies.join(' | ')}
+                      </span>
+                      <h3
+                        className={`text-lg font-medium ${currentTheme.primary} mb-2`}
                       >
-                        Code
-                        <svg className="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none">
-                          <path
-                            d="M5 12H19M19 12L12 5M19 12L12 19"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </a>
+                        {project.title}
+                      </h3>
+                      <p className="text-gray-700 dark:text-slate-300 mb-4 leading-relaxed text-sm flex-grow">
+                        {project.description}
+                      </p>
+                      <div className="flex justify-between items-center mt-auto">
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`${currentTheme.primary} hover:${currentTheme.secondary} transition flex items-center text-xs font-medium bg-gradient-to-br ${currentTheme.badgeBg} px-3 py-1.5 rounded-lg border ${currentTheme.badgeBorder} ${currentTheme.buttonHover}`}
+                        >
+                          Live Demo
+                          <svg
+                            className="w-3 h-3 ml-1"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M5 12H19M19 12L12 5M19 12L12 19"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </a>
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`${currentTheme.primary} hover:${currentTheme.secondary} transition flex items-center text-xs font-medium bg-gradient-to-br ${currentTheme.badgeBg} px-3 py-1.5 rounded-lg border ${currentTheme.badgeBorder} ${currentTheme.buttonHover}`}
+                        >
+                          Code
+                          <svg
+                            className="w-3 h-3 ml-1"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M5 12H19M19 12L12 5M19 12L12 19"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
             </div>
           </div>
         </section>
@@ -142,9 +206,9 @@ function ProjectsSkeleton() {
     >
       {/* Skeleton Wave Background */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-gradient-to-b from-indigo-50/80 to-gray-50/80 dark:from-slate-800/80 dark:to-slate-900/80 z-0" />
-      
+
       {/* Updated skeleton title style */}
-      <motion.h1 
+      <motion.h1
         className="text-5xl font-bold text-center mb-12 relative z-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

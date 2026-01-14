@@ -50,7 +50,8 @@ export default function Skills() {
             Technologies I Work With
           </h1>
           <p className="text-lg text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
-            A comprehensive suite of modern tools and technologies to deliver exceptional digital solutions
+            A comprehensive suite of modern tools and technologies to deliver
+            exceptional digital solutions
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400 rounded-full mx-auto mt-6"></div>
         </div>
@@ -99,8 +100,9 @@ export default function Skills() {
         <div className="text-center mt-16 max-w-3xl mx-auto">
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl p-8 border border-white/50 dark:border-slate-700/50 shadow-lg dark:shadow-slate-900/20">
             <p className="text-gray-700 dark:text-slate-300 text-lg leading-relaxed font-light">
-              Continuously expanding my expertise with the latest technologies and best practices
-              to deliver cutting-edge solutions for modern web applications.
+              Continuously expanding my expertise with the latest technologies
+              and best practices to deliver cutting-edge solutions for modern
+              web applications.
             </p>
           </div>
         </div>

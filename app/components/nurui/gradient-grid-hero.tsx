@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useEffect, useRef } from "react"
-import { motion } from "framer-motion"
+import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 
 export function GradientGridHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -10,7 +10,7 @@ export function GradientGridHero() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext("2d")
+    const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     let devicePixelRatio: number
@@ -26,7 +26,7 @@ export function GradientGridHero() {
     }
 
     setCanvasDimensions()
-    window.addEventListener("resize", setCanvasDimensions)
+    window.addEventListener('resize', setCanvasDimensions)
 
     // Mouse position
     let mouseX = 0
@@ -34,7 +34,7 @@ export function GradientGridHero() {
     let targetX = 0
     let targetY = 0
 
-    window.addEventListener("mousemove", (e) => {
+    window.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect()
       targetX = e.clientX - rect.left
       targetY = e.clientY - rect.top
@@ -96,7 +96,7 @@ export function GradientGridHero() {
 
     // Particle grid
     const particlesArray: Particle[] = []
-    const gridSize = 40 
+    const gridSize = 40
 
     function init() {
       particlesArray.length = 0
@@ -167,11 +167,11 @@ export function GradientGridHero() {
 
     requestAnimationFrame(animate)
 
-    window.addEventListener("resize", init)
+    window.addEventListener('resize', init)
 
     return () => {
-      window.removeEventListener("resize", setCanvasDimensions)
-      window.removeEventListener("resize", init)
+      window.removeEventListener('resize', setCanvasDimensions)
+      window.removeEventListener('resize', init)
     }
   }, [])
 
@@ -182,7 +182,11 @@ export function GradientGridHero() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <canvas ref={canvasRef} className="w-full h-screen" style={{ display: "block" }} />
+      <canvas
+        ref={canvasRef}
+        className="w-full h-screen"
+        style={{ display: 'block' }}
+      />
     </motion.div>
   )
 }

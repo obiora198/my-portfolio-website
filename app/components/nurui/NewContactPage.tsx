@@ -1,72 +1,45 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import CanvasRevealEffect from './PixelMatrix'
+import React, { useState, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mail, User, MessageSquare, Send } from 'lucide-react'
+import { useTheme } from '../ThemeContext'
 import emailjs from '@emailjs/browser'
 import { toast } from 'react-hot-toast'
 
-interface ContactPageProps {
-  className?: string
-}
-
 export default function Contact() {
-  return (
-    <section
-      id="contact-section"
-      className="flex w-full h-screen justify-center items-center bg-white dark:bg-slate-900 transition-colors duration-300"
-    >
-      <ContactPage />
-    </section>
-  )
-}
-
-export const ContactPage = ({ className }: ContactPageProps) => {
-  const [loading, setLoading] = useState<boolean>(false)
-  const [formSubmitted, setFormSubmitted] = useState<boolean>(false)
+  const { currentTheme } = useTheme()
+  const [loading, setLoading] = useState(false)
+  const [formSubmitted, setFormSubmitted] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
-  const [initialCanvasVisible, setInitialCanvasVisible] = useState(true)
-  const [reverseCanvasVisible, setReverseCanvasVisible] = useState(false)
-  
-  // Intersection Observer state
-  const [isInView, setIsInView] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
+
+  const [formData, setFormData] = useState({
+    userName: '',
+    userEmail: '',
+    message: '',
+  })
 
   const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
   const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
 
-  if (!serviceId || !templateId) {
-    console.error('EmailJS environment variables are not set')
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
   }
 
-  // Intersection Observer to detect when section is in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting)
-      },
-      {
-        threshold: 0.2,
-        rootMargin: '50px',
-      }
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current)
-      }
-    }
-  }, [])
-
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     setLoading(true)
 
-    if (!formRef.current || !serviceId || !templateId) return
+    if (!formRef.current || !serviceId || !templateId) {
+      console.error('EmailJS configuration missing')
+      setLoading(false)
+      return
+    }
 
     toast.loading('Sending message...', { id: 'contact-toast' })
 
@@ -75,20 +48,15 @@ export const ContactPage = ({ className }: ContactPageProps) => {
         publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
       })
       .then(
-        (response) => {
+        () => {
           toast.success('Message sent successfully!', { id: 'contact-toast' })
-
-          setReverseCanvasVisible(true)
-          setInitialCanvasVisible(false)
-
-          setTimeout(() => {
-            setFormSubmitted(true)
-            setLoading(false)
-          }, 2000)
-
+          setFormSubmitted(true)
+          setLoading(false)
+          setFormData({ userName: '', userEmail: '', message: '' })
           formRef.current?.reset()
         },
         (error) => {
+          console.error('EmailJS error:', error)
           toast.error('Failed to send message. Please try again.', {
             id: 'contact-toast',
           })
@@ -99,237 +67,245 @@ export const ContactPage = ({ className }: ContactPageProps) => {
 
   const handleBackToForm = () => {
     setFormSubmitted(false)
-    setReverseCanvasVisible(false)
-    setInitialCanvasVisible(true)
   }
 
   return (
-    <div
-      ref={sectionRef}
-      className={`flex w-full flex-col min-h-screen sm:pb-16 pb-8 relative bg-white dark:bg-slate-900 transition-colors duration-300 ${className}`}
+    <section
+      id="contact-section"
+      className="py-20 px-6 sm:px-8 lg:px-12 bg-gradient-to-br from-gray-50 to-white dark:from-slate-950 dark:to-slate-900 transition-colors duration-300"
     >
-      <div className="absolute inset-0 z-0">
-        {/* Initial canvas (forward animation) */}
-        {initialCanvasVisible && (
-          <div className="absolute inset-0">
-            <CanvasRevealEffect
-              animationSpeed={6}
-              colors={[
-                [99, 102, 241], // indigo-500
-                [196, 181, 253], // violet-300
-              ]}
-              dotSize={5}
-              reverse={false}
-              isVisible={isInView}
-            />
-          </div>
-        )}
+      <div className="max-w-5xl mx-auto">
+        {/* Section Header */}
+        <motion.div
+          className="text-center mb-16 space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2
+            className={`text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
+          >
+            Get In Touch
+          </h2>
+          <p className="text-lg sm:text-xl text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
+            Have a project in mind? Let's work together to create something
+            amazing
+          </p>
+        </motion.div>
 
-        {/* Reverse canvas (appears when form is submitted) */}
-        {reverseCanvasVisible && (
-          <div className="absolute inset-0">
-            <CanvasRevealEffect
-              animationSpeed={6}
-              colors={[
-                [255, 255, 255],
-                [255, 255, 255],
-              ]}
-              dotSize={5}
-              reverse={true}
-              isVisible={isInView}
-            />
-          </div>
-        )}
-
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(225,225,225,1)_0%,_transparent_100%)] dark:bg-[radial-gradient(circle_at_center,_rgba(30,41,59,1)_0%,_transparent_100%)]" />
-        <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-gray-50 to-transparent dark:from-slate-800 dark:to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-gray-50 to-transparent dark:from-slate-800 dark:to-transparent" />
-      </div>
-
-      {/* Content Layer */}
-      <div className="relative z-20 flex flex-col flex-1">
-        <div className="flex flex-1 flex-col lg:flex-row">
-          <div className="flex-1 flex flex-col justify-center items-center px-4 pt-4">
-            <div className="w-full max-w-lg">
-              <AnimatePresence mode="wait">
-                {!formSubmitted ? (
-                  <motion.div
-                    key="contact-form"
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -50 }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="space-y-8"
-                  >
-                    {/* Header */}
-                    <div className="text-center space-y-2">
-                      <motion.h1
-                        className="text-5xl font-bold text-center"
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-                          Get in Touch
-                        </span>
-                      </motion.h1>
-                      <p className="text-lg text-indigo-400 dark:text-indigo-300 font-extralight">
-                        Let&apos;s start a conversation
-                      </p>
-                    </div>
-
-                    {/* Contact Form */}
-                    <div className="backdrop-blur-sm bg-white dark:bg-slate-800 rounded-3xl border border-indigo-300 dark:border-slate-600 px-6 py-8 shadow-lg dark:shadow-slate-900/20">
-                      <form
-                        ref={formRef}
-                        className="flex flex-col gap-6"
-                        onSubmit={handleFormSubmit}
-                      >
-                        {/* Name Field */}
-                        <div className="relative">
-                          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                            Your Name
-                          </label>
-                          <input
-                            type="text"
-                            id="name"
-                            name="userName"
-                            placeholder="Enter your name"
-                            required
-                            className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
-                          />
-                        </div>
-
-                        {/* Email Field */}
-                        <div className="relative">
-                          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                            Your Email
-                          </label>
-                          <input
-                            type="email"
-                            id="email"
-                            name="userEmail"
-                            placeholder="Enter your email"
-                            required
-                            className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
-                          />
-                        </div>
-
-                        {/* Message Field */}
-                        <div className="relative">
-                          <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                            Your Message
-                          </label>
-                          <textarea
-                            id="message"
-                            name="message"
-                            rows={4}
-                            placeholder="Tell me about your project..."
-                            required
-                            className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 resize-none"
-                          />
-                        </div>
-
-                        {/* Submit Button */}
-                        <motion.button
-                          type="submit"
-                          disabled={loading}
-                          className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 ${
-                            loading
-                              ? 'bg-gray-400 dark:bg-slate-600 text-white cursor-not-allowed'
-                              : 'bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-600 dark:to-purple-600 text-white hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/25'
-                          }`}
-                          whileTap={{ scale: loading ? 1 : 0.98 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {loading ? (
-                            <div className="flex items-center justify-center gap-3">
-                              <div className="w-5 h-5 border-2 border-white/80 rounded-full animate-spin border-t-white"></div>
-                              <span className="text-white">Sending Message...</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-center gap-2">
-                              <span>Send Message</span>
-                              <svg 
-                                className="w-4 h-4" 
-                                fill="none" 
-                                stroke="currentColor" 
-                                viewBox="0 0 24 24"
-                              >
-                                <path 
-                                  strokeLinecap="round" 
-                                  strokeLinejoin="round" 
-                                  strokeWidth={2} 
-                                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" 
-                                />
-                              </svg>
-                            </div>
-                          )}
-                        </motion.button>
-                      </form>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="success-step"
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, ease: 'easeOut', delay: 0.3 }}
-                    className="space-y-8 text-center"
-                  >
-                    <div className="space-y-2">
-                      <h1 className="text-4xl font-bold text-indigo-500 dark:text-indigo-400">
-                        Message Sent!
-                      </h1>
-                      <p className="text-lg text-indigo-500/70 dark:text-indigo-300/70 font-light">
-                        Thank you for reaching out
-                      </p>
-                    </div>
-
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.5 }}
-                      className="py-10"
-                    >
-                      <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-white to-white/70 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center shadow-lg">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-10 w-10 text-black dark:text-white"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </motion.div>
-
-                    <div className="space-y-4">
-                      <p className="text-indigo-500 dark:text-indigo-400 font-light text-lg">
-                        We&apos;ve received your message and will respond within 24 hours.
-                      </p>
-
-                      <motion.button
-                        onClick={handleBackToForm}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1 }}
-                        className="w-full py-4 rounded-xl bg-white dark:bg-slate-700 text-black dark:text-white font-medium hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors border border-gray-200 dark:border-slate-600 shadow-sm"
-                      >
-                        Send Another Message
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Left - Contact Info */}
+          <motion.div
+            className="space-y-8"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                Let's create something amazing together
+              </h3>
+              <p className="text-gray-600 dark:text-slate-400 leading-relaxed text-lg">
+                I'm always interested in hearing about new projects and
+                opportunities. Whether you have a question or just want to say
+                hi, feel free to drop me a message!
+              </p>
             </div>
-          </div>
+
+            {/* Contact Cards */}
+            <div className="space-y-4 text-lg">
+              <motion.div
+                className={`flex items-start gap-4 p-6 rounded-2xl bg-gradient-to-br ${currentTheme.badgeBg} border border-${currentTheme.badgeBorder} shadow-sm`}
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div
+                  className={`p-4 rounded-xl bg-gradient-to-br ${currentTheme.iconBg} text-white flex-shrink-0`}
+                >
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Email
+                  </h4>
+                  <a
+                    href="mailto:emmanuelobiora.dev@gmail.com"
+                    className={`${currentTheme.primary} hover:underline`}
+                  >
+                    emmanuelobiora.dev@gmail.com
+                  </a>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className={`flex items-start gap-4 p-6 rounded-2xl bg-gradient-to-br ${currentTheme.badgeBg} border border-${currentTheme.badgeBorder} shadow-sm`}
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div
+                  className={`p-4 rounded-xl bg-gradient-to-br ${currentTheme.iconBg} text-white flex-shrink-0`}
+                >
+                  <MessageSquare className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Response Time
+                  </h4>
+                  <p className="text-gray-600 dark:text-slate-400">
+                    Usually within 24 hours
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Decorative Element */}
+            <div className="relative hidden lg:block h-32">
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${currentTheme.gradient} opacity-10 rounded-3xl blur-2xl`}
+              />
+            </div>
+          </motion.div>
+
+          {/* Right - Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <AnimatePresence mode="wait">
+              {!formSubmitted ? (
+                <motion.form
+                  key="contact-form"
+                  ref={formRef}
+                  onSubmit={handleSubmit}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-700 p-8 space-y-6"
+                >
+                  {/* Name Field */}
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="name"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300"
+                    >
+                      <User className={`w-4 h-4 ${currentTheme.primary}`} />
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="userName"
+                      value={formData.userName}
+                      onChange={handleChange}
+                      required
+                      className={`w-full px-4 py-3 rounded-xl border-2 border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:${currentTheme.primary.replace(
+                        'text-',
+                        'border-'
+                      )} focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200`}
+                      placeholder="John Doe"
+                    />
+                  </div>
+
+                  {/* Email Field */}
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="email"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300"
+                    >
+                      <Mail className={`w-4 h-4 ${currentTheme.primary}`} />
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="userEmail"
+                      value={formData.userEmail}
+                      onChange={handleChange}
+                      required
+                      className={`w-full px-4 py-3 rounded-xl border-2 border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:${currentTheme.primary.replace(
+                        'text-',
+                        'border-'
+                      )} focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200`}
+                      placeholder="john@example.com"
+                    />
+                  </div>
+
+                  {/* Message Field */}
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="message"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300"
+                    >
+                      <MessageSquare
+                        className={`w-4 h-4 ${currentTheme.primary}`}
+                      />
+                      Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      rows={5}
+                      className={`w-full px-4 py-3 rounded-xl border-2 border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:${currentTheme.primary.replace('text-', 'border-')} dark:focus:${currentTheme.primary.replace('text-', 'border-')} focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-none`}
+                      placeholder="Tell me about your project..."
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <motion.button
+                    type="submit"
+                    disabled={loading}
+                    className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium ${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed`}
+                    whileHover={!loading ? { scale: 1.02 } : {}}
+                    whileTap={!loading ? { scale: 0.98 } : {}}
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Send className="w-5 h-5" />
+                    )}
+                    {loading ? 'Sending...' : 'Send Message'}
+                  </motion.button>
+                </motion.form>
+              ) : (
+                <motion.div
+                  key="success-message"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-700 p-12 text-center space-y-6"
+                >
+                  <div
+                    className={`w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto`}
+                  >
+                    <Send className="w-10 h-10" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      Message Sent!
+                    </h3>
+                    <p className="text-gray-600 dark:text-slate-400">
+                      Thank you for reaching out. I'll get back to you within 24
+                      hours.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleBackToForm}
+                    className={`${currentTheme.primary} font-medium hover:underline`}
+                  >
+                    Send another message
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
