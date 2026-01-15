@@ -7,6 +7,7 @@ import React, {
   useState,
   ReactNode,
 } from 'react'
+import { generateFavicon, updateFavicon } from '../utils/favicon'
 
 export type ThemeMode = 'light' | 'dark'
 
@@ -186,6 +187,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     root.setAttribute('data-palette', themeName)
     localStorage.setItem('theme', themeMode)
     localStorage.setItem('palette', themeName)
+
+    // Update favicon with current theme colors
+    const currentColors =
+      themeMode === 'light' ? themes[themeName] : darkThemes[themeName]
+    const faviconHref = generateFavicon(
+      currentColors.primary,
+      currentColors.secondary,
+      currentColors.accent
+    )
+    updateFavicon(faviconHref)
   }, [themeMode, themeName, mounted])
 
   const toggleTheme = () => {

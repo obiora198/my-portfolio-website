@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Moon, Sun } from 'lucide-react'
 import Link from 'next/link'
 import { useTheme } from '../ThemeContext'
+import { Logo } from '../Logo'
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -49,12 +50,12 @@ export function Navigation() {
           {/* Logo */}
           <motion.a
             href="#home"
-            className="relative z-50 text-2xl font-bold bg-gradient-to-r from-orange-600 via-rose-600 to-pink-600 bg-clip-text text-transparent"
+            className="relative z-50"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Emmanuel.dev
+            <Logo />
           </motion.a>
 
           {/* Desktop Navigation */}

@@ -163,12 +163,12 @@ export function HeroSection() {
 
           {/* Right Content - Image/Visual */}
           <motion.div
-            className="relative"
+            className="relative flex items-center justify-center"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="relative">
+            <div className="relative max-w-md mx-auto">
               {/* Decorative Background */}
               <div
                 className={`absolute inset-0 bg-gradient-to-br ${currentTheme.iconBg} rounded-3xl transform rotate-6`}
@@ -177,11 +177,11 @@ export function HeroSection() {
               {/* Image Container */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/hero-img.png"
-                  alt="Emmanuel Obiora - Developer workspace"
-                  width={600}
-                  height={600}
-                  className="w-full h-auto"
+                  src="/hero-photo.jpg"
+                  alt="Emmanuel Obiora - Full-Stack Developer"
+                  width={500}
+                  height={650}
+                  className="w-full h-auto max-h-[500px] md:max-h-[600px] lg:max-h-[650px] object-cover object-center"
                   priority
                 />
               </div>

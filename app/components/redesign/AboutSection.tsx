@@ -112,8 +112,8 @@ export function AboutSection() {
             {/* Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src="/profile-img.png"
-                alt="Emmanuel Obiora workspace"
+                src="/about-photo.jpg"
+                alt="Emmanuel Obiora - Developer at work"
                 width={600}
                 height={400}
                 className="w-full h-64 object-cover"
