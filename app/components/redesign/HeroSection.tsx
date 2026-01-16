@@ -105,7 +105,8 @@ export function HeroSection() {
                 <ArrowRight className="w-5 h-5" />
               </a>
               <a
-                href="#contact"
+                href="/Emmanuel-Obiora-Resume.pdf"
+                download="Emmanuel-Obiora-Resume.pdf"
                 className={`inline-flex items-center gap-2 px-6 py-3 border-2 rounded-xl font-medium transition-all duration-200 ${
                   isDarkMode
                     ? 'bg-gray-800 border-gray-700 text-white hover:border-gray-600'
@@ -149,7 +150,7 @@ export function HeroSection() {
                 <Linkedin className="w-5 h-5" />
               </a>
               <a
-                href="mailto:emmanuelobiora196@gmail.com"
+                href="mailto:emmanuelobiora11@gmail.com"
                 className={`p-3 rounded-lg transition-all duration-200 ${
                   isDarkMode
                     ? 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'

@@ -80,10 +80,10 @@ export function ContactSection() {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left - Contact Info */}
           <motion.div
-            className="space-y-8"
+            className="space-y-8 w-full"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -107,7 +107,7 @@ export function ContactSection() {
             {/* Contact Cards */}
             <div className="space-y-4">
               <motion.div
-                className={`flex items-start gap-4 p-5 rounded-2xl border ${
+                className={`flex items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border ${
                   isDarkMode
                     ? 'bg-gray-900 border-gray-700'
                     : `bg-gradient-to-br ${currentTheme.badgeBg} border-${currentTheme.badgeBorder}`
@@ -127,16 +127,16 @@ export function ContactSection() {
                     Email
                   </h4>
                   <a
-                    href="mailto:emmanuelobiora196@gmail.com"
-                    className={`text-${currentTheme.primary} hover:underline`}
+                    href="mailto:emmanuelobiora11@gmail.com"
+                    className={`text-${currentTheme.primary} hover:underline break-all`}
                   >
-                    emmanuelobiora196@gmail.com
+                    emmanuelobiora11@gmail.com
                   </a>
                 </div>
               </motion.div>
 
               <motion.div
-                className={`flex items-start gap-4 p-5 rounded-2xl border ${
+                className={`flex items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border ${
                   isDarkMode
                     ? 'bg-gray-900 border-gray-700'
                     : `bg-gradient-to-br ${currentTheme.badgeBg} border-${currentTheme.badgeBorder}`
@@ -165,6 +165,7 @@ export function ContactSection() {
 
           {/* Right - Contact Form */}
           <motion.div
+            className="w-full"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -173,7 +174,7 @@ export function ContactSection() {
             <form
               ref={formRef}
               onSubmit={handleSubmit}
-              className={`rounded-3xl shadow-xl border p-8 space-y-6 ${
+              className={`rounded-3xl shadow-xl border p-6 sm:p-8 space-y-4 sm:space-y-6 ${
                 isDarkMode
                   ? 'bg-gray-900 border-gray-700'
                   : 'bg-white border-gray-100'
@@ -197,7 +198,7 @@ export function ContactSection() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
+                  className={`w-full px-4 py-3 text-base rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
                     isDarkMode
                       ? 'bg-gray-800 border-gray-700 text-white focus:border-orange-600 focus:ring-orange-600/20'
                       : 'border-gray-200 focus:border-orange-600 focus:ring-orange-600/20'
@@ -224,7 +225,7 @@ export function ContactSection() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
+                  className={`w-full px-4 py-3 text-base rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
                     isDarkMode
                       ? 'bg-gray-800 border-gray-700 text-white focus:border-orange-600 focus:ring-orange-600/20'
                       : 'border-gray-200 focus:border-orange-600 focus:ring-orange-600/20'
@@ -251,7 +252,7 @@ export function ContactSection() {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
+                  className={`w-full px-4 py-3 text-base rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
                     isDarkMode
                       ? 'bg-gray-800 border-gray-700 text-white focus:border-orange-600 focus:ring-orange-600/20'
                       : 'border-gray-200 focus:border-orange-600 focus:ring-orange-600/20'

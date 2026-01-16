@@ -35,9 +35,10 @@ export function ThemeSwitcher() {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button - Responsive sizing */}
       <motion.button
-        className={`fixed bottom-8 right-8 z-50 p-4 rounded-full bg-gradient-to-r ${currentTheme.buttonGradient} text-white shadow-lg hover:shadow-2xl transition-shadow duration-300`}
+        className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 p-3 sm:p-4 rounded-full bg-gradient-to-r ${currentTheme.buttonGradient} text-white shadow-lg hover:shadow-2xl transition-shadow duration-300`}
+        style={{ zIndex: 50 }}
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -45,7 +46,7 @@ export function ThemeSwitcher() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <Palette className="w-6 h-6" />
+        <Palette className="w-5 h-5 sm:w-6 sm:h-6" />
       </motion.button>
 
       {/* Theme Panel */}
@@ -54,16 +55,18 @@ export function ThemeSwitcher() {
           <>
             {/* Backdrop */}
             <motion.div
-              className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+              style={{ zIndex: 9998 }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Panel */}
+            {/* Panel - Mobile responsive */}
             <motion.div
-              className="fixed right-8 bottom-28 z-50 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-80 max-h-[600px] overflow-y-auto"
+              className="fixed left-4 right-4 bottom-20 sm:left-auto sm:right-8 sm:bottom-28 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6 w-auto sm:w-80 max-h-[70vh] sm:max-h-[600px] overflow-y-auto"
+              style={{ zIndex: 9999 }}
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
