@@ -93,19 +93,20 @@ export function AboutSection() {
               <p
                 className={`leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
               >
-                With over 2 years of experience in web development, I've had the
-                privilege of working with startups and businesses to bring their
-                digital visions to life. My journey began with a curiosity about
-                how things work on the web, and it has evolved into a passion
-                for creating seamless, user-centric applications.
+                With over 2 years of experience in web development, I&apos;ve
+                had the privilege of working with startups and businesses to
+                bring their digital visions to life. My journey began with a
+                curiosity about how things work on the web, and it has evolved
+                into a passion for creating seamless, user-centric applications.
               </p>
               <p
                 className={`leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
               >
                 I believe in the power of clean code, intuitive design, and
-                continuous learning. Whether it's building a complex dashboard,
-                designing a landing page, or architecting a scalable backend, I
-                approach each project with dedication and attention to detail.
+                continuous learning. Whether it&apos;s building a complex
+                dashboard, designing a landing page, or architecting a scalable
+                backend, I approach each project with dedication and attention
+                to detail.
               </p>
             </div>
 

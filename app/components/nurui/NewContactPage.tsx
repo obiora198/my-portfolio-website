@@ -89,7 +89,7 @@ export default function Contact() {
             Get In Touch
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Have a project in mind? Let's work together to create something
+            Have a project in mind? Let&apos;s work together to create something
             amazing
           </p>
         </motion.div>
@@ -105,10 +105,10 @@ export default function Contact() {
           >
             <div className="space-y-6">
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Let's create something amazing together
+                Let&apos;s create something amazing together
               </h3>
               <p className="text-gray-600 dark:text-slate-400 leading-relaxed text-lg">
-                I'm always interested in hearing about new projects and
+                I&apos;m always interested in hearing about new projects and
                 opportunities. Whether you have a question or just want to say
                 hi, feel free to drop me a message!
               </p>
@@ -290,8 +290,8 @@ export default function Contact() {
                       Message Sent!
                     </h3>
                     <p className="text-gray-600 dark:text-slate-400">
-                      Thank you for reaching out. I'll get back to you within 24
-                      hours.
+                      Thank you for reaching out. I&apos;ll get back to you
+                      within 24 hours.
                     </p>
                   </div>
                   <button

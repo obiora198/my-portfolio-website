@@ -28,7 +28,7 @@ export function FooterSection() {
             </h3>
             <p className="text-gray-400 leading-relaxed">
               Building exceptional digital experiences with passion and
-              precision. Let's create something amazing together.
+              precision. Let&apos;s build something amazing together.
             </p>
           </motion.div>
 

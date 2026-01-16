@@ -75,7 +75,7 @@ export function ContactSection() {
           <p
             className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
           >
-            Have a project in mind? Let's work together to create something
+            Have a project in mind? Let&apos;s work together to create something
             amazing
           </p>
         </motion.div>
@@ -93,12 +93,12 @@ export function ContactSection() {
               <h3
                 className={`text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
               >
-                Let's create something amazing together
+                Let&apos;s create something amazing together
               </h3>
               <p
                 className={`leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
               >
-                I'm always interested in hearing about new projects and
+                I&apos;m always interested in hearing about new projects and
                 opportunities. Whether you have a question or just want to say
                 hi, feel free to drop me a message!
               </p>

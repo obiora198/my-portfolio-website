@@ -58,7 +58,7 @@ export function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                Hi, I'm{' '}
+                Hi, I&apos;m{' '}
                 <span
                   className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
                 >
