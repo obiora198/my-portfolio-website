@@ -51,14 +51,14 @@ export function HeroSection() {
             {/* Main Heading */}
             <div className="space-y-4">
               <motion.h1
-                className={`text-5xl sm:text-6xl lg:text-7xl font-bold ${
+                className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                Hi, I&apos;m{' '}
+                Hi, I&apos;m <br className="hidden sm:block" />
                 <span
                   className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
                 >
@@ -169,14 +169,14 @@ export function HeroSection() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="relative max-w-md mx-auto">
+            <div className="relative max-w-md lg:max-w-xl mx-auto">
               {/* Decorative Background */}
               <div
                 className={`absolute inset-0 bg-gradient-to-br ${currentTheme.iconBg} rounded-3xl transform rotate-6`}
               />
 
               {/* Image Container */}
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative rounded-3xl overflow-hidden w-full shadow-2xl">
                 <Image
                   src="/hero-photo.jpg"
                   alt="Emmanuel Obiora - Full-Stack Developer"
