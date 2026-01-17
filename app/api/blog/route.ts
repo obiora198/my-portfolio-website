@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       author,
       tags,
       published,
-    } = body
+    const { title, slug, content, excerpt, coverImage, author, tags } = body
 
     // Validate required fields
     if (!title || !slug || !content || !excerpt) {
@@ -84,34 +84,35 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if slug already exists
-    const existingPost = await Post.findOne({ slug })
-    if (existingPost) {
+    const existingBlog = await Blog.findOne({ slug })
+    if (existingBlog) {
       return NextResponse.json(
-        { error: 'A post with this slug already exists' },
-        { status: 409 }
+        { error: 'A blog post with this slug already exists' },
+        { status: 400 }
       )
     }
 
-    // Create new post
-    const post = await Post.create({
+    const newBlog = new Blog({
       title,
       slug,
       content,
       excerpt,
       coverImage,
-      author: author || 'Emmanuel Obiora',
-      tags: tags || [],
-      published: published || false,
+      author: author || 'Emmanuel Obiora', // Default author if not provided
+      tags: tags || [], // Default to empty array if not provided
+      published: false, // Default to unpublished
     })
 
+    await newBlog.save()
+
     return NextResponse.json(
-      { message: 'Post created successfully', post },
+      { message: 'Blog post created successfully', post: newBlog },
       { status: 201 }
     )
   } catch (error: any) {
-    console.error('Error creating post:', error)
+    console.error('Error creating blog post:', error)
     return NextResponse.json(
-      { error: 'Failed to create post', message: error.message },
+      { error: 'Failed to create blog post', message: error.message },
       { status: 500 }
     )
   }
