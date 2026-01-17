@@ -43,27 +43,30 @@ export async function PUT(
     const { slug } = params
     const body = await request.json()
 
-    const post = await Post.findOne({ slug })
+    const blog = await Blog.findOne({ slug })
 
-    if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    if (!blog) {
+      return NextResponse.json(
+        { error: 'Blog post not found' },
+        { status: 404 }
+      )
     }
 
-    // Update post
-    const updatedPost = await Post.findByIdAndUpdate(
-      post._id,
+    // Update blog
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      blog._id,
       { ...body },
       { new: true, runValidators: true }
     )
 
     return NextResponse.json({
-      message: 'Post updated successfully',
-      post: updatedPost,
+      message: 'Blog post updated successfully',
+      post: updatedBlog,
     })
   } catch (error: any) {
-    console.error('Error updating post:', error)
+    console.error('Error updating blog post:', error)
     return NextResponse.json(
-      { error: 'Failed to update post', message: error.message },
+      { error: 'Failed to update blog post', message: error.message },
       { status: 500 }
     )
   }
@@ -79,21 +82,24 @@ export async function DELETE(
 
     const { slug } = params
 
-    const post = await Post.findOne({ slug })
+    const blog = await Blog.findOne({ slug })
 
-    if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    if (!blog) {
+      return NextResponse.json(
+        { error: 'Blog post not found' },
+        { status: 404 }
+      )
     }
 
-    await Post.findByIdAndDelete(post._id)
+    await Blog.findByIdAndDelete(blog._id)
 
     return NextResponse.json({
-      message: 'Post deleted successfully',
+      message: 'Blog post deleted successfully',
     })
   } catch (error: any) {
-    console.error('Error deleting post:', error)
+    console.error('Error deleting blog post:', error)
     return NextResponse.json(
-      { error: 'Failed to delete post', message: error.message },
+      { error: 'Failed to delete blog post', message: error.message },
       { status: 500 }
     )
   }
