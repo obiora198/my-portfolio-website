@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
-import Post from '@/models/Post'
+import Blog from '@/models/Blog'
 
-// GET /api/blog - List all published posts with pagination
+// GET /api/blog - List all blog posts with pagination
 export async function GET(request: NextRequest) {
   try {
     await connectDB()
 
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '10')
+    const limit = parseInt(searchParams.get('limit') || '6')
     const tag = searchParams.get('tag')
     const search = searchParams.get('search')
 
     const skip = (page - 1) * limit
 
     // Build query
-    const query: any = { published: true }
+    const query: any = {}
 
     if (tag) {
       query.tags = tag
@@ -31,15 +31,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Get posts with pagination
-    const posts = await Post.find(query)
+    const posts = await Blog.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select('-content') // Exclude full content for list view
       .lean()
 
     // Get total count for pagination
-    const total = await Post.countDocuments(query)
+    const total = await Blog.countDocuments(query)
 
     return NextResponse.json({
       posts,

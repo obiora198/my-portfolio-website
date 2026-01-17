@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
-import Post from '@/models/Post'
+import Blog from '@/models/Blog'
 
-// GET /api/blog/[slug] - Get single post by slug
+// GET /api/blog/[slug] - Get single blog post by slug
 export async function GET(
   request: NextRequest,
   { params }: { params: { slug: string } }
@@ -10,18 +10,19 @@ export async function GET(
   try {
     await connectDB()
 
-    const { slug } = params
+    const blog = await Blog.findOne({ slug: params.slug }).lean()
 
-    const post = await Post.findOne({ slug, published: true }).lean()
-
-    if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    if (!blog) {
+      return NextResponse.json(
+        { error: 'Blog post not found' },
+        { status: 404 }
+      )
     }
 
-    // Increment view count
-    await Post.findByIdAndUpdate(post._id, { $inc: { views: 1 } })
+    // Increment views
+    await Blog.findOneAndUpdate({ slug: params.slug }, { $inc: { views: 1 } })
 
-    return NextResponse.json({ post })
+    return NextResponse.json(blog)
   } catch (error: any) {
     console.error('Error fetching post:', error)
     return NextResponse.json(

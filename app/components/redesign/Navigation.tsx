@@ -4,16 +4,17 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Moon, Sun } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useTheme } from '../ThemeContext'
 import { Logo } from '../Logo'
 
-const navLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Blog', href: '#blog' },
-  { name: 'VTU Services', href: '#vtu' },
-  { name: 'Contact', href: '#contact' },
+const baseNavLinks = [
+  { name: 'Home', href: '#home', homeHref: '#home' },
+  { name: 'About', href: '#about', homeHref: '#about' },
+  { name: 'Projects', href: '#projects', homeHref: '#projects' },
+  { name: 'Blog', href: '/blog', homeHref: '/blog' },
+  { name: 'VTU Services', href: '/vtu', homeHref: '/vtu' },
+  { name: 'Contact', href: '#contact', homeHref: '#contact' },
 ]
 
 export function Navigation() {
@@ -21,6 +22,18 @@ export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const { theme, toggleTheme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
+  const pathname = usePathname()
+  const isHomePage = pathname === '/'
+
+  // Adjust nav links based on current page
+  const navLinks = baseNavLinks.map((link) => ({
+    ...link,
+    href: isHomePage
+      ? link.homeHref
+      : link.href.startsWith('#')
+        ? `/${link.href}`
+        : link.href,
+  }))
 
   useEffect(() => {
     const handleScroll = () => {
