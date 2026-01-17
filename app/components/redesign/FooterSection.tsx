@@ -60,7 +60,7 @@ export function FooterSection() {
               </li>
               <li>
                 <a
-                  href="#blog"
+                  href="/blog"
                   className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   Blog
@@ -68,7 +68,7 @@ export function FooterSection() {
               </li>
               <li>
                 <a
-                  href="#vtu"
+                  href="/vtu"
                   className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   VTU Services
