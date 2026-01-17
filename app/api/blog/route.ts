@@ -64,15 +64,6 @@ export async function POST(request: NextRequest) {
     await connectDB()
 
     const body = await request.json()
-    const {
-      title,
-      slug,
-      content,
-      excerpt,
-      coverImage,
-      author,
-      tags,
-      published,
     const { title, slug, content, excerpt, coverImage, author, tags } = body
 
     // Validate required fields
