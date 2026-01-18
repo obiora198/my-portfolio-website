@@ -1,7 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Copy, Check } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
+import toast from 'react-hot-toast'
 
 interface Transaction {
   requestId: string
@@ -22,6 +25,18 @@ export function RecentTransactions({
 }: RecentTransactionsProps) {
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedId(text)
+      toast.success('Transaction ID copied!')
+      setTimeout(() => setCopiedId(null), 2000)
+    } catch (err) {
+      toast.error('Failed to copy')
+    }
+  }
 
   const getStatusColor = (status: string) => {
     const lowerStatus = status.toLowerCase()
@@ -151,7 +166,26 @@ export function RecentTransactions({
                   <td
                     className={`px-6 py-4 font-mono text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
                   >
-                    {transaction.requestId.slice(0, 12)}...
+                    <div className="flex items-center gap-2">
+                      <span>{transaction.requestId.slice(0, 12)}...</span>
+                      <button
+                        onClick={() => copyToClipboard(transaction.requestId)}
+                        className={`p-1.5 rounded-lg transition-all ${
+                          copiedId === transaction.requestId
+                            ? 'bg-green-100 text-green-600'
+                            : isDarkMode
+                              ? 'hover:bg-gray-700 text-gray-400 hover:text-white'
+                              : 'hover:bg-gray-100 text-gray-500 hover:text-gray-900'
+                        }`}
+                        title="Copy transaction ID"
+                      >
+                        {copiedId === transaction.requestId ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
                   </td>
                   <td
                     className={`px-6 py-4 font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
@@ -195,17 +229,35 @@ export function RecentTransactions({
               transition={{ delay: index * 0.1 }}
             >
               <div className="flex justify-between items-start mb-3">
-                <div>
+                <div className="flex-1">
                   <p
                     className={`font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
                   >
                     {transaction.serviceID}
                   </p>
-                  <p
-                    className={`text-sm font-mono ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-                  >
-                    {transaction.requestId.slice(0, 12)}...
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={`text-sm font-mono ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                    >
+                      {transaction.requestId.slice(0, 12)}...
+                    </p>
+                    <button
+                      onClick={() => copyToClipboard(transaction.requestId)}
+                      className={`p-1 rounded transition-all ${
+                        copiedId === transaction.requestId
+                          ? 'bg-green-100 text-green-600'
+                          : isDarkMode
+                            ? 'hover:bg-gray-700 text-gray-500 hover:text-white'
+                            : 'hover:bg-gray-100 text-gray-400 hover:text-gray-900'
+                      }`}
+                    >
+                      {copiedId === transaction.requestId ? (
+                        <Check className="w-3 h-3" />
+                      ) : (
+                        <Copy className="w-3 h-3" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
