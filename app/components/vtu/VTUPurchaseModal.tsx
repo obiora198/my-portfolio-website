@@ -512,23 +512,49 @@ export function VTUPurchaseModal({
                   >
                     Select Country
                   </label>
-                  <select
-                    value={selectedCountryCode}
-                    onChange={(e) => setSelectedCountryCode(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-lg border focus:ring-2 transition-all ${
-                      isDarkMode
-                        ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500'
-                        : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500'
-                    }`}
-                    required
-                  >
-                    <option value="">Choose a country...</option>
-                    {countriesList.map((c: any) => (
-                      <option key={c.code} value={c.code}>
-                        {c.name} ({c.currency})
+                  <div className="relative">
+                    <select
+                      value={selectedCountryCode}
+                      onChange={(e) => setSelectedCountryCode(e.target.value)}
+                      className={`w-full px-4 py-3 pr-10 rounded-lg border-2 focus:ring-2 focus:ring-offset-0 transition-all appearance-none cursor-pointer font-medium ${
+                        isDarkMode
+                          ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500 focus:border-orange-500 hover:border-gray-600'
+                          : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400'
+                      }`}
+                      required
+                    >
+                      <option
+                        value=""
+                        className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
+                      >
+                        Choose a country...
                       </option>
-                    ))}
-                  </select>
+                      {countriesList.map((c: any) => (
+                        <option
+                          key={c.code}
+                          value={c.code}
+                          className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
+                        >
+                          {c.name} ({c.currency})
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg
+                        className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -605,24 +631,59 @@ export function VTUPurchaseModal({
                     >
                       Select Plan
                     </label>
-                    <select
-                      value={variationCode}
-                      onChange={(e) => handlePlanChange(e.target.value)}
-                      className={`w-full px-4 py-3 rounded-lg border focus:ring-2 transition-all ${
-                        isDarkMode
-                          ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500'
-                          : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500'
-                      }`}
-                      required
-                    >
-                      <option value="">Choose a plan...</option>
-                      {variations.map((v: any) => (
-                        <option key={v.variation_code} value={v.variation_code}>
-                          {v.name}{' '}
-                          {v.variation_amount && `- ₦${v.variation_amount}`}
+                    <div className="relative">
+                      <select
+                        value={variationCode}
+                        onChange={(e) => handlePlanChange(e.target.value)}
+                        className={`w-full px-4 py-3 pr-10 rounded-lg border-2 focus:ring-2 focus:ring-offset-0 transition-all appearance-none cursor-pointer font-medium ${
+                          isDarkMode
+                            ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500 focus:border-orange-500 hover:border-gray-600'
+                            : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400'
+                        }`}
+                        required
+                      >
+                        <option
+                          value=""
+                          className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
+                        >
+                          Choose a plan...
                         </option>
-                      ))}
-                    </select>
+                        {variations.map((v: any) => (
+                          <option
+                            key={v.variation_code}
+                            value={v.variation_code}
+                            className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
+                          >
+                            {v.name}{' '}
+                            {v.variation_amount &&
+                              `- ₦${v.variation_amount.toLocaleString()}`}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg
+                          className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    {isVariationsLoading && (
+                      <p
+                        className={`text-xs mt-2 ${isDarkMode ? 'text-orange-400' : 'text-indigo-600'} animate-pulse flex items-center gap-1`}
+                      >
+                        <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        Loading plans...
+                      </p>
+                    )}
                   </div>
                 )}
 
