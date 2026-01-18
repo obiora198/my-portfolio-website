@@ -26,22 +26,6 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight, rehypeRaw]}
-        components={{
-          code: ({ node, inline, className, children, ...props }) => {
-            if (!inline) {
-              return (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              )
-            }
-            return (
-              <code className={className} {...props}>
-                {children}
-              </code>
-            )
-          },
-        }}
       >
         {content}
       </ReactMarkdown>

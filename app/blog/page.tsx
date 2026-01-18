@@ -24,7 +24,7 @@ interface Post {
 }
 
 export default function BlogPage() {
-  const { theme } = useTheme()
+  const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
 
   const [posts, setPosts] = useState<Post[]>([])
