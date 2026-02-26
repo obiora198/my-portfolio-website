@@ -59,6 +59,11 @@ export async function POST(request: Request) {
 
     console.log('VTpass Pay Response:', response.data)
 
+    const token =
+      response.data.purchased_code ||
+      response.data.mainToken ||
+      response.data.content?.transactions?.token
+
     // Save to MongoDB
     try {
       await Transaction.create({
@@ -75,15 +80,14 @@ export async function POST(request: Request) {
         operatorId: operator_id,
         countryCode: country_code,
         productTypeId: product_type_id,
+        token: token,
         activeTab: activeTab,
       })
     } catch (dbError) {
       console.error('MongoDB Save Error:', dbError)
-      // We don't want to fail the request if DB save fails,
-      // but in a production app you'd likely want to handle this better.
     }
 
-    return NextResponse.json(response.data)
+    return NextResponse.json({ ...response.data, token })
   } catch (error: any) {
     console.error('API Pay Error:', error.response?.data || error.message)
     return NextResponse.json(

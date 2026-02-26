@@ -54,6 +54,14 @@ const ProjectSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    images: {
+      type: [String],
+      default: [],
+    },
+    blogUrl: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

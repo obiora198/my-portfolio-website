@@ -95,7 +95,7 @@ export function ServicesGrid({ onServiceClick }: ServicesGridProps) {
               <motion.button
                 key={service.id}
                 onClick={() => onServiceClick(service.id)}
-                className={`group relative p-8 rounded-2xl transition-all duration-300 text-left overflow-hidden ${
+                className={`group relative p-6 sm:p-8 rounded-2xl transition-all duration-300 text-left overflow-hidden ${
                   isDarkMode
                     ? 'bg-[#1C1E2E] hover:bg-[#252836] border border-gray-800 hover:border-gray-700'
                     : 'bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl'

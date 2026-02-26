@@ -1,43 +1,18 @@
 import dynamic from 'next/dynamic'
+import { Navigation } from './components/redesign/Navigation'
+import { HeroSection } from './components/redesign/HeroSection'
+import { AboutSection } from './components/redesign/AboutSection'
 
-// Import the redesign components with proper loading states
-const Navigation = dynamic(
-  () =>
-    import('./components/redesign/Navigation').then((mod) => ({
-      default: mod.Navigation,
-    })),
-  {
-    loading: () => <nav className="h-20" />,
-  }
-)
-
-const HeroSection = dynamic(
-  () =>
-    import('./components/redesign/HeroSection').then((mod) => ({
-      default: mod.HeroSection,
-    })),
-  {
-    loading: () => <div className="min-h-screen" />,
-  }
-)
-
-const AboutSection = dynamic(
-  () =>
-    import('./components/redesign/AboutSection').then((mod) => ({
-      default: mod.AboutSection,
-    })),
-  {
-    loading: () => <div className="min-h-screen" />,
-  }
-)
-
+// Keep heavy/below-the-fold sections dynamic for performance
 const ProjectsSection = dynamic(
   () =>
     import('./components/redesign/ProjectsSection').then((mod) => ({
       default: mod.ProjectsSection,
     })),
   {
-    loading: () => <div className="min-h-screen" />,
+    loading: () => (
+      <div className="py-20 animate-pulse bg-gray-50/50 dark:bg-gray-900/50 min-h-[800px]" />
+    ),
   }
 )
 
@@ -47,7 +22,9 @@ const BlogSection = dynamic(
       default: mod.BlogSection,
     })),
   {
-    loading: () => <div className="min-h-[60vh]" />,
+    loading: () => (
+      <div className="py-20 animate-pulse bg-gray-50/50 dark:bg-gray-900/50 min-h-[600px]" />
+    ),
   }
 )
 
@@ -57,7 +34,7 @@ const VTUSection = dynamic(
       default: mod.VTUSection,
     })),
   {
-    loading: () => <div className="min-h-screen" />,
+    loading: () => <div className="py-20 min-h-[400px]" />,
   }
 )
 
@@ -67,7 +44,7 @@ const ContactSection = dynamic(
       default: mod.ContactSection,
     })),
   {
-    loading: () => <div className="min-h-screen" />,
+    loading: () => <div className="py-20 min-h-[600px]" />,
   }
 )
 
@@ -77,7 +54,7 @@ const FooterSection = dynamic(
       default: mod.FooterSection,
     })),
   {
-    loading: () => <footer className="h-64" />,
+    loading: () => <footer className="h-64 bg-gray-900" />,
   }
 )
 

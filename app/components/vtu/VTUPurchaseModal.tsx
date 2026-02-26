@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import AxiosInstance from '@/app/utils/axiosInstance'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { CustomSelect } from '@/app/vtu/components/CustomSelect'
 
 interface VTUPurchaseModalProps {
   isOpen: boolean
@@ -16,7 +17,7 @@ interface VTUPurchaseModalProps {
   onSuccess: () => void
 }
 
-type VTUTab = 'airtime' | 'data' | 'electricity' | 'international'
+type VTUTab = 'airtime' | 'data' | 'tv' | 'electricity' | 'international'
 
 interface Service {
   serviceID: string
@@ -35,11 +36,14 @@ export function VTUPurchaseModal({
 
   // Map selected service to tab
   const getTabFromService = (service: string | null): VTUTab => {
-    if (!service) return 'airtime'
     const map: { [key: string]: VTUTab } = {
       airtime: 'airtime',
       data: 'data',
-      'cable-tv': 'electricity',
+      'cable-tv': 'tv',
+      dstv: 'tv',
+      gotv: 'tv',
+      startimes: 'tv',
+      showmax: 'tv',
       electricity: 'electricity',
       international: 'international',
     }
@@ -66,6 +70,22 @@ export function VTUPurchaseModal({
   // WhatsApp receipt
   const [whatsappNumber, setWhatsappNumber] = useState('')
   const [useTransactionNumber, setUseTransactionNumber] = useState(true)
+
+  // Validation state
+  const [phoneError, setPhoneError] = useState('')
+  const [whatsappError, setWhatsappError] = useState('')
+  const [meterVerifyError, setMeterVerifyError] = useState('')
+
+  // Verification state
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [customerName, setCustomerName] = useState('')
+  const [isVerified, setIsVerified] = useState(false)
+  const [electricityType, setElectricityType] = useState<
+    'prepaid' | 'postpaid'
+  >('prepaid')
+  const [subscriptionType, setSubscriptionType] = useState<'renew' | 'change'>(
+    'renew'
+  )
 
   // Transaction state
   const [loading, setLoading] = useState(false)
@@ -96,6 +116,13 @@ export function VTUPurchaseModal({
     setEmail('')
   }, [activeTab])
 
+  // Reset verification when billers/service changes
+  useEffect(() => {
+    setCustomerName('')
+    setIsVerified(false)
+    setMeterVerifyError('')
+  }, [billersCode, selectedServiceId, electricityType])
+
   // Fetch Services
   const { data: services = [], isLoading: isServicesLoading } = useQuery<
     Service[]
@@ -105,6 +132,7 @@ export function VTUPurchaseModal({
       const identifierMap: { [key: string]: string } = {
         airtime: 'airtime',
         data: 'data',
+        tv: 'tv-subscription',
         electricity: 'electricity-bill',
       }
       const response = await AxiosInstance.get(
@@ -144,7 +172,11 @@ export function VTUPurchaseModal({
       const response = await AxiosInstance.get(
         `/service-variations?serviceID=${selectedServiceId}`
       )
-      return response.data.content.varations || []
+      return (
+        response.data.content.variations ||
+        response.data.content.varations ||
+        []
+      )
     },
     enabled:
       activeTab !== 'airtime' &&
@@ -159,9 +191,7 @@ export function VTUPurchaseModal({
   const { data: countriesList = [] } = useQuery({
     queryKey: ['countries'],
     queryFn: async () => {
-      const response = await AxiosInstance.get(
-        '/get-international-airtime-countries'
-      )
+      const response = await AxiosInstance.get('/countries')
       return response.data.content.countries || []
     },
     enabled: activeTab === 'international' && isOpen,
@@ -174,7 +204,7 @@ export function VTUPurchaseModal({
     queryFn: async () => {
       if (!selectedCountryCode) return []
       const response = await AxiosInstance.get(
-        `/get-international-airtime-product-types?code=${selectedCountryCode}`
+        `/product-types?code=${selectedCountryCode}`
       )
       return response.data.content || []
     },
@@ -188,7 +218,7 @@ export function VTUPurchaseModal({
     queryFn: async () => {
       if (!selectedCountryCode || !selectedProductTypeId) return []
       const response = await AxiosInstance.get(
-        `/get-international-airtime-operators?code=${selectedCountryCode}&product_type_id=${selectedProductTypeId}`
+        `/operators?code=${selectedCountryCode}&product_type_id=${selectedProductTypeId}`
       )
       return response.data.content || []
     },
@@ -221,6 +251,46 @@ export function VTUPurchaseModal({
     const requestIdBase = `${y}${m}${d}${h}${min}`
     const randomStr = Math.random().toString(36).substring(2, 10)
     return `${requestIdBase}${randomStr}`
+  }
+
+  // Phone Validation
+  const validatePhone = (
+    phoneNumber: string,
+    isInternational: boolean = false
+  ): boolean => {
+    if (!phoneNumber) return false
+
+    if (isInternational) {
+      // International: Must start with + and have 10-15 digits
+      const intlPattern = /^\+[1-9]\d{9,14}$/
+      return intlPattern.test(phoneNumber)
+    } else {
+      // Nigerian: Must be 11 digits starting with 0, or 10 digits without 0
+      const nigerianPattern = /^(0|\+234)?[789]\d{9}$/
+      return nigerianPattern.test(phoneNumber.replace(/\s/g, ''))
+    }
+  }
+
+  const handlePhoneChange = (value: string) => {
+    setPhone(value)
+    if (value && !validatePhone(value, activeTab === 'international')) {
+      setPhoneError(
+        activeTab === 'international'
+          ? 'Enter valid international format (e.g., +1234567890)'
+          : 'Enter valid Nigerian number (e.g., 08012345678)'
+      )
+    } else {
+      setPhoneError('')
+    }
+  }
+
+  const handleWhatsAppChange = (value: string) => {
+    setWhatsappNumber(value)
+    if (value && !validatePhone(value, false)) {
+      setWhatsappError('Enter valid Nigerian number (e.g., 08012345678)')
+    } else {
+      setWhatsappError('')
+    }
   }
 
   // Check Transaction Status (Requery)
@@ -273,10 +343,43 @@ export function VTUPurchaseModal({
     }
   }
 
+  // Handle Verification
+  const handleVerify = async () => {
+    if (!billersCode || !selectedServiceId) return
+    setIsVerifying(true)
+    setMeterVerifyError('')
+    try {
+      const response = await axios.post('/api/vtu/merchant-verify', {
+        billersCode,
+        serviceID: selectedServiceId,
+        type: activeTab === 'electricity' ? electricityType : undefined,
+      })
+
+      if (response.data.code === '000') {
+        setCustomerName(
+          response.data.content.Customer_Name ||
+            response.data.content.customerName
+        )
+        setIsVerified(true)
+      } else {
+        setMeterVerifyError(
+          response.data.response_description || 'Verification failed'
+        )
+      }
+    } catch (err: any) {
+      setMeterVerifyError(err.response?.data?.message || 'Verification failed')
+    } finally {
+      setIsVerifying(false)
+    }
+  }
+
   // Handle Plan/Variation Change
   const handlePlanChange = (val: string) => {
     setVariationCode(val)
-    const selectedPlan = variations.find((v: any) => v.variation_code === val)
+    // Find the exact plan using index to handle duplicates correctly
+    const selectedPlan = variations.find(
+      (v: any, index: number) => `${v.variation_code}-${index}` === val
+    )
     if (selectedPlan?.variation_amount) {
       setAmount(selectedPlan.variation_amount)
     }
@@ -295,7 +398,9 @@ export function VTUPurchaseModal({
           activeTab === 'international' ? 'foreign-airtime' : selectedServiceId,
         amount: Number(amount),
         phone: phone,
-        variation_code: variationCode,
+        variation_code: variationCode.includes('-')
+          ? variationCode.split('-').slice(0, -1).join('-')
+          : variationCode,
         billersCode: activeTab === 'international' ? phone : billersCode,
       }
 
@@ -304,6 +409,10 @@ export function VTUPurchaseModal({
         payload.country_code = selectedCountryCode
         payload.product_type_id = selectedProductTypeId
         payload.email = email
+      }
+
+      if (activeTab === 'tv') {
+        payload.subscription_type = subscriptionType
       }
 
       payload.whatsappNumber = useTransactionNumber ? phone : whatsappNumber
@@ -324,6 +433,12 @@ export function VTUPurchaseModal({
       const status = response.data.content?.transactions?.status
 
       if (code === '000') {
+        // Look for token in response
+        const token = response.data.token
+        if (token) {
+          setLastTransaction((prev: any) => ({ ...prev, token }))
+        }
+
         if (status === 'delivered' || status === 'successful') {
           setModalType('success')
           setModalMessage('Transaction successful!')
@@ -344,13 +459,18 @@ export function VTUPurchaseModal({
         setTimeout(() => checkTransactionStatus(requestId), 5000)
       } else {
         setModalType('error')
-        setModalMessage('Transaction failed. Please try again.')
+        setModalMessage(
+          response.data.response_description ||
+            'Transaction failed. Please try again.'
+        )
         setShowResultModal(true)
       }
     } catch (err: any) {
       console.error('Purchase error:', err)
       setModalType('error')
-      setModalMessage('Network error. Please check your connection.')
+      setModalMessage(
+        err.response?.data?.message || 'Network error. Please try again.'
+      )
       setShowResultModal(true)
     } finally {
       setLoading(false)
@@ -366,8 +486,18 @@ export function VTUPurchaseModal({
       return !!selectedServiceId && !!amount
     } else if (activeTab === 'data') {
       return !!selectedServiceId && !!variationCode
+    } else if (activeTab === 'tv') {
+      return (
+        !!selectedServiceId && !!variationCode && !!billersCode && isVerified
+      )
     } else if (activeTab === 'electricity') {
-      return !!selectedServiceId && !!variationCode && !!billersCode
+      return (
+        !!selectedServiceId &&
+        !!variationCode &&
+        !!billersCode &&
+        !!amount &&
+        isVerified
+      )
     } else if (activeTab === 'international') {
       if (email && selectedOperatorId) {
         if (variations.length > 0) {
@@ -426,17 +556,18 @@ export function VTUPurchaseModal({
             </div>
 
             {/* Service Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+            <div className="flex overflow-x-auto pb-4 sm:grid sm:grid-cols-5 gap-2 mb-6 scrollbar-hide">
               {[
                 { id: 'airtime', label: 'Airtime' },
                 { id: 'data', label: 'Data' },
+                { id: 'tv', label: 'TV' },
                 { id: 'electricity', label: 'Electric' },
                 { id: 'international', label: 'Intl' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as VTUTab)}
-                  className={`px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
+                  className={`px-4 py-2.5 rounded-lg font-medium text-sm transition-all whitespace-nowrap min-w-[100px] sm:min-w-0 ${
                     activeTab === tab.id
                       ? `bg-gradient-to-r ${currentTheme.buttonGradient} text-white shadow-lg`
                       : isDarkMode
@@ -458,9 +589,11 @@ export function VTUPurchaseModal({
                     className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
                   >
                     Select{' '}
-                    {activeTab === 'electricity' ? 'Provider' : 'Network'}
+                    {activeTab === 'electricity' || activeTab === 'tv'
+                      ? 'Provider'
+                      : 'Network'}
                   </label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {isServicesLoading ? (
                       <div className="col-span-full text-center py-4">
                         <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -513,47 +646,18 @@ export function VTUPurchaseModal({
                     Select Country
                   </label>
                   <div className="relative">
-                    <select
+                    <CustomSelect
+                      options={countriesList.map((c: any) => ({
+                        ...c,
+                        label: `${c.name} (${c.currency})`,
+                        value: c.code,
+                      }))}
                       value={selectedCountryCode}
-                      onChange={(e) => setSelectedCountryCode(e.target.value)}
-                      className={`w-full px-4 py-3 pr-10 rounded-lg border-2 focus:ring-2 focus:ring-offset-0 transition-all appearance-none cursor-pointer font-medium ${
-                        isDarkMode
-                          ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500 focus:border-orange-500 hover:border-gray-600'
-                          : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400'
-                      }`}
-                      required
-                    >
-                      <option
-                        value=""
-                        className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
-                      >
-                        Choose a country...
-                      </option>
-                      {countriesList.map((c: any) => (
-                        <option
-                          key={c.code}
-                          value={c.code}
-                          className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
-                        >
-                          {c.name} ({c.currency})
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <svg
-                        className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </div>
+                      onChange={(val) => setSelectedCountryCode(val)}
+                      placeholder="Choose a country..."
+                      searchPlaceholder="Search countries..."
+                      className="w-full"
+                    />
                   </div>
                 </div>
               )}
@@ -566,28 +670,19 @@ export function VTUPurchaseModal({
                   >
                     Service Type
                   </label>
-                  <select
-                    value={selectedProductTypeId || ''}
-                    onChange={(e) =>
-                      setSelectedProductTypeId(Number(e.target.value))
-                    }
-                    className={`w-full px-4 py-3 rounded-lg border focus:ring-2 transition-all ${
-                      isDarkMode
-                        ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500'
-                        : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500'
-                    }`}
-                    required
-                  >
-                    <option value="">Choose service type...</option>
-                    {productTypes.map((type: any) => (
-                      <option
-                        key={type.product_type_id}
-                        value={type.product_type_id}
-                      >
-                        {type.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <CustomSelect
+                      options={productTypes.map((type: any) => ({
+                        ...type,
+                        label: type.name,
+                        value: type.product_type_id,
+                      }))}
+                      value={selectedProductTypeId}
+                      onChange={(val) => setSelectedProductTypeId(val)}
+                      placeholder="Choose service type..."
+                      className="w-full"
+                    />
+                  </div>
                 </div>
               )}
 
@@ -622,8 +717,58 @@ export function VTUPurchaseModal({
                 </div>
               )}
 
-              {/* Data/Electricity Variation Selection */}
-              {(activeTab === 'data' || activeTab === 'electricity') &&
+              {/* Electricity Type */}
+              {activeTab === 'electricity' && (
+                <div className="flex gap-2 mb-4">
+                  {(['prepaid', 'postpaid'] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setElectricityType(type)}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
+                        electricityType === type
+                          ? isDarkMode
+                            ? 'border-orange-500 bg-orange-500/10 text-orange-500'
+                            : 'border-indigo-500 bg-indigo-50 text-indigo-600'
+                          : isDarkMode
+                            ? 'border-gray-700 text-gray-400'
+                            : 'border-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* TV Subscription Type */}
+              {activeTab === 'tv' && (
+                <div className="flex gap-2 mb-4">
+                  {(['renew', 'change'] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setSubscriptionType(type)}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
+                        subscriptionType === type
+                          ? isDarkMode
+                            ? 'border-orange-500 bg-orange-500/10 text-orange-500'
+                            : 'border-indigo-500 bg-indigo-50 text-indigo-600'
+                          : isDarkMode
+                            ? 'border-gray-700 text-gray-400'
+                            : 'border-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Data/TV/Electricity Variation Selection */}
+              {(activeTab === 'data' ||
+                activeTab === 'electricity' ||
+                activeTab === 'tv') &&
                 selectedServiceId && (
                   <div>
                     <label
@@ -632,88 +777,142 @@ export function VTUPurchaseModal({
                       Select Plan
                     </label>
                     <div className="relative">
-                      <select
+                      <CustomSelect
+                        options={variations.map((v: any, index: number) => ({
+                          ...v,
+                          label: v.name,
+                          value: `${v.variation_code}-${index}`,
+                          original_variation_code: v.variation_code,
+                        }))}
                         value={variationCode}
-                        onChange={(e) => handlePlanChange(e.target.value)}
-                        className={`w-full px-4 py-3 pr-10 rounded-lg border-2 focus:ring-2 focus:ring-offset-0 transition-all appearance-none cursor-pointer font-medium ${
-                          isDarkMode
-                            ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500 focus:border-orange-500 hover:border-gray-600'
-                            : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400'
-                        }`}
-                        required
-                      >
-                        <option
-                          value=""
-                          className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
-                        >
-                          Choose a plan...
-                        </option>
-                        {variations.map((v: any) => (
-                          <option
-                            key={v.variation_code}
-                            value={v.variation_code}
-                            className={isDarkMode ? 'bg-gray-800' : 'bg-white'}
-                          >
-                            {v.name}{' '}
-                            {v.variation_amount &&
-                              `- ₦${v.variation_amount.toLocaleString()}`}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <svg
-                          className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </div>
+                        onChange={(val) => handlePlanChange(val)}
+                        placeholder="Choose a plan..."
+                        isLoading={isVariationsLoading}
+                        searchPlaceholder="Search plans..."
+                        renderOption={(option) => (
+                          <div className="flex flex-col w-full text-left">
+                            <span className="text-sm font-bold truncate">
+                              {option.name}
+                            </span>
+                            <div className="flex items-center justify-between mt-1">
+                              {option.variation_amount && (
+                                <span className="text-xs text-indigo-500 font-black">
+                                  ₦
+                                  {Number(
+                                    option.variation_amount
+                                  ).toLocaleString()}
+                                </span>
+                              )}
+                              {option.fixedPrice === 'Yes' && (
+                                <span className="text-[8px] uppercase tracking-tighter bg-green-500/10 text-green-500 px-1.5 py-0.5 rounded-full">
+                                  Fixed Price
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        className="w-full"
+                      />
                     </div>
                     {isVariationsLoading && (
-                      <p
+                      <div
                         className={`text-xs mt-2 ${isDarkMode ? 'text-orange-400' : 'text-indigo-600'} animate-pulse flex items-center gap-1`}
                       >
                         <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
                         Loading plans...
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              {/* Electricity Meter / TV Smartcard Number */}
+              {(activeTab === 'electricity' || activeTab === 'tv') &&
+                variationCode && (
+                  <div>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
+                      {activeTab === 'electricity'
+                        ? 'Meter Number'
+                        : 'Smartcard / IUC Number'}
+                    </label>
+                    <input
+                      type="text"
+                      value={billersCode}
+                      onChange={(e) => setBillersCode(e.target.value)}
+                      placeholder={
+                        activeTab === 'electricity'
+                          ? 'Enter meter number'
+                          : 'Enter smartcard number'
+                      }
+                      className={`w-full px-4 py-3 rounded-lg border focus:ring-2 transition-all ${
+                        isDarkMode
+                          ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500'
+                          : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500'
+                      }`}
+                      required
+                    />
+                  </div>
+                )}
+
+              {/* Verification Section for Electricity/TV */}
+              {(activeTab === 'electricity' || activeTab === 'tv') &&
+                billersCode && (
+                  <div className="pt-2">
+                    {!isVerified ? (
+                      <button
+                        type="button"
+                        onClick={handleVerify}
+                        disabled={isVerifying}
+                        className={`w-full py-2.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                          isDarkMode
+                            ? 'bg-orange-500/20 text-orange-500 hover:bg-orange-500/30'
+                            : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                        }`}
+                      >
+                        {isVerifying ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            Verifying...
+                          </>
+                        ) : (
+                          'Verify Number'
+                        )}
+                      </button>
+                    ) : (
+                      <div
+                        className={`p-3 rounded-lg flex items-center gap-3 ${
+                          isDarkMode
+                            ? 'bg-green-500/10 text-green-400'
+                            : 'bg-green-50 text-green-700'
+                        }`}
+                      >
+                        <Check className="w-5 h-5 flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium uppercase opacity-70 leading-tight">
+                            Customer Name
+                          </p>
+                          <p className="font-bold">{customerName}</p>
+                        </div>
+                      </div>
+                    )}
+                    {meterVerifyError && (
+                      <p className="text-xs text-red-500 mt-2 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {meterVerifyError}
                       </p>
                     )}
                   </div>
                 )}
 
-              {/* Electricity Meter Number */}
-              {activeTab === 'electricity' && variationCode && (
-                <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
-                  >
-                    Meter Number
-                  </label>
-                  <input
-                    type="text"
-                    value={billersCode}
-                    onChange={(e) => setBillersCode(e.target.value)}
-                    placeholder="Enter meter number"
-                    className={`w-full px-4 py-3 rounded-lg border focus:ring-2 transition-all ${
-                      isDarkMode
-                        ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500'
-                        : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500'
-                    }`}
-                    required
-                  />
-                </div>
-              )}
-
               {/* Phone Number */}
               {((activeTab === 'airtime' && selectedServiceId) ||
                 (activeTab === 'data' && variationCode) ||
-                (activeTab === 'electricity' && variationCode && billersCode) ||
+                (activeTab === 'tv' && variationCode && isVerified) ||
+                (activeTab === 'electricity' &&
+                  variationCode &&
+                  billersCode &&
+                  isVerified) ||
                 (activeTab === 'international' && selectedOperatorId)) && (
                 <div>
                   <label
@@ -724,19 +923,37 @@ export function VTUPurchaseModal({
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
                     placeholder={
                       activeTab === 'international'
-                        ? 'Include country code'
+                        ? '+1234567890'
                         : '08012345678'
                     }
-                    className={`w-full px-4 py-3 rounded-lg border focus:ring-2 transition-all ${
-                      isDarkMode
-                        ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500'
-                        : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500'
+                    className={`w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-offset-0 transition-all ${
+                      phoneError
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : isDarkMode
+                          ? 'bg-gray-800/50 border-gray-700 text-white focus:ring-orange-500 focus:border-orange-500'
+                          : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500'
                     }`}
                     required
                   />
+                  {phoneError && (
+                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                      <svg
+                        className="w-3 h-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {phoneError}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -843,14 +1060,32 @@ export function VTUPurchaseModal({
                         <input
                           type="tel"
                           value={whatsappNumber}
-                          onChange={(e) => setWhatsappNumber(e.target.value)}
-                          placeholder="WhatsApp number"
-                          className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 transition-all ${
-                            isDarkMode
-                              ? 'bg-gray-700 border-gray-600 text-white focus:ring-orange-500'
-                              : 'bg-white border-gray-300 text-gray-900 focus:ring-indigo-500'
+                          onChange={(e) => handleWhatsAppChange(e.target.value)}
+                          placeholder="08012345678"
+                          className={`w-full px-4 py-2.5 rounded-lg border-2 focus:ring-2 focus:ring-offset-0 transition-all ${
+                            whatsappError
+                              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                              : isDarkMode
+                                ? 'bg-gray-700 border-gray-600 text-white focus:ring-orange-500 focus:border-orange-500'
+                                : 'bg-white border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500'
                           }`}
                         />
+                        {whatsappError && (
+                          <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                            <svg
+                              className="w-3 h-3"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            {whatsappError}
+                          </p>
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -942,6 +1177,36 @@ export function VTUPurchaseModal({
                 <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                   {modalMessage}
                 </p>
+
+                {lastTransaction?.token && (
+                  <div
+                    className={`mt-4 p-4 rounded-xl border-2 border-dashed ${
+                      isDarkMode
+                        ? 'bg-orange-500/5 border-orange-500/30'
+                        : 'bg-orange-50 border-orange-200'
+                    }`}
+                  >
+                    <p
+                      className={`text-xs uppercase font-bold mb-1 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}
+                    >
+                      Token / PIN
+                    </p>
+                    <p
+                      className={`text-2xl font-black tracking-widest ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                    >
+                      {lastTransaction.token}
+                    </p>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(lastTransaction.token)
+                        toast.success('Token copied!')
+                      }}
+                      className="text-xs mt-2 underline opacity-70 hover:opacity-100"
+                    >
+                      Copy Token
+                    </button>
+                  </div>
+                )}
               </div>
 
               <button

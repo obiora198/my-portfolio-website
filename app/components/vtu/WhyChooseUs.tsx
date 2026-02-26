@@ -72,7 +72,7 @@ export function WhyChooseUs() {
             return (
               <motion.div
                 key={feature.title}
-                className={`relative p-8 rounded-2xl transition-all duration-300 overflow-hidden ${
+                className={`relative p-6 sm:p-8 rounded-2xl transition-all duration-300 overflow-hidden ${
                   isDarkMode
                     ? 'bg-[#1C1E2E] border border-gray-800'
                     : 'bg-white border border-gray-200 shadow-lg'

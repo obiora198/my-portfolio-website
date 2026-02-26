@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import QueryProvider from '@/components/providers/QueryProvider'
 import ThemeScript from './components/ThemeScript'
+import ServiceWorkerCleaner from './components/ServiceWorkerCleaner'
 
 // Dynamic import for Footer to reduce initial bundle size
 // const Footer = dynamic(() => import('./components/sections/Footer'), {
@@ -111,6 +112,7 @@ export default function RootLayout({
       </head>
       <body className={`${poppins.className}`}>
         <ThemeScript />
+        <ServiceWorkerCleaner />
         <QueryProvider>
           <ThemeProvider>
             <AuthProvider>

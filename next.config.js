@@ -18,11 +18,23 @@ const nextConfig = {
         hostname: 'plus.unsplash.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
     ],
     domains: [
       'images.unsplash.com',
       'firebasestorage.googleapis.com',
       'plus.unsplash.com',
+      'placehold.co',
+      'res.cloudinary.com',
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

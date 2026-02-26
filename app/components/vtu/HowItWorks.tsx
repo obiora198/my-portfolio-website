@@ -87,7 +87,7 @@ export function HowItWorks() {
                 {/* Number Circle */}
                 <div className="relative">
                   <div
-                    className={`w-20 h-20 rounded-full bg-gradient-to-br ${currentTheme.buttonGradient} flex items-center justify-center text-white text-3xl font-bold shadow-lg`}
+                    className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${currentTheme.buttonGradient} flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shadow-lg`}
                   >
                     {step.number}
                   </div>

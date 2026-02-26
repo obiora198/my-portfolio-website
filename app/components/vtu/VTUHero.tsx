@@ -41,7 +41,7 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
               </motion.div>
 
               <h1
-                className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                className={`text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
               >
                 Everything You Need to{' '}
                 <span
@@ -52,7 +52,7 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
               </h1>
 
               <p
-                className={`text-lg sm:text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                className={`text-base sm:text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
               >
                 Top up airtime, buy data, pay bills, and more — all in one
                 place. Fast, secure, and hassle-free.
@@ -123,14 +123,32 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative hidden lg:block"
           >
+            {/* Decorative gradient blur behind image */}
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20 blur-3xl rounded-full`}
+            />
+
+            {/* Image container with border gradient */}
             <div className="relative w-full h-[600px]">
-              <Image
-                src="/vtu-phone-mockup.png"
-                alt="VTU Platform"
-                fill
-                className="object-contain drop-shadow-2xl"
-                priority
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${currentTheme.buttonGradient} rounded-3xl opacity-75 blur-sm`}
               />
+              <div
+                className={`relative w-full h-full rounded-3xl p-1 bg-gradient-to-br ${currentTheme.buttonGradient}`}
+              >
+                <div
+                  className={`relative w-full h-full rounded-3xl overflow-hidden ${isDarkMode ? 'bg-[#0B0D17]' : 'bg-white'}`}
+                >
+                  <Image
+                    src="/vtu-phone-mockup.png"
+                    alt="VTU Platform"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-contain drop-shadow-2xl p-4"
+                    priority
+                  />
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>

@@ -14,6 +14,7 @@ export interface ITransaction {
   operatorId?: string
   countryCode?: string
   productTypeId?: string
+  token?: string
   timestamp: Date
   activeTab: string
 }
@@ -32,6 +33,7 @@ const TransactionSchema = new Schema<ITransaction>({
   operatorId: { type: String },
   countryCode: { type: String },
   productTypeId: { type: String },
+  token: { type: String },
   timestamp: { type: Date, default: Date.now },
   activeTab: { type: String },
 })
