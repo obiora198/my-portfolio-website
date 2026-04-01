@@ -1,0 +1,21 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="faviconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c" />
+      <stop offset="50%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <!-- Outer Circle -->
+  <circle cx="32" cy="32" r="28" stroke="url(#faviconGradient)" stroke-width="3" fill="none" />
+  <!-- E Letter -->
+  <path
+    d="M21 19 H37 M21 19 V32 M21 32 H34 M21 32 V45 M21 45 H37"
+    stroke="url(#faviconGradient)"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- O Letter - small circle -->
+  <circle cx="43" cy="21" r="6" stroke="url(#faviconGradient)" stroke-width="3" fill="none" />
+</svg>
