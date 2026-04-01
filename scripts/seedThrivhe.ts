@@ -43,11 +43,12 @@ Across the platform, I focused on:
 
 The result was a complete evolution of Thrivhe.com from a static website into a functional healthcare management ecosystem supporting real-world professional workflows.`,
     image:
-      'https://placehold.co/1200x630/2563eb/ffffff?text=Thrivhe+Health+Platform',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303991/portfolio/projects/thrivhe/i263rvb8fjwkvuuhsecb.png',
     images: [
-      'https://placehold.co/800x600/3b82f6/ffffff?text=Organization+Dashboard',
-      'https://placehold.co/800x600/60a5fa/ffffff?text=Careers+and+Job+Board',
-      'https://placehold.co/800x600/93c5fd/ffffff?text=Advanced+Analytics+SVG',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303991/portfolio/projects/thrivhe/i263rvb8fjwkvuuhsecb.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303977/portfolio/projects/thrivhe/mowrsjeletpnfkgbigyv.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303993/portfolio/projects/thrivhe/nufvy6g22inf4p3xyya4.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303994/portfolio/projects/thrivhe/xzjwkacdloacgxxmcgwg.png',
     ],
     technologies: [
       'React',
@@ -108,9 +109,16 @@ I also integrated backend-managed FAQs and job postings into the public platform
 
 The result was a complete evolution of Thrivhe.com into a functional healthcare management ecosystem. This project demonstrates my ability to modernize legacy systems, implement complex frontend architecture, and build production-grade interfaces that balance visual quality with operational reliability.`,
     coverImage:
-      'https://placehold.co/1200x630/2563eb/ffffff?text=Thrivhe+Health+Platform',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303991/portfolio/projects/thrivhe/i263rvb8fjwkvuuhsecb.png',
+    images: [
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303991/portfolio/projects/thrivhe/i263rvb8fjwkvuuhsecb.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303977/portfolio/projects/thrivhe/mowrsjeletpnfkgbigyv.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303993/portfolio/projects/thrivhe/nufvy6g22inf4p3xyya4.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772303994/portfolio/projects/thrivhe/xzjwkacdloacgxxmcgwg.png',
+    ],
     author: 'Emmanuel Obi',
     tags: ['React', 'Healthcare', 'Frontend Architecture', 'Redesign'],
+    liveUrl: 'https://www.thrivhe.com',
     views: 0,
   },
 }

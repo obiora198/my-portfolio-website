@@ -25,8 +25,12 @@ export default function NotFound() {
 
       <main className="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
         {/* Background Orbs */}
-        <div className={`absolute top-1/4 -left-20 w-96 h-96 rounded-full blur-[120px] animate-pulse opacity-10 dark:opacity-20 bg-gradient-to-br ${currentTheme.gradient}`} />
-        <div className={`absolute bottom-1/4 -right-20 w-96 h-96 rounded-full blur-[120px] animate-pulse delay-700 opacity-10 dark:opacity-20 bg-gradient-to-br ${currentTheme.gradient}`} />
+        <div
+          className={`absolute top-1/4 -left-20 w-96 h-96 rounded-full blur-[120px] animate-pulse opacity-10 dark:opacity-20 bg-gradient-to-br ${currentTheme.gradient}`}
+        />
+        <div
+          className={`absolute bottom-1/4 -right-20 w-96 h-96 rounded-full blur-[120px] animate-pulse delay-700 opacity-10 dark:opacity-20 bg-gradient-to-br ${currentTheme.gradient}`}
+        />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -36,18 +40,18 @@ export default function NotFound() {
         >
           <div className="mb-8 flex justify-center">
             <motion.div
-              animate={{
-                y: [0, -15, 0],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="w-24 h-24 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-3xl flex items-center justify-center backdrop-blur-xl shadow-2xl"
-            >
-              <Ghost className={`w-12 h-12 ${currentTheme.primary}`} />
-            </motion.div>
+            animate={{
+              y: [0, -20, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="flex items-center justify-center p-4"
+          >
+            <Ghost className={`w-28 h-28 ${currentTheme.primary} drop-shadow-[0_0_30px_rgba(99,102,241,0.5)] dark:drop-shadow-[0_0_40px_rgba(129,140,248,0.3)] filter brightness-110`} />
+          </motion.div>
           </div>
 
           <motion.h1
@@ -74,7 +78,8 @@ export default function NotFound() {
             transition={{ delay: 0.6 }}
             className="text-gray-600 dark:text-gray-400 text-lg mb-10 max-w-md mx-auto"
           >
-            The page you're looking for has vanished or never existed. Let's get you back on track.
+            The page you're looking for has vanished or never existed. Let's get
+            you back on track.
           </motion.p>
 
           <motion.div

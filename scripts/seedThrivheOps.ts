@@ -33,11 +33,14 @@ Implemented backend integrations allowing admins to manage FAQs and Job Posts, w
 ### Phase 4: Dual-Context Dashboard Architecture
 My most significant architectural contribution was implementing a Dual-Context Architecture (Individual vs. Organization) across both dashboards. Using Zustand with persistent middleware, I engineered a shared architecture that ensured seamless switching, session persistence, and reduced code duplication.`,
     image:
-      'https://placehold.co/1200x630/2c3e50/ffffff?text=Thrivhe+Operations+Dashboard',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356288/portfolio/projects/thrivhe-ops/ud8zrph93gh65qigtivo.png',
     images: [
-      'https://placehold.co/800x600/34495e/ffffff?text=Admin+Account+Management',
-      'https://placehold.co/800x600/2980b9/ffffff?text=Dietician+Dashboard+Context+Switch',
-      'https://placehold.co/800x600/27ae60/ffffff?text=Content+Management+System',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356288/portfolio/projects/thrivhe-ops/ud8zrph93gh65qigtivo.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356289/portfolio/projects/thrivhe-ops/fpqzcir9atdotycebi5t.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356290/portfolio/projects/thrivhe-ops/ox01nch3i9zkyhg0aqoa.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356292/portfolio/projects/thrivhe-ops/oxbq5z2ucoyw6glofeqm.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356293/portfolio/projects/thrivhe-ops/zepcno6280lyjx5zsjwc.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356294/portfolio/projects/thrivhe-ops/lzp5easuh1qrigmyx5yu.png',
     ],
     technologies: [
       'React 19',
@@ -94,7 +97,15 @@ My most significant contribution was the engineering of a **Dual-Context Archite
 
 The platform has matured into a structured healthcare operations system supporting multi-level administrative control, secure provider onboarding, and real-time dashboard updates. This project demonstrates the balance between complex frontend architecture and mission-critical operational reliability.`,
     coverImage:
-      'https://placehold.co/1200x630/2c3e50/ffffff?text=Thrivhe+Operations+Dashboard',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356288/portfolio/projects/thrivhe-ops/ud8zrph93gh65qigtivo.png',
+    images: [
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356288/portfolio/projects/thrivhe-ops/ud8zrph93gh65qigtivo.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356289/portfolio/projects/thrivhe-ops/fpqzcir9atdotycebi5t.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356290/portfolio/projects/thrivhe-ops/ox01nch3i9zkyhg0aqoa.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356292/portfolio/projects/thrivhe-ops/oxbq5z2ucoyw6glofeqm.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356293/portfolio/projects/thrivhe-ops/zepcno6280lyjx5zsjwc.png',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772356294/portfolio/projects/thrivhe-ops/lzp5easuh1qrigmyx5yu.png',
+    ],
     author: 'Emmanuel Obi',
     tags: ['React', 'Architecture', 'Healthcare', 'Zustand', 'Admin Panel'],
     views: 0,
