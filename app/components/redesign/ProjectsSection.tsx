@@ -1,11 +1,12 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ProjectCard } from './ProjectCard'
 import { useTheme } from '../ThemeContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { MongoProjectType } from '../../configs/tsTypes'
 import fetchProjects from '../../lib/fetchProjects'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 // Skeleton component for loading state
 function ProjectCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
@@ -104,6 +105,27 @@ export function ProjectsSection() {
   const [projects, setProjects] = useState<MongoProjectType[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [visibleCount, setVisibleCount] = useState(6)
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  const handleViewMore = () => {
+    setVisibleCount((prev) => prev + 6)
+    // Small delay to allow new items to render before scrolling
+    setTimeout(() => {
+      const projectsGrid = document.getElementById('projects-grid')
+      if (projectsGrid) {
+        const lastItem = projectsGrid.lastElementChild
+        if (lastItem) {
+          lastItem.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        }
+      }
+    }, 100)
+  }
+
+  const handleGoBackUp = () => {
+    setVisibleCount(6)
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -141,6 +163,7 @@ export function ProjectsSection() {
   return (
     <section
       id="projects"
+      ref={sectionRef}
       className={`py-20 px-6 sm:px-8 lg:px-12 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
     >
       <div className="max-w-7xl mx-auto">
@@ -188,21 +211,64 @@ export function ProjectsSection() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <ProjectCard
-                key={project._id}
-                title={project.title}
-                description={project.description}
-                techStack={
-                  project.technologies?.join(' | ') || 'Web Development'
-                }
-                imageUrl={project.image}
-                liveUrl={project.liveUrl || '#'}
-                codeUrl={project.githubUrl || '#'}
-              />
-            ))}
-          </div>
+          <>
+            <div
+              id="projects-grid"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              <AnimatePresence>
+                {projects.slice(0, visibleCount).map((project) => (
+                  <ProjectCard
+                    key={project._id}
+                    title={project.title}
+                    description={project.description}
+                    techStack={
+                      project.technologies?.join(' | ') || 'Web Development'
+                    }
+                    imageUrl={project.image}
+                    liveUrl={project.liveUrl || '#'}
+                    codeUrl={project.githubUrl || '#'}
+                    blogUrl={project.blogUrl}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Pagination / Scroll Buttons */}
+            <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
+              {visibleCount < projects.length && (
+                <motion.button
+                  onClick={handleViewMore}
+                  className={`inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <ChevronDown className="w-5 h-5" />
+                  View More Projects
+                </motion.button>
+              )}
+
+              {visibleCount > 6 && (
+                <motion.button
+                  onClick={handleGoBackUp}
+                  className={`inline-flex items-center gap-2 px-8 py-4 border-2 rounded-xl font-medium transition-all duration-200 ${
+                    isDarkMode
+                      ? 'bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <ChevronUp className="w-5 h-5" />
+                  Go Back Up
+                </motion.button>
+              )}
+            </div>
+          </>
         )}
       </div>
     </section>

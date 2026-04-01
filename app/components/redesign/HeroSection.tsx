@@ -178,13 +178,16 @@ export function HeroSection() {
               {/* Image Container */}
               <div className="relative rounded-3xl overflow-hidden w-full shadow-2xl">
                 <Image
-                  src="/hero-photo.jpg"
+                  src="/hero-new.jpg"
                   alt="Emmanuel Obiora - Full-Stack Developer"
                   width={500}
                   height={650}
                   className="w-full h-auto max-h-[500px] md:max-h-[600px] lg:max-h-[650px] object-cover object-center"
                   priority
                 />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${currentTheme.iconBg} opacity-20`}
+                ></div>
               </div>
 
               {/* Floating Stats Cards */}

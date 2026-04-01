@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import AxiosInstance from '../utils/axiosInstance'
 import Nav from '../components/nav/Nav'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -846,15 +847,15 @@ const VTUPage = () => {
                                   : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 hover:border-indigo-400'
                               }`}
                             >
-                              <img
-                                src={service.image}
-                                alt={service.name}
-                                className="w-7 h-7 rounded-full object-contain"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement
-                                  target.src = '/images/airtime.jpg'
-                                }}
-                              />
+                              <div className="w-7 h-7 rounded-full overflow-hidden relative">
+                                <Image
+                                  src={service.image}
+                                  alt={service.name}
+                                  fill
+                                  className="object-contain"
+                                  unoptimized
+                                />
+                              </div>
                               <span className="text-[10px] uppercase tracking-wider truncate px-2 w-full text-center">
                                 {service.name.split(' ')[0]}
                               </span>
@@ -999,15 +1000,15 @@ const VTUPage = () => {
                                       }`}
                                     >
                                       {op.operator_image && (
-                                        <img
-                                          src={op.operator_image}
-                                          className="w-4 h-4 rounded-full object-contain"
-                                          onError={(e) => {
-                                            const target =
-                                              e.target as HTMLImageElement
-                                            target.src = '/images/airtime.jpg'
-                                          }}
-                                        />
+                                        <div className="w-4 h-4 rounded-full overflow-hidden relative">
+                                          <Image
+                                            src={op.operator_image}
+                                            alt={op.name}
+                                            fill
+                                            className="object-contain"
+                                            unoptimized
+                                          />
+                                        </div>
                                       )}
                                       {op.name}
                                     </button>
@@ -1439,9 +1440,11 @@ const VTUPage = () => {
           <div className="flex-1">
             <div className="relative">
               <div className="absolute -inset-4 bg-indigo-600/5 rounded-[3rem] blur-2xl"></div>
-              <img
+              <Image
                 src="/images/vtu-mockup.png"
                 alt="VTU App"
+                width={600}
+                height={400}
                 className="relative rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800"
               />
             </div>

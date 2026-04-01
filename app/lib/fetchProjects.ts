@@ -1,6 +1,6 @@
 export default async function fetchProjects() {
   try {
-    const response = await fetch('/api/projects')
+    const response = await fetch('/api/projects', { cache: 'no-store' })
 
     if (!response.ok) {
       console.error('Failed to fetch projects:', response.status)

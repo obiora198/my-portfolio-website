@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BsChevronDown, BsSearch } from 'react-icons/bs'
+import Image from 'next/image'
 
 interface CustomSelectProps {
   label?: string
@@ -76,11 +77,15 @@ export const CustomSelect = ({
               ) : (
                 <>
                   {selectedOption.image && (
-                    <img
-                      src={selectedOption.image}
-                      className="w-5 h-5 rounded-full object-contain"
-                      alt=""
-                    />
+                    <div className="w-5 h-5 rounded-full overflow-hidden relative">
+                      <Image
+                        src={selectedOption.image}
+                        fill
+                        className="object-contain"
+                        alt=""
+                        unoptimized
+                      />
+                    </div>
                   )}
                   <span className="truncate">{selectedOption.label}</span>
                 </>
@@ -99,77 +104,109 @@ export const CustomSelect = ({
 
         <AnimatePresence>
           {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl shadow-indigo-600/10 overflow-hidden"
-            >
-              <div className="p-3 border-b border-slate-100 dark:border-slate-800">
-                <div className="relative">
-                  <BsSearch
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={12}
-                  />
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder={searchPlaceholder}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg py-2 pl-9 pr-4 text-xs font-bold outline-none focus:ring-1 focus:ring-indigo-500/30"
-                  />
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsOpen(false)}
+                className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              />
+
+              {/* Modal Container */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
+              >
+                {/* Search Header */}
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+                  <div className="relative">
+                    <BsSearch
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      size={14}
+                    />
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder={searchPlaceholder}
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl py-3 pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      autoFocus
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="max-h-60 overflow-y-auto custom-scrollbar">
-                {isLoading ? (
-                  <div className="p-8 text-center">
-                    <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                    <p className="text-[10px] text-slate-400 font-bold">
-                      Loading...
-                    </p>
-                  </div>
-                ) : filteredOptions.length === 0 ? (
-                  <div className="p-8 text-center">
-                    <p className="text-[10px] text-slate-400 font-bold">
-                      No options found.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="p-2 space-y-1">
-                    {filteredOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => {
-                          onChange(option.value)
-                          setIsOpen(false)
-                        }}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold ${
-                          value === option.value
-                            ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
-                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-                        }`}
-                      >
-                        {renderOption ? (
-                          renderOption(option)
-                        ) : (
-                          <>
-                            {option.image && (
-                              <img
-                                src={option.image}
-                                className="w-5 h-5 rounded-full object-contain"
-                                alt=""
-                              />
-                            )}
-                            <span className="truncate">{option.label}</span>
-                          </>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
+
+                {/* Options List */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
+                  {isLoading ? (
+                    <div className="py-12 text-center">
+                      <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                      <p className="text-xs text-slate-500 font-medium">
+                        Loading options...
+                      </p>
+                    </div>
+                  ) : filteredOptions.length === 0 ? (
+                    <div className="py-12 text-center">
+                      <p className="text-sm text-slate-500 font-medium">
+                        No results found for &quot;{search}&quot;
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      {filteredOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            onChange(option.value)
+                            setIsOpen(false)
+                            setSearch('')
+                          }}
+                          className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                            value === option.value
+                              ? 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50'
+                              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:translate-x-1'
+                          }`}
+                        >
+                          {renderOption ? (
+                            renderOption(option)
+                          ) : (
+                            <>
+                              {option.image && (
+                                <div className="w-6 h-6 rounded-full overflow-hidden relative bg-white p-0.5">
+                                  <Image
+                                    src={option.image}
+                                    fill
+                                    className="object-contain"
+                                    alt=""
+                                    unoptimized
+                                  />
+                                </div>
+                              )}
+                              <span className="truncate">{option.label}</span>
+                            </>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer / Close Info */}
+                <div className="p-3 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                  >
+                    Tap backdrop or here to close
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </div>

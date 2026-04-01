@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
     if (category) query.category = category
     if (featured === 'true') query.featured = true
 
-    // Fetch projects with sorting
-    let projectsQuery = Project.find(query).sort({ order: 1, createdAt: -1 })
+    // Fetch projects with sorting - prioritizing recency
+    let projectsQuery = Project.find(query).sort({ createdAt: -1, order: 1 })
 
     if (limit > 0) {
       projectsQuery = projectsQuery.limit(limit)
@@ -54,7 +54,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     // Validate required fields
-    const { title, description, image, technologies, category } = body
+    const {
+      title,
+      description,
+      image,
+      technologies,
+      category,
+      images,
+      blogUrl,
+    } = body
 
     if (!title || !description || !image || !technologies || !category) {
       return NextResponse.json(

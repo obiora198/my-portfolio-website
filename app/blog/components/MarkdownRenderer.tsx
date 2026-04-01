@@ -12,33 +12,66 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
-  const { theme, currentTheme } = useTheme()
+  const { theme } = useTheme()
   const isDarkMode = theme === 'dark'
 
   return (
-    <div
-      className={`prose prose-lg max-w-none ${
-        isDarkMode
-          ? 'prose-invert prose-headings:text-white prose-h1:text-4xl prose-h1:font-bold prose-h1:mb-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:border-gray-700 prose-h2:pb-3 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-4 prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4 prose-strong:text-white prose-strong:font-semibold prose-em:text-gray-200 prose-ul:list-disc prose-ul:pl-6 prose-ul:my-6 prose-li:text-gray-300 prose-li:mb-2 prose-ol:list-decimal prose-ol:pl-6 prose-code:text-orange-400 prose-code:bg-[#1a1d29] prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-pre:!bg-[#1a1d29] prose-pre:border prose-pre:border-gray-700 prose-pre:rounded-xl prose-pre:p-6 prose-pre:my-6 prose-pre:overflow-x-auto prose-pre:shadow-xl prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:bg-[#1C1E2E] prose-blockquote:pl-6 prose-blockquote:py-4 prose-blockquote:my-6 prose-blockquote:italic prose-blockquote:text-gray-400 prose-a:text-orange-400 prose-a:font-medium prose-a:no-underline hover:prose-a:text-orange-300 hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-2xl prose-img:my-8 prose-hr:border-gray-700 prose-hr:my-12'
-          : 'prose-headings:text-gray-900 prose-h1:text-4xl prose-h1:font-bold prose-h1:mb-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:border-gray-200 prose-h2:pb-3 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4 prose-strong:text-gray-900 prose-strong:font-semibold prose-em:text-gray-600 prose-ul:list-disc prose-ul:pl-6 prose-ul:my-6 prose-li:text-gray-700 prose-li:mb-2 prose-ol:list-decimal prose-ol:pl-6 prose-code:text-indigo-600 prose-code:bg-indigo-50 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-pre:!bg-gray-900 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-xl prose-pre:p-6 prose-pre:my-6 prose-pre:overflow-x-auto prose-pre:shadow-xl prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:bg-indigo-50 prose-blockquote:pl-6 prose-blockquote:py-4 prose-blockquote:my-6 prose-blockquote:italic prose-blockquote:text-gray-600 prose-a:text-indigo-600 prose-a:font-medium prose-a:no-underline hover:prose-a:text-indigo-700 hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-2xl prose-img:my-8 prose-hr:border-gray-200 prose-hr:my-12'
-      }`}
-    >
+    <div className="w-full">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight, rehypeRaw]}
         components={{
-          code: ({ node, inline, className, children, ...props }) => {
-            if (!inline) {
-              return (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              )
-            }
-            return (
-              <code className={className} {...props}>
+          h1: ({ children }) => (
+            <h1 className="text-4xl font-bold mb-8 mt-12 text-gray-900 dark:text-white leading-tight">
+              {children}
+            </h1>
+          ),
+          h2: ({ children }) => (
+            <h2 className="text-3xl font-bold mb-6 mt-16 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-4 leading-tight">
+              {children}
+            </h2>
+          ),
+          h3: ({ children }) => (
+            <h3 className="text-2xl font-bold mb-4 mt-12 text-gray-900 dark:text-white leading-tight">
+              {children}
+            </h3>
+          ),
+          p: ({ children }) => (
+            <p className="text-lg leading-relaxed mb-6 text-gray-700 dark:text-gray-300">
+              {children}
+            </p>
+          ),
+          ul: ({ children }) => (
+            <ul className="list-disc pl-6 mb-6 space-y-2 text-gray-700 dark:text-gray-300">
+              {children}
+            </ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="list-decimal pl-6 mb-6 space-y-2 text-gray-700 dark:text-gray-300">
+              {children}
+            </ol>
+          ),
+          li: ({ children }) => (
+            <li className="text-lg leading-relaxed">{children}</li>
+          ),
+          strong: ({ children }) => (
+            <strong className="font-bold text-gray-900 dark:text-white">
+              {children}
+            </strong>
+          ),
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-4 border-indigo-500 dark:border-[#FF4E50] pl-6 py-4 my-8 bg-gray-50 dark:bg-gray-800/50 rounded-r-lg italic text-gray-700 dark:text-gray-300">
+              {children}
+            </blockquote>
+          ),
+          code: ({ children, className }) => {
+            const isInline = !className
+            return isInline ? (
+              <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-indigo-600 dark:text-[#FF4E50] font-mono text-sm whitespace-nowrap">
                 {children}
               </code>
+            ) : (
+              <code className={className}>{children}</code>
             )
           },
         }}

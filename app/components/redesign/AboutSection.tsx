@@ -93,7 +93,7 @@ export function AboutSection() {
               <p
                 className={`leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
               >
-                With over 2 years of experience in web development, I&apos;ve
+                With over 3 years of experience in web development, I&apos;ve
                 had the privilege of working with startups and businesses to
                 bring their digital visions to life. My journey began with a
                 curiosity about how things work on the web, and it has evolved
@@ -113,11 +113,11 @@ export function AboutSection() {
             {/* Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src="/about-photo.jpg"
+                src="/about-new.jpg"
                 alt="Emmanuel Obiora - Developer at work"
                 width={600}
                 height={400}
-                className="w-full h-64 object-cover"
+                className="w-full h-64 object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>

@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import QueryProvider from '@/components/providers/QueryProvider'
 import ThemeScript from './components/ThemeScript'
+import ServiceWorkerCleaner from './components/ServiceWorkerCleaner'
 
 // Dynamic import for Footer to reduce initial bundle size
 // const Footer = dynamic(() => import('./components/sections/Footer'), {
@@ -36,11 +37,17 @@ export const metadata: Metadata = {
     'Abuja portfolio website',
   ],
   icons: {
-    icon: [
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    icon: '/favicon.svg',
+    apple: [
+      { url: '/favicon.svg' },
+      { url: '/favicon.svg', sizes: '180x180', type: 'image/svg+xml' },
     ],
-    apple: '/apple-touch-icon.png',
+    other: [
+      {
+        rel: 'apple-touch-icon-precomposed',
+        url: '/favicon.svg',
+      },
+    ],
   },
   manifest: '/site.webmanifest',
   metadataBase: new URL('https://emmanuel-obiora.vercel.app'),
@@ -111,6 +118,7 @@ export default function RootLayout({
       </head>
       <body className={`${poppins.className}`}>
         <ThemeScript />
+        <ServiceWorkerCleaner />
         <QueryProvider>
           <ThemeProvider>
             <AuthProvider>

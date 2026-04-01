@@ -9,6 +9,8 @@ export interface IBlog {
   author: string
   tags: string[]
   views: number
+  images: string[]
+  liveUrl?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -23,6 +25,8 @@ const BlogSchema = new Schema<IBlog>(
     author: { type: String, required: true },
     tags: { type: [String], default: [] },
     views: { type: Number, default: 0 },
+    images: { type: [String], default: [] },
+    liveUrl: { type: String },
   },
   {
     timestamps: true,

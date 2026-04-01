@@ -4,19 +4,32 @@ import Transaction from '@/models/Transaction'
 
 export async function GET(request: Request) {
   try {
+    console.log('Fetching transaction history...')
     await dbConnect()
 
-    // In a real app, you might filter by user ID from a session
-    // For now, we'll return the most recent 20 transactions
+    // Ensure model is registered
+    if (!Transaction) {
+      throw new Error('Transaction model not initialized')
+    }
+
     const transactions = await Transaction.find({})
       .sort({ timestamp: -1 })
       .limit(20)
+      .lean() // Use lean for performance
 
+    console.log(`Found ${transactions.length} transactions`)
     return NextResponse.json(transactions)
   } catch (error: any) {
-    console.error('API History Error:', error.message)
+    console.error('API History Error Details:', {
+      message: error.message,
+      stack: error.stack,
+    })
     return NextResponse.json(
-      { message: 'Internal Server Error' },
+      {
+        message: 'Internal Server Error',
+        error:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
+      },
       { status: 500 }
     )
   }

@@ -25,6 +25,8 @@ export interface MongoProjectType {
   featured: boolean
   category: string
   order: number
+  images?: string[]
+  blogUrl?: string
   createdAt: Date
   updatedAt: Date
 }

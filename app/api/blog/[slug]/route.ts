@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
-import Blog from '@/models/Blog'
+import Post from '@/models/Post'
 
 // GET /api/blog/[slug] - Get single blog post by slug
 export async function GET(
@@ -10,19 +10,19 @@ export async function GET(
   try {
     await connectDB()
 
-    const blog = await Blog.findOne({ slug: params.slug }).lean()
+    const post = await Post.findOne({ slug: params.slug }).lean()
 
-    if (!blog) {
+    if (!post) {
       return NextResponse.json(
-        { error: 'Blog post not found' },
+        { error: 'Post not found' },
         { status: 404 }
       )
     }
 
     // Increment views
-    await Blog.findOneAndUpdate({ slug: params.slug }, { $inc: { views: 1 } })
+    await Post.findOneAndUpdate({ slug: params.slug }, { $inc: { views: 1 } })
 
-    return NextResponse.json(blog)
+    return NextResponse.json(post)
   } catch (error: any) {
     console.error('Error fetching post:', error)
     return NextResponse.json(
@@ -46,7 +46,10 @@ export async function PUT(
     const post = await Post.findOne({ slug })
 
     if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      )
     }
 
     // Update post
@@ -82,7 +85,10 @@ export async function DELETE(
     const post = await Post.findOne({ slug })
 
     if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      )
     }
 
     await Post.findByIdAndDelete(post._id)

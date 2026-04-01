@@ -1,36 +1,46 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Shield, Zap, Headphones, CreditCard } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Shield, TrendingUp, Clock, Headphones } from 'lucide-react'
+import { useTheme } from '@/app/components/ThemeContext'
 
 export function WhyChooseUs() {
+  const { theme, currentTheme } = useTheme()
+  const isDarkMode = theme === 'dark'
+
   const features = [
     {
       icon: Shield,
-      title: 'Secure & Safe',
-      description: 'Bank-level security and encryption',
+      title: 'Secure & Reliable',
+      description: 'Bank-level security for all your transactions',
+      gradient: 'from-blue-500 to-cyan-500',
     },
     {
-      icon: Zap,
+      icon: TrendingUp,
+      title: 'Best Prices',
+      description: 'Competitive rates on all our services',
+      gradient: 'from-green-500 to-emerald-500',
+    },
+    {
+      icon: Clock,
       title: 'Instant Delivery',
-      description: 'Transactions completed in seconds',
+      description: 'Get your services delivered in seconds',
+      gradient: 'from-orange-500 to-red-500',
     },
     {
       icon: Headphones,
       title: '24/7 Support',
-      description: 'Always here to support you',
-    },
-    {
-      icon: CreditCard,
-      title: 'Multiple Payments',
-      description: 'Card, transfer, or digital wallets',
+      description: 'Round-the-clock customer assistance',
+      gradient: 'from-purple-500 to-pink-500',
     },
   ]
 
   return (
-    <section className="py-20 px-6 sm:px-8 lg:px-12 bg-[#1a1d29]">
+    <section
+      className={`py-20 px-6 sm:px-8 lg:px-12 transition-colors duration-300 ${isDarkMode ? 'bg-[#0B0D17]' : 'bg-gray-50'}`}
+    >
       <div className="max-w-7xl mx-auto">
-        {/* Section Heading */}
+        {/* Section Header */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -38,39 +48,64 @@ export function WhyChooseUs() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#FF6B35] to-[#F7931E] bg-clip-text text-transparent">
-            Why Choose Us
+          <h2
+            className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+          >
+            Why Choose{' '}
+            <span
+              className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
+            >
+              Us?
+            </span>
           </h2>
+          <p
+            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+          >
+            We provide the best VTU services with unmatched reliability
+          </p>
         </motion.div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              className="bg-[#252836] rounded-2xl p-6 border border-gray-700 hover:border-[#FF6B35] transition-all duration-300 group text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -8 }}
-            >
-              {/* Icon */}
-              <div className="mb-4 flex justify-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <feature.icon className="w-8 h-8 text-white" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feature, index) => {
+            const Icon = feature.icon
+            return (
+              <motion.div
+                key={feature.title}
+                className={`relative p-6 sm:p-8 rounded-2xl transition-all duration-300 overflow-hidden ${
+                  isDarkMode
+                    ? 'bg-[#1C1E2E] border border-gray-800'
+                    : 'bg-white border border-gray-200 shadow-lg'
+                }`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -8 }}
+              >
+                {/* Icon */}
+                <div
+                  className={`w-14 h-14 rounded-xl mb-6 flex items-center justify-center bg-gradient-to-br ${feature.gradient}`}
+                >
+                  <Icon className="w-7 h-7 text-white" />
                 </div>
-              </div>
 
-              {/* Content */}
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            </motion.div>
-          ))}
+                {/* Content */}
+                <div>
+                  <h3
+                    className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p
+                    className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    {feature.description}
+                  </p>
+                </div>
+              </motion.div>
+            )
+          })}
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
-import Blog from '@/models/Blog'
+import Post from '@/models/Post'
 
 // GET /api/blog - List all blog posts with pagination
 export async function GET(request: NextRequest) {
@@ -31,14 +31,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Get posts with pagination
-    const posts = await Blog.find(query)
+    const posts = await Post.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean()
 
     // Get total count for pagination
-    const total = await Blog.countDocuments(query)
+    const total = await Post.countDocuments(query)
 
     return NextResponse.json({
       posts,
@@ -64,16 +64,7 @@ export async function POST(request: NextRequest) {
     await connectDB()
 
     const body = await request.json()
-    const {
-      title,
-      slug,
-      content,
-      excerpt,
-      coverImage,
-      author,
-      tags,
-      published,
-    } = body
+    const { title, slug, content, excerpt, coverImage, author, tags } = body
 
     // Validate required fields
     if (!title || !slug || !content || !excerpt) {
@@ -88,24 +79,25 @@ export async function POST(request: NextRequest) {
     if (existingPost) {
       return NextResponse.json(
         { error: 'A post with this slug already exists' },
-        { status: 409 }
+        { status: 400 }
       )
     }
 
-    // Create new post
-    const post = await Post.create({
+    const newPost = new Post({
       title,
       slug,
       content,
       excerpt,
       coverImage,
-      author: author || 'Emmanuel Obiora',
-      tags: tags || [],
-      published: published || false,
+      author: author || 'Emmanuel Obiora', // Default author if not provided
+      tags: tags || [], // Default to empty array if not provided
+      published: false, // Default to unpublished
     })
 
+    await newPost.save()
+
     return NextResponse.json(
-      { message: 'Post created successfully', post },
+      { message: 'Post created successfully', post: newPost },
       { status: 201 }
     )
   } catch (error: any) {

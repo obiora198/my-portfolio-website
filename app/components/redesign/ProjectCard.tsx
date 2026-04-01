@@ -12,6 +12,7 @@ interface ProjectCardProps {
   imageUrl: string
   liveUrl: string
   codeUrl: string
+  blogUrl?: string
 }
 
 export function ProjectCard({
@@ -21,9 +22,13 @@ export function ProjectCard({
   imageUrl,
   liveUrl,
   codeUrl,
+  blogUrl,
 }: ProjectCardProps) {
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
+
+  // Generate border color class from primary text color
+  const borderClass = currentTheme.primary.replace(/text-/g, 'border-')
 
   return (
     <motion.div
@@ -42,7 +47,7 @@ export function ProjectCard({
           alt={title}
           width={600}
           height={400}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
         {/* Gradient Overlay on Hover */}
@@ -77,12 +82,24 @@ export function ProjectCard({
         </p>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-wrap gap-3 pt-2">
+          {blogUrl && (
+            <a
+              href={blogUrl}
+              className={`flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-4 py-2.5 border-2 rounded-xl font-medium text-sm transition-all duration-200 shadow-md hover:shadow-lg ${
+                isDarkMode
+                  ? `${borderClass} ${currentTheme.primary} hover:bg-gray-700`
+                  : `${borderClass} ${currentTheme.primary} hover:bg-gray-50`
+              }`}
+            >
+              Details
+            </a>
+          )}
           <a
             href={liveUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium text-sm hover:${currentTheme.buttonHover} transition-all duration-200 shadow-md hover:shadow-lg`}
+            className={`flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium text-sm hover:${currentTheme.buttonHover} transition-all duration-200 shadow-md hover:shadow-lg`}
           >
             <ExternalLink className="w-4 h-4" />
             Live Demo
@@ -91,7 +108,7 @@ export function ProjectCard({
             href={codeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 border-2 rounded-xl font-medium text-sm transition-all duration-200 ${
+            className={`flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-4 py-2.5 border-2 rounded-xl font-medium text-sm transition-all duration-200 ${
               isDarkMode
                 ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600'
                 : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'

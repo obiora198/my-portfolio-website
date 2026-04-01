@@ -2,8 +2,12 @@
 
 import { motion } from 'framer-motion'
 import { Smartphone, FileText, CreditCard, Check } from 'lucide-react'
+import { useTheme } from '@/app/components/ThemeContext'
 
 export function HowItWorks() {
+  const { theme, currentTheme } = useTheme()
+  const isDarkMode = theme === 'dark'
+
   const steps = [
     {
       number: 1,
@@ -32,7 +36,10 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className="py-20 px-6 sm:px-8 lg:px-12 bg-[#1a1d29]">
+    <section
+      id="how-it-works"
+      className={`py-20 px-6 sm:px-8 lg:px-12 transition-colors duration-300 ${isDarkMode ? 'bg-[#1C1E2E]' : 'bg-white'}`}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Section Heading */}
         <motion.div
@@ -42,15 +49,29 @@ export function HowItWorks() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#FF6B35] to-[#F7931E] bg-clip-text text-transparent">
-            How It Works
+          <h2
+            className={`text-4xl sm:text-5xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+          >
+            How It{' '}
+            <span
+              className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
+            >
+              Works
+            </span>
           </h2>
+          <p
+            className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+          >
+            Simple and secure process in just 4 easy steps
+          </p>
         </motion.div>
 
         {/* Steps Container */}
         <div className="relative">
           {/* Connecting Line - Desktop Only */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-[#FF6B35] to-[#F7931E] -translate-y-1/2" />
+          <div
+            className={`hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r ${currentTheme.gradientText} -translate-y-1/2 opacity-30`}
+          />
 
           {/* Steps Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 relative z-10">
@@ -65,20 +86,32 @@ export function HowItWorks() {
               >
                 {/* Number Circle */}
                 <div className="relative">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-orange-500/50">
+                  <div
+                    className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${currentTheme.buttonGradient} flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shadow-lg`}
+                  >
                     {step.number}
                   </div>
                 </div>
 
                 {/* Icon */}
-                <div className="w-16 h-16 rounded-full bg-[#252836] border-2 border-gray-700 flex items-center justify-center">
-                  <step.icon className="w-8 h-8 text-white" />
+                <div
+                  className={`w-16 h-16 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-[#252836] border-2 border-gray-700' : 'bg-gray-100 border-2 border-gray-200'}`}
+                >
+                  <step.icon
+                    className={`w-8 h-8 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                  />
                 </div>
 
                 {/* Content */}
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">{step.title}</h3>
-                  <p className="text-gray-400">{step.description}</p>
+                  <h3
+                    className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                  >
+                    {step.title}
+                  </h3>
+                  <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    {step.description}
+                  </p>
                 </div>
               </motion.div>
             ))}
