@@ -84,6 +84,6 @@ PostSchema.index({ tags: 1, published: 1 })
 PostSchema.index({ slug: 1 }, { unique: true })
 
 const Post: Model<IPost> =
-  models.Post || mongoose.model<IPost>('Post', PostSchema)
+  models.Post || mongoose.model<IPost>('Post', PostSchema, 'blogs')
 
 export default Post
