@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
-import Blog from '@/models/Blog'
+import Post from '@/models/Post'
 
 // GET /api/blog - List all blog posts with pagination
 export async function GET(request: NextRequest) {
@@ -31,14 +31,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Get posts with pagination
-    const posts = await Blog.find(query)
+    const posts = await Post.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean()
 
     // Get total count for pagination
-    const total = await Blog.countDocuments(query)
+    const total = await Post.countDocuments(query)
 
     return NextResponse.json({
       posts,
@@ -75,15 +75,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if slug already exists
-    const existingBlog = await Blog.findOne({ slug })
-    if (existingBlog) {
+    const existingPost = await Post.findOne({ slug })
+    if (existingPost) {
       return NextResponse.json(
-        { error: 'A blog post with this slug already exists' },
+        { error: 'A post with this slug already exists' },
         { status: 400 }
       )
     }
 
-    const newBlog = new Blog({
+    const newPost = new Post({
       title,
       slug,
       content,
@@ -94,16 +94,16 @@ export async function POST(request: NextRequest) {
       published: false, // Default to unpublished
     })
 
-    await newBlog.save()
+    await newPost.save()
 
     return NextResponse.json(
-      { message: 'Blog post created successfully', post: newBlog },
+      { message: 'Post created successfully', post: newPost },
       { status: 201 }
     )
   } catch (error: any) {
-    console.error('Error creating blog post:', error)
+    console.error('Error creating post:', error)
     return NextResponse.json(
-      { error: 'Failed to create blog post', message: error.message },
+      { error: 'Failed to create post', message: error.message },
       { status: 500 }
     )
   }

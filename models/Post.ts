@@ -11,6 +11,8 @@ export interface IPost {
   tags: string[]
   published: boolean
   views: number
+  images?: string[]
+  liveUrl?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -62,6 +64,13 @@ const PostSchema = new Schema<IPost>(
     views: {
       type: Number,
       default: 0,
+    },
+    images: {
+      type: [String],
+      default: [],
+    },
+    liveUrl: {
+      type: String,
     },
   },
   {

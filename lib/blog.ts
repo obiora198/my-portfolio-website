@@ -1,16 +1,16 @@
 import connectDB from './mongodb'
-import Blog from '@/models/Blog'
+import Post from '@/models/Post'
 
 export async function getBlogBySlug(slug: string) {
   await connectDB()
-  const blog = await Blog.findOne({ slug }).lean()
-  if (blog) {
+  const post = await Post.findOne({ slug }).lean()
+  if (post) {
     // Increment views in background
-    Blog.findOneAndUpdate({ slug }, { $inc: { views: 1 } })
+    Post.findOneAndUpdate({ slug }, { $inc: { views: 1 } })
       .exec()
       .catch((err) => console.error('Error incrementing views:', err))
   }
-  return JSON.parse(JSON.stringify(blog))
+  return JSON.parse(JSON.stringify(post))
 }
 
 export async function getBlogs({
@@ -41,13 +41,13 @@ export async function getBlogs({
     ]
   }
 
-  const posts = await Blog.find(query)
+  const posts = await Post.find(query)
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
     .lean()
 
-  const total = await Blog.countDocuments(query)
+  const total = await Post.countDocuments(query)
 
   return {
     posts: JSON.parse(JSON.stringify(posts)),
@@ -55,7 +55,7 @@ export async function getBlogs({
       page,
       limit,
       total,
-      pages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limit),
     },
   }
 }

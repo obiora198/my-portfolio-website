@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
-import Blog from '@/models/Blog'
+import Post from '@/models/Post'
 
 // GET /api/blog/[slug] - Get single blog post by slug
 export async function GET(
@@ -10,19 +10,19 @@ export async function GET(
   try {
     await connectDB()
 
-    const blog = await Blog.findOne({ slug: params.slug }).lean()
+    const post = await Post.findOne({ slug: params.slug }).lean()
 
-    if (!blog) {
+    if (!post) {
       return NextResponse.json(
-        { error: 'Blog post not found' },
+        { error: 'Post not found' },
         { status: 404 }
       )
     }
 
     // Increment views
-    await Blog.findOneAndUpdate({ slug: params.slug }, { $inc: { views: 1 } })
+    await Post.findOneAndUpdate({ slug: params.slug }, { $inc: { views: 1 } })
 
-    return NextResponse.json(blog)
+    return NextResponse.json(post)
   } catch (error: any) {
     console.error('Error fetching post:', error)
     return NextResponse.json(
@@ -43,30 +43,30 @@ export async function PUT(
     const { slug } = params
     const body = await request.json()
 
-    const blog = await Blog.findOne({ slug })
+    const post = await Post.findOne({ slug })
 
-    if (!blog) {
+    if (!post) {
       return NextResponse.json(
-        { error: 'Blog post not found' },
+        { error: 'Post not found' },
         { status: 404 }
       )
     }
 
-    // Update blog
-    const updatedBlog = await Blog.findByIdAndUpdate(
-      blog._id,
+    // Update post
+    const updatedPost = await Post.findByIdAndUpdate(
+      post._id,
       { ...body },
       { new: true, runValidators: true }
     )
 
     return NextResponse.json({
-      message: 'Blog post updated successfully',
-      post: updatedBlog,
+      message: 'Post updated successfully',
+      post: updatedPost,
     })
   } catch (error: any) {
-    console.error('Error updating blog post:', error)
+    console.error('Error updating post:', error)
     return NextResponse.json(
-      { error: 'Failed to update blog post', message: error.message },
+      { error: 'Failed to update post', message: error.message },
       { status: 500 }
     )
   }
@@ -82,24 +82,24 @@ export async function DELETE(
 
     const { slug } = params
 
-    const blog = await Blog.findOne({ slug })
+    const post = await Post.findOne({ slug })
 
-    if (!blog) {
+    if (!post) {
       return NextResponse.json(
-        { error: 'Blog post not found' },
+        { error: 'Post not found' },
         { status: 404 }
       )
     }
 
-    await Blog.findByIdAndDelete(blog._id)
+    await Post.findByIdAndDelete(post._id)
 
     return NextResponse.json({
-      message: 'Blog post deleted successfully',
+      message: 'Post deleted successfully',
     })
   } catch (error: any) {
-    console.error('Error deleting blog post:', error)
+    console.error('Error deleting post:', error)
     return NextResponse.json(
-      { error: 'Failed to delete blog post', message: error.message },
+      { error: 'Failed to delete post', message: error.message },
       { status: 500 }
     )
   }
