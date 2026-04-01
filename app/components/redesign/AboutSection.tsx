@@ -117,7 +117,7 @@ export function AboutSection() {
                 alt="Emmanuel Obiora - Developer at work"
                 width={600}
                 height={400}
-                className="w-full h-64 object-cover"
+                className="w-full h-64 object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>

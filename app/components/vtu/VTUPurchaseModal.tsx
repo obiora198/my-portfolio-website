@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, AlertCircle } from 'lucide-react'
@@ -47,7 +49,7 @@ export function VTUPurchaseModal({
       electricity: 'electricity',
       international: 'international',
     }
-    return map[service] || 'airtime'
+    return (service ? map[service] : null) || 'airtime'
   }
 
   const [activeTab, setActiveTab] = useState<VTUTab>(
@@ -616,15 +618,16 @@ export function VTUPurchaseModal({
                                 : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
-                          <img
-                            src={service.image}
-                            alt={service.name}
-                            className="w-8 h-8 rounded-full"
-                            onError={(e) => {
-                              ;(e.target as HTMLImageElement).src =
-                                '/images/airtime.jpg'
-                            }}
-                          />
+                          <div className="w-8 h-8 rounded-full overflow-hidden relative">
+                            <Image
+                              src={service.image}
+                              alt={service.name}
+                              width={32}
+                              height={32}
+                              className="w-full h-full object-cover"
+                              unoptimized
+                            />
+                          </div>
                           <span
                             className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
                           >

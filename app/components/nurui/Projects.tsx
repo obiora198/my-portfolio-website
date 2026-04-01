@@ -45,7 +45,7 @@ export default function Projects() {
       isMounted = false
       clearTimeout(timeoutId)
     }
-  }, [])
+  }, [loading])
 
   return (
     <>

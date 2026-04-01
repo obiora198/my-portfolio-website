@@ -47,7 +47,7 @@ export function ProjectCard({
           alt={title}
           width={600}
           height={400}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
         {/* Gradient Overlay on Hover */}

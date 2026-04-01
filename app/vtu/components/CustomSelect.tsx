@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BsChevronDown, BsSearch } from 'react-icons/bs'
+import Image from 'next/image'
 
 interface CustomSelectProps {
   label?: string
@@ -76,11 +77,15 @@ export const CustomSelect = ({
               ) : (
                 <>
                   {selectedOption.image && (
-                    <img
-                      src={selectedOption.image}
-                      className="w-5 h-5 rounded-full object-contain"
-                      alt=""
-                    />
+                    <div className="w-5 h-5 rounded-full overflow-hidden relative">
+                      <Image
+                        src={selectedOption.image}
+                        fill
+                        className="object-contain"
+                        alt=""
+                        unoptimized
+                      />
+                    </div>
                   )}
                   <span className="truncate">{selectedOption.label}</span>
                 </>
@@ -171,11 +176,15 @@ export const CustomSelect = ({
                           ) : (
                             <>
                               {option.image && (
-                                <img
-                                  src={option.image}
-                                  className="w-6 h-6 rounded-full object-contain bg-white p-0.5"
-                                  alt=""
-                                />
+                                <div className="w-6 h-6 rounded-full overflow-hidden relative bg-white p-0.5">
+                                  <Image
+                                    src={option.image}
+                                    fill
+                                    className="object-contain"
+                                    alt=""
+                                    unoptimized
+                                  />
+                                </div>
                               )}
                               <span className="truncate">{option.label}</span>
                             </>

@@ -43,7 +43,7 @@ export default function AdminPage() {
     } else {
       start()
     }
-  }, [user, authLoading])
+  }, [user, authLoading, router])
 
   const handleDelete = async (id: String) => {
     if (!user) {
