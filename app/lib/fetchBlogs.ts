@@ -1,7 +1,7 @@
 export default async function fetchBlogs(limit: number = 6) {
   try {
     const response = await fetch(`/api/blog?limit=${limit}`, {
-      cache: 'no-store',
+      next: { revalidate: 3600 }, // Cache for 1 hour on the server
     })
 
     if (!response.ok) {

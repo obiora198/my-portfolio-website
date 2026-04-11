@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { ProjectType } from '../../configs/tsTypes'
+import { MongoProjectType } from '../../configs/tsTypes'
 import fetchProjects from '../../lib/fetchProjects'
-import deleteProject from '../../../firebase/firestore/deleteProject'
+import deleteProject from '../../lib/deleteProject'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../context/authContext'
 import AdminButton from '../../components/buttons/AdminButton'
@@ -20,15 +20,17 @@ import logOut from '@/firebase/auth/logout'
 import Loading from '@/app/components/Loading'
 import { toast } from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from '../../components/ThemeContext'
 
 export default function AdminPage() {
-  const [projects, setProjects] = React.useState<ProjectType[]>([])
+  const [projects, setProjects] = React.useState<MongoProjectType[]>([])
   const [loading, setLoading] = useState(false)
-  const [projectToDelete, setProjectToDelete] = useState<ProjectType | null>(
+  const [projectToDelete, setProjectToDelete] = useState<MongoProjectType | null>(
     null
   )
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
+  const { currentTheme } = useTheme()
 
   const start = async () => {
     let projectsArray = await fetchProjects()
@@ -45,13 +47,13 @@ export default function AdminPage() {
     }
   }, [user, authLoading, router])
 
-  const handleDelete = async (id: String) => {
+  const handleDelete = async (id: string) => {
     if (!user) {
       alert('not authorized')
       router.push('/auth/signin')
       return
     }
-    if (projectToDelete && projectToDelete.id) {
+    if (projectToDelete && projectToDelete._id) {
       setLoading(true)
       const result = await deleteProject(id)
 
@@ -78,7 +80,7 @@ export default function AdminPage() {
         <motion.h2
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent"
+          className={`text-xl font-bold bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
         >
           Admin Panel
         </motion.h2>
@@ -89,13 +91,13 @@ export default function AdminPage() {
         >
           <a
             href="/"
-            className="text-gray-600 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 font-medium transition-colors duration-300"
+            className={`text-gray-600 dark:text-slate-400 hover:${currentTheme.primary} font-medium transition-colors duration-300`}
           >
             Home
           </a>
           <a
             href="/#projects-section"
-            className="text-gray-600 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 font-medium transition-colors duration-300"
+            className={`text-gray-600 dark:text-slate-400 hover:${currentTheme.primary} font-medium transition-colors duration-300`}
           >
             Projects
           </a>
@@ -117,7 +119,7 @@ export default function AdminPage() {
           transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent mb-4">
+          <h1 className={`text-4xl font-bold bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent mb-4`}>
             Manage Projects
           </h1>
           <p className="text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
@@ -151,7 +153,7 @@ export default function AdminPage() {
               <AnimatePresence>
                 {projects.map((item, index) => (
                   <motion.tr
-                    key={item.id}
+                    key={item._id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
@@ -159,7 +161,7 @@ export default function AdminPage() {
                     className="hover:bg-gray-50 dark:hover:bg-slate-700/50 border-b border-gray-200 dark:border-slate-600 transition-colors duration-300"
                   >
                     <td className="p-4 text-gray-800 dark:text-slate-200 font-medium">
-                      {item.data.title}
+                      {item.title}
                     </td>
                     <td className="p-4 text-center">
                       <div className="inline-flex gap-3 items-center">
@@ -201,8 +203,8 @@ export default function AdminPage() {
                           <DialogContent>
                             <p className="text-gray-700 dark:text-slate-300 py-4">
                               Are you sure you want to delete &quot;
-                              {projectToDelete?.data.title}&quot;? This action
-                              cannot be undone.
+                              {projectToDelete?.title}&quot;? This action cannot
+                              be undone.
                             </p>
                           </DialogContent>
                           <DialogActions className="gap-2 p-4">
@@ -222,7 +224,7 @@ export default function AdminPage() {
                             <Button
                               onClick={() =>
                                 projectToDelete &&
-                                handleDelete(projectToDelete.id)
+                                handleDelete(projectToDelete._id)
                               }
                               variant="contained"
                               color="error"

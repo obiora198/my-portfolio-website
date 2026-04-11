@@ -5,6 +5,8 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useMemo,
+  useCallback,
   ReactNode,
 } from 'react'
 import { generateFavicon, updateFavicon } from '../utils/favicon'
@@ -199,18 +201,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     updateFavicon(faviconHref)
   }, [themeMode, themeName, mounted])
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'))
-  }
+  }, [])
 
   // This is the function to set the palette/color theme
-  const setTheme = (name: string) => {
+  const setTheme = useCallback((name: string) => {
     if (themes[name]) {
       setThemeName(name)
     }
-  }
+  }, [])
 
-  const value = {
+  const value = useMemo(() => ({
     theme: themeMode,
     themeName,
     currentTheme: mounted
@@ -220,7 +222,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       : themes.sunset, // Default fallback for hydration
     setTheme,
     toggleTheme,
-  }
+  }), [themeMode, themeName, mounted, setTheme, toggleTheme])
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }

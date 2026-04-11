@@ -51,9 +51,9 @@ export function AboutSection() {
   return (
     <section
       id="about"
-      className={`py-20 px-6 sm:px-8 lg:px-12 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+      className={`py-20 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <motion.div
           className="text-center mb-16 space-y-4"

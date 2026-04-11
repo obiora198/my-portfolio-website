@@ -25,7 +25,7 @@ export function ServicesGrid({ onServiceClick }: ServicesGridProps) {
       icon: Wifi,
       title: 'Data Bundles',
       description: 'Get affordable data plans',
-      gradient: 'from-purple-500 to-pink-500',
+      gradient: `from-${currentTheme.primary.replace('text-', '')} to-${currentTheme.secondary.replace('text-', '')}`,
     },
     {
       id: 'cable-tv',
@@ -53,7 +53,7 @@ export function ServicesGrid({ onServiceClick }: ServicesGridProps) {
       icon: CreditCard,
       title: 'Fund Wallet',
       description: 'Add money to your wallet',
-      gradient: 'from-indigo-500 to-purple-500',
+      gradient: currentTheme.buttonGradient,
     },
   ]
 

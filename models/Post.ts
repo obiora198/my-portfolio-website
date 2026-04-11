@@ -31,7 +31,6 @@ const PostSchema = new Schema<IPost>(
       unique: true,
       trim: true,
       lowercase: true,
-      index: true,
     },
     content: {
       type: String,
@@ -84,6 +83,6 @@ PostSchema.index({ tags: 1, published: 1 })
 PostSchema.index({ slug: 1 }, { unique: true })
 
 const Post: Model<IPost> =
-  models.Post || mongoose.model<IPost>('Post', PostSchema)
+  models.Post || mongoose.model<IPost>('Post', PostSchema, 'blogs')
 
 export default Post

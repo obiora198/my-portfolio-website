@@ -68,7 +68,7 @@ export function ThemedBlogDetail({ post }: ThemedBlogDetailProps) {
                 className={`w-12 h-12 rounded-full flex items-center justify-center border ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100'}`}
               >
                 <User
-                  className={`w-6 h-6 ${currentTheme.primary.replace('text-', 'stroke-').includes('stroke-') ? currentTheme.primary : 'text-indigo-500'}`}
+                  className={`w-6 h-6 ${currentTheme.primary}`}
                 />
               </div>
               <div className="text-left">
@@ -101,15 +101,24 @@ export function ThemedBlogDetail({ post }: ThemedBlogDetailProps) {
         </div>
       </header>
 
-      {/* Featured Image - Wide but constrained */}
+      {/* Featured Image - Universal Aspect Ratio Handler */}
       <section className="max-w-6xl mx-auto px-4 mb-16">
         {post.coverImage && (
-          <div className="relative aspect-[21/9] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-gray-200 dark:ring-gray-800">
+          <div className="relative aspect-[21/9] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-gray-200 dark:ring-gray-800 bg-gray-100 dark:bg-gray-900 group">
+            {/* Blurred Backdrop */}
             <Image
               src={post.coverImage}
               alt={post.title}
               fill
-              className="object-cover object-top"
+              className="absolute inset-0 object-cover opacity-40 blur-3xl saturate-150 group-hover:opacity-50 transition-opacity duration-500 scale-110"
+              priority
+            />
+            {/* Main Contained Image */}
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              fill
+              className="relative z-10 object-contain object-center scale-[0.98]"
               priority
             />
           </div>

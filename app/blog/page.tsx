@@ -3,6 +3,7 @@ import { BlogHero } from '../components/blog/BlogHero'
 import { BlogCard } from '../components/blog/BlogCard'
 import { Navigation } from '../components/redesign/Navigation'
 import { ThemeSwitcher } from '../components/redesign/ThemeSwitcher'
+import { BlogPagination } from './components/BlogPagination'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -86,37 +87,11 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               </div>
 
               {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-3 mt-16">
-                  {page > 1 && (
-                    <Link
-                      href={{
-                        pathname: '/blog',
-                        query: { ...searchParams, page: page - 1 },
-                      }}
-                      className="px-6 py-3 border rounded-xl font-medium bg-white dark:bg-[#252836] border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:border-indigo-500 dark:hover:border-[#FF4E50] transition-all"
-                    >
-                      Previous
-                    </Link>
-                  )}
-
-                  <span className="px-6 py-3 rounded-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-[#FF4E50] dark:to-[#F9D423] text-white">
-                    {page} / {totalPages}
-                  </span>
-
-                  {page < totalPages && (
-                    <Link
-                      href={{
-                        pathname: '/blog',
-                        query: { ...searchParams, page: page + 1 },
-                      }}
-                      className="px-6 py-3 border rounded-xl font-medium bg-white dark:bg-[#252836] border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:border-indigo-500 dark:hover:border-[#FF4E50] transition-all"
-                    >
-                      Next
-                    </Link>
-                  )}
-                </div>
-              )}
+              <BlogPagination
+                page={page}
+                totalPages={totalPages}
+                searchParams={searchParams}
+              />
             </>
           )}
         </div>

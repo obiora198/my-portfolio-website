@@ -61,7 +61,7 @@ export function BlogHero() {
         >
           <Link
             href="/"
-            className={`inline-flex items-center gap-2 transition-colors duration-200 mb-12 ${isDarkMode ? 'text-[#FF4E50] hover:text-[#F9D423]' : currentTheme.primary + ' hover:opacity-80'}`}
+            className={`inline-flex items-center gap-2 transition-colors duration-200 mb-12 ${isDarkMode ? currentTheme.primary + ' hover:opacity-80' : currentTheme.primary + ' hover:opacity-80'}`}
           >
             <ArrowLeft className="w-5 h-5" />
             <span className="font-medium">Back to Home</span>
@@ -103,7 +103,7 @@ export function BlogHero() {
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search articles..."
-              className={`w-full pl-12 pr-4 py-4 border rounded-full focus:outline-none focus:ring-2 transition-colors duration-200 ${isDarkMode ? 'bg-[#252836] border-gray-700 text-white placeholder-gray-500 focus:ring-indigo-500/50' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500'}`}
+              className={`w-full pl-12 pr-4 py-4 border rounded-full focus:outline-none focus:ring-2 transition-colors duration-200 ${isDarkMode ? 'bg-[#252836] border-gray-700 text-white placeholder-gray-500 focus:ring-' + currentTheme.primary.replace('text-', '').replace('dark:', '').split('-')[0] + '-500/50' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-' + currentTheme.primary.replace('text-', '').split('-')[0] + '-500 focus:border-' + currentTheme.primary.replace('text-', '').split('-')[0] + '-500'}`}
             />
           </div>
         </motion.div>

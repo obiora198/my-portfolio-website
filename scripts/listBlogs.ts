@@ -1,11 +1,11 @@
 import dbConnect from '../lib/mongodb'
-import Blog from '../models/Blog'
+import Post from '../models/Post'
 
 async function listBlogs() {
   try {
     await dbConnect()
     console.log('Connected to database...')
-    const blogs = await Blog.find({}).sort({ createdAt: -1 }).lean()
+    const blogs = await Post.find({}).sort({ createdAt: -1 }).lean()
     console.log(`Found ${blogs.length} blogs:`)
     blogs.forEach((b: any) => {
       console.log(`- [${b._id}] ${b.title}`)

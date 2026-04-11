@@ -41,7 +41,7 @@ export function BlogCard({
     >
       <Link href={`/blog/${slug}`} className="block">
         <div
-          className={`rounded-2xl overflow-hidden border transition-all duration-300 shadow-lg hover:shadow-2xl ${isDarkMode ? 'bg-[#252836] border-gray-700 hover:border-[#FF4E50]' : 'bg-white border-gray-200 hover:border-' + currentTheme.primary.replace('text-', '')}`}
+          className={`rounded-2xl overflow-hidden border transition-all duration-300 shadow-lg hover:shadow-2xl ${isDarkMode ? 'bg-[#252836] border-gray-700 hover:border-' + currentTheme.primary.replace('text-', '').replace('dark:', '') : 'bg-white border-gray-200 hover:border-' + currentTheme.primary.replace('text-', '')}`}
         >
           {/* Image Container */}
           <div className="relative aspect-video overflow-hidden">
@@ -77,7 +77,7 @@ export function BlogCard({
 
             {/* Title */}
             <h3
-              className={`text-xl font-bold transition-colors duration-200 line-clamp-2 ${isDarkMode ? 'text-white group-hover:text-[#FF4E50]' : 'text-gray-900 group-hover:' + currentTheme.primary}`}
+              className={`text-xl font-bold transition-colors duration-200 line-clamp-2 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:${currentTheme.primary}`}
             >
               {title}
             </h3>

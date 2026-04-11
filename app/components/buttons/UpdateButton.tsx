@@ -7,40 +7,37 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material'
-import updateProject from '../../../firebase/firestore/updateProject'
-import { ProjectType } from '@/app/configs/tsTypes'
+import updateProject from '../../lib/updateProject'
+import { MongoProjectType } from '@/app/configs/tsTypes'
 import { FaTrash } from "react-icons/fa";
 import Image from 'next/image'
 import { useAuth } from '@/app/context/authContext'
 import { useRouter } from 'next/navigation'
+import { useTheme } from '@/app/components/ThemeContext'
 
-
-interface ExistingProject {
-  id?: string
-  data: ProjectType['data']
-}
 
 export default function ProjectUpdate({
   existingProject,
 }: {
-  existingProject: ExistingProject
+  existingProject: MongoProjectType
 }) {
   // State for form fields
-  const [title, setTitle] = useState(existingProject?.data.title || '')
-  const [link, setLink] = useState(existingProject?.data.link || '')
+  const [title, setTitle] = useState(existingProject?.title || '')
+  const [link, setLink] = useState(existingProject?.liveUrl || '')
   const [githubLink, setGithubLink] = useState(
-    existingProject?.data.githubLink || ''
+    existingProject?.githubUrl || ''
   )
-  const [stack, setStack] = useState(existingProject?.data.stack || '')
+  const [stack, setStack] = useState(existingProject?.technologies?.join(' | ') || '')
   const [description, setDescription] = useState(
-    existingProject?.data.description || ''
+    existingProject?.description || ''
   )
   const [image, setImage] = useState<File | null | undefined>(null) // State for image file
-  const [imageUrl, setImageUrl] = useState(existingProject?.data.image || '') // State for image URL
+  const [imageUrl, setImageUrl] = useState(existingProject?.image || '') // State for image URL
   const [loading, setLoading] = useState(false)
   const [openDialog, setOpenDialog] = useState(false) // State for dialog visibility
   const { user } = useAuth() // Get user from context
   const router = useRouter() // Get router from Next.js
+  const { currentTheme } = useTheme() // Get theme from context
 
   // Handle form submission
 
@@ -76,20 +73,19 @@ export default function ProjectUpdate({
     }
     setLoading(true)
 
-    const projectData: ProjectType['data'] = {
+    const projectData: Partial<MongoProjectType> = {
       title: title,
-      link: link,
-      githubLink: githubLink,
+      liveUrl: link,
+      githubUrl: githubLink,
       description: description,
-      stack: stack,
-      image: imageUrl, // Use the image URL for the project
-      updatedAt: new Date().getTime(), // Set the current timestamp
+      technologies: stack.split('|').map((s) => s.trim()),
+      image: imageUrl,
     }
 
     try {
       // Call the update function passing the project ID and data
       const result: UpdateResult = await updateProject(
-        existingProject.id,
+        existingProject._id,
         projectData
       )
       if (result.status === 200) {
@@ -124,7 +120,7 @@ export default function ProjectUpdate({
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle className="text-indigo-600 font-bold text-2xl text-center">
+        <DialogTitle className={`text-center font-bold text-2xl mb-2 ${currentTheme.primary}`}>
           Update Project
         </DialogTitle>
 

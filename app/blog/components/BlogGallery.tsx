@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ZoomIn, ZoomOut } from 'lucide-react'
+import { useTheme } from '@/app/components/ThemeContext'
 
 interface BlogGalleryProps {
   images: string[]
@@ -10,6 +11,7 @@ interface BlogGalleryProps {
 export function BlogGallery({ images }: BlogGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isZoomed, setIsZoomed] = useState(false)
+  const { currentTheme } = useTheme()
 
   // Body Scroll Locking
   useEffect(() => {
@@ -40,7 +42,7 @@ export function BlogGallery({ images }: BlogGalleryProps) {
 
   return (
     <div className="mt-16 mb-8 text-left">
-      <h3 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white border-l-4 border-indigo-600 dark:border-[#FF4E50] pl-4">
+      <h3 className={`text-2xl font-bold mb-8 text-gray-900 dark:text-white border-l-4 ${currentTheme.primary.replace('text-', 'border-')} pl-4`}>
         Project Gallery
       </h3>
 

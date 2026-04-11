@@ -3,7 +3,7 @@ import Post from '@/models/Post'
 
 export async function getBlogBySlug(slug: string) {
   await connectDB()
-  const post = await Post.findOne({ slug }).lean()
+  const post = await Post.findOne({ slug: { $regex: new RegExp(`^${slug}$`, 'i') } }).lean()
   if (post) {
     // Increment views in background
     Post.findOneAndUpdate({ slug }, { $inc: { views: 1 } })

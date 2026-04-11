@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from 'react'
 import { MongoProjectType } from '../../configs/tsTypes'
 import fetchProjects from '../../lib/fetchProjects'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 
 // Skeleton component for loading state
 function ProjectCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
@@ -102,9 +103,6 @@ function ProjectCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
 export function ProjectsSection() {
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
-  const [projects, setProjects] = useState<MongoProjectType[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [visibleCount, setVisibleCount] = useState(6)
   const sectionRef = useRef<HTMLDivElement>(null)
 
@@ -127,46 +125,26 @@ export function ProjectsSection() {
     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  useEffect(() => {
-    let isMounted = true
+  const {
+    data: projects = [],
+    isLoading: loading,
+    error: queryError,
+  } = useQuery({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  })
 
-    async function loadProjects() {
-      try {
-        console.log('🚀 Loading projects...')
-        setLoading(true)
-        setError(null)
-
-        const data = await fetchProjects()
-        console.log('✅ Fetched projects:', data?.length || 0, 'projects')
-
-        if (isMounted) {
-          setProjects(data)
-          setLoading(false)
-        }
-      } catch (err) {
-        console.error('❌ Failed to load projects:', err)
-        if (isMounted) {
-          setError('Failed to load projects')
-          setProjects([])
-          setLoading(false)
-        }
-      }
-    }
-
-    loadProjects()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  const error = queryError ? 'Failed to load projects' : null
 
   return (
     <section
       id="projects"
       ref={sectionRef}
-      className={`py-20 px-6 sm:px-8 lg:px-12 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+      className={`py-20 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <motion.div
           className="text-center mb-16 space-y-4"
@@ -217,7 +195,7 @@ export function ProjectsSection() {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
               <AnimatePresence>
-                {projects.slice(0, visibleCount).map((project) => (
+                {projects.slice(0, visibleCount).map((project: MongoProjectType) => (
                   <ProjectCard
                     key={project._id}
                     title={project.title}
@@ -227,7 +205,7 @@ export function ProjectsSection() {
                     }
                     imageUrl={project.image}
                     liveUrl={project.liveUrl || '#'}
-                    codeUrl={project.githubUrl || '#'}
+                    codeUrl={project.githubUrl || ''}
                     blogUrl={project.blogUrl}
                   />
                 ))}

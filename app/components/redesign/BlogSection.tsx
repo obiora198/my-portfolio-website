@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useTheme } from '../ThemeContext'
 import { useEffect, useState } from 'react'
 import fetchBlogs from '../../lib/fetchBlogs'
+import { useQuery } from '@tanstack/react-query'
 
 // Blog type based on the API response
 interface BlogType {
@@ -51,32 +52,23 @@ function BlogCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
 }
 
 export function BlogSection() {
-  console.log('--- BlogSection Component Rendered ---')
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
-  const [blogs, setBlogs] = useState<BlogType[]>([])
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function getBlogs() {
-      try {
-        const data = await fetchBlogs(3)
-        setBlogs(data.posts || [])
-      } catch (error) {
-        console.error('Error fetching blogs:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    getBlogs()
-  }, [])
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['blogs', 3],
+    queryFn: () => fetchBlogs(3),
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const blogs = data?.posts || []
 
   return (
     <section
       id="blog"
-      className={`py-20 px-6 sm:px-8 lg:px-12 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+      className={`py-20 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <motion.div
           className="text-center mb-16 space-y-4"
@@ -104,7 +96,7 @@ export function BlogSection() {
               <BlogCardSkeleton key={i} isDarkMode={isDarkMode} />
             ))
           ) : blogs.length > 0 ? (
-            blogs.map((post, index) => (
+            blogs.map((post: BlogType, index: number) => (
               <motion.article
                 key={post._id}
                 className={`group rounded-2xl overflow-hidden transition-all duration-300 ${
@@ -125,6 +117,7 @@ export function BlogSection() {
                       src={post.coverImage}
                       alt={post.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
                     />
                   )}

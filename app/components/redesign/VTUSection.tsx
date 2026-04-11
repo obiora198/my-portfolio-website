@@ -66,9 +66,9 @@ export function VTUSection() {
   return (
     <section
       id="vtu"
-      className={`py-20 px-6 sm:px-8 lg:px-12 ${isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-br from-gray-50 to-white'}`}
+      className={`py-20 ${isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-br from-gray-50 to-white'}`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <motion.div
           className="text-center mb-16 space-y-4"
@@ -96,8 +96,8 @@ export function VTUSection() {
               <motion.div
                 className={`rounded-2xl p-6 transition-all duration-300 cursor-pointer ${
                   isDarkMode
-                    ? 'bg-gray-900 hover:bg-gray-850 border border-gray-700 hover:border-indigo-500'
-                    : 'bg-white hover:shadow-2xl border border-gray-100 hover:border-indigo-300'
+                    ? `bg-gray-900 hover:bg-gray-850 border border-gray-700 ${currentTheme.primary.replace('text-', 'hover:border-')}`
+                    : `bg-white hover:shadow-2xl border border-gray-100 ${currentTheme.primary.replace('text-', 'hover:border-')}`
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -161,7 +161,7 @@ export function VTUSection() {
                 className={`w-16 h-16 rounded-full bg-gradient-to-br ${currentTheme.badgeBg} border-2 border-${currentTheme.badgeBorder} flex items-center justify-center mb-4`}
               >
                 <feature.icon
-                  className={`w-8 h-8 text-${currentTheme.primary}`}
+                  className={`w-8 h-8 ${currentTheme.primary}`}
                 />
               </div>
               <h4
