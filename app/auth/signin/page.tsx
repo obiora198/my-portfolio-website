@@ -5,10 +5,14 @@ import { useRouter } from 'next/navigation'
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth'
 import firebase_app from '../../../firebase/config'
 import { motion } from 'framer-motion'
+import { useTheme } from '../../components/ThemeContext'
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Login() {
   const router = useRouter()
   const auth = getAuth(firebase_app)
+  const { currentTheme } = useTheme()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -48,11 +52,11 @@ export default function Login() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent mb-4"
+            className={`text-4xl font-bold bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent mb-4`}
           >
             Admin Login
           </motion.h1>
-          <div className="w-20 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full mx-auto"></div>
+          <div className={`w-20 h-1 bg-gradient-to-r ${currentTheme.gradient} rounded-full mx-auto`}></div>
         </div>
 
         {/* Login Form */}
@@ -76,7 +80,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                className={`w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-${currentTheme.primary.replace('text-', '').replace('dark:', '')} focus:border-transparent transition-all duration-300`}
               />
             </div>
 
@@ -93,7 +97,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                className={`w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-${currentTheme.primary.replace('text-', '').replace('dark:', '')} focus:border-transparent transition-all duration-300`}
               />
             </div>
 
@@ -106,7 +110,7 @@ export default function Login() {
               className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 ${
                 loading
                   ? 'bg-gray-400 dark:bg-slate-600 text-white cursor-not-allowed'
-                  : 'bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-600 dark:to-purple-600 text-white hover:shadow-lg hover:shadow-indigo-500/25'
+                  : `bg-gradient-to-r ${currentTheme.buttonGradient} text-white hover:shadow-lg hover:${currentTheme.buttonHover}`
               }`}
             >
               {loading ? (
@@ -143,12 +147,13 @@ export default function Login() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center mt-6"
         >
-          <a
+          <Link
             href="/"
-            className="text-gray-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300 font-medium"
+            className={`flex items-center justify-center gap-2 ${currentTheme.primary} hover:opacity-80 transition-opacity duration-300 font-medium`}
           >
-            ← Back to Home
-          </a>
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Home</span>
+          </Link>
         </motion.div>
       </motion.div>
     </div>

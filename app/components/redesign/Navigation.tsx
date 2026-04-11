@@ -26,14 +26,17 @@ export function Navigation() {
   const isHomePage = pathname === '/'
 
   // Adjust nav links based on current page
-  const navLinks = baseNavLinks.map((link) => ({
-    ...link,
-    href: isHomePage
-      ? link.homeHref
-      : link.href.startsWith('#')
-        ? `/${link.href}`
-        : link.href,
-  }))
+  const navLinks = baseNavLinks.map((link) => {
+    const isAnchor = link.href.startsWith('#')
+    return {
+      ...link,
+      href: isHomePage
+        ? link.homeHref
+        : isAnchor
+          ? `/${link.href}`
+          : link.href,
+    }
+  })
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,7 +68,7 @@ export function Navigation() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <motion.a
-              href="#home"
+              href={isHomePage ? '#home' : '/'}
               className="relative z-50"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}

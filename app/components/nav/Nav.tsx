@@ -58,6 +58,10 @@ export default function Nav() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30)
+    
+    // Check initial scroll position in case page was refreshed while scrolled
+    handleScroll()
+    
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -82,8 +86,8 @@ export default function Nav() {
     : 'text-gray-500 dark:text-white'
 
   const brandGradient = scrolled
-    ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400'
-    : 'hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg'
+    ? `bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`
+    : `hover:${currentTheme.primary} drop-shadow-lg`
 
   return (
     <>
@@ -97,7 +101,7 @@ export default function Nav() {
             href="/"
             className="text-4xl font-bold hover:scale-105 transition-all duration-300"
           >
-            <span className="text-white bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl px-3 py-1 shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300">
+            <span className={`text-white bg-gradient-to-br ${currentTheme.buttonGradient} rounded-xl px-3 py-1 shadow-lg shadow-indigo-500/30 hover:shadow-xl transition-all duration-300`}>
               E
             </span>
             <span
@@ -114,7 +118,7 @@ export default function Nav() {
                 <li key={index} className="relative">
                   {!link.url ? (
                     <div
-                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group/nav backdrop-blur-sm hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg ${textColor}`}
+                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group/nav backdrop-blur-sm hover:${currentTheme.primary} drop-shadow-lg ${textColor}`}
                       onMouseEnter={() => setDropdownOpenIndex(index)}
                       onMouseLeave={() => setDropdownOpenIndex(null)}
                     >
@@ -167,13 +171,13 @@ export default function Nav() {
                                   >
                                     <Link
                                       href={sublink.url || '#'}
-                                      className="relative block px-6 py-3.5 rounded-xl transition-all duration-300 group/sub hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-slate-300 overflow-hidden text-center whitespace-nowrap"
+                                      className={`relative block px-6 py-3.5 rounded-xl transition-all duration-300 group/sub hover:${currentTheme.primary} text-gray-700 dark:text-slate-300 overflow-hidden text-center whitespace-nowrap`}
                                     >
                                       <span className="relative z-10 font-medium">
                                         {sublink.text}
                                       </span>
-                                      <span className="absolute inset-0 rounded-xl opacity-0 group-hover/sub:opacity-100 transition-all duration-400 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 dark:from-indigo-500/10 dark:via-purple-500/10 dark:to-pink-500/10 border border-indigo-200/30 dark:border-indigo-500/20"></span>
-                                      <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover/sub:w-3/4 transition-all duration-500 ease-out bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400"></span>
+                                      <span className={`absolute inset-0 rounded-xl opacity-0 group-hover/sub:opacity-100 transition-all duration-400 ${currentTheme.accentLight} border border-indigo-200/30 dark:border-indigo-500/20`}></span>
+                                      <span className={`absolute bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover/sub:w-3/4 transition-all duration-500 ease-out bg-gradient-to-r ${currentTheme.buttonGradient}`}></span>
                                     </Link>
                                   </motion.li>
                                 ))}
@@ -186,11 +190,11 @@ export default function Nav() {
                   ) : (
                     <Link
                       href={link.url}
-                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:text-indigo-600 dark:hover:text-indigo-400 drop-shadow-lg ${textColor}`}
+                      className={`relative px-6 py-3 rounded-full transition-all duration-300 group backdrop-blur-sm hover:${currentTheme.primary} drop-shadow-lg ${textColor}`}
                     >
                       <span className="relative z-10">{link.text}</span>
-                      <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-500/20 dark:via-purple-500/20 dark:to-pink-500/20 border border-indigo-200/50 dark:border-indigo-500/30"></span>
-                      <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover:w-3/4 transition-all duration-300 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400"></span>
+                      <span className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 ${currentTheme.accentLight} border border-indigo-200/50 dark:border-indigo-500/30`}></span>
+                      <span className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover:w-3/4 transition-all duration-300 bg-gradient-to-r ${currentTheme.buttonGradient}`}></span>
                     </Link>
                   )}
                 </li>
@@ -200,10 +204,10 @@ export default function Nav() {
               <li className="relative ml-4">
                 <button
                   onClick={toggleAdminMenu}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-full drop-shadow-lg transition-all duration-300 group backdrop-blur-sm border hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/30 ${
+                  className={`flex items-center gap-2 px-6 py-3 rounded-full drop-shadow-lg transition-all duration-300 group backdrop-blur-sm border hover:${currentTheme.primary} hover:border-indigo-300 dark:hover:border-indigo-500 shadow-md ${
                     scrolled
                       ? 'text-gray-600 dark:text-slate-400 border-indigo-200/50 dark:border-slate-600'
-                      : 'text-purple-600 dark:text-purple-400 border-white/30 dark:border-slate-500 shadow-lg'
+                      : `${currentTheme.primary} border-white/30 dark:border-slate-500 shadow-lg`
                   }`}
                 >
                   <FaUserShield className="text-sm" />
@@ -224,9 +228,9 @@ export default function Nav() {
                         <Link
                           href="/auth/admin"
                           onClick={() => setAdminMenuOpen(false)}
-                          className="flex items-center px-6 py-4 text-sm text-gray-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:via-purple-50 hover:to-pink-50 dark:hover:from-indigo-900/50 dark:hover:via-purple-900/50 dark:hover:to-pink-900/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300 group"
+                          className={`flex items-center px-6 py-4 text-sm text-gray-700 dark:text-slate-300 hover:bg-gradient-to-r ${currentTheme.accentLight} hover:${currentTheme.primary} transition-all duration-300 group`}
                         >
-                          <FaThLarge className="mr-3 group-hover:text-indigo-500 transition-colors" />
+                          <FaThLarge className={`mr-3 group-hover:${currentTheme.primary} transition-colors`} />
                           Dashboard
                           <FaArrowRight className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0" />
                         </Link>
@@ -245,11 +249,11 @@ export default function Nav() {
             href="/"
             className="text-3xl font-bold hover:scale-105 transition-all duration-300"
           >
-            <span className="text-white bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl px-2.5 py-1 shadow-lg shadow-indigo-500/30">
+            <span className={`text-white bg-gradient-to-br ${currentTheme.buttonGradient} rounded-xl px-2.5 py-1 shadow-lg shadow-indigo-500/30`}>
               E
             </span>
             <span
-              className={`ml-1 transition-all duration-500 ${scrolled ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent' : 'text-white dark:text-white drop-shadow-lg'}`}
+              className={`ml-1 transition-all duration-500 ${scrolled ? `bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent` : 'text-white dark:text-white drop-shadow-lg'}`}
             >
               mmanuel
             </span>
@@ -297,7 +301,7 @@ export default function Nav() {
                       <Link
                         href={link.url}
                         onClick={closeMobileMenu}
-                        className="flex items-center px-8 py-4 text-gray-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-50 hover:via-purple-50 hover:to-pink-50 dark:hover:from-indigo-900/50 dark:hover:via-purple-900/50 dark:hover:to-pink-900/50 transition-all duration-300 border-l-4 border-transparent hover:border-indigo-500 dark:hover:border-indigo-400 group"
+                        className={`flex items-center px-8 py-4 text-gray-700 dark:text-slate-300 hover:${currentTheme.primary} hover:bg-gradient-to-r ${currentTheme.accentLight} transition-all duration-300 border-l-4 border-transparent hover:${currentTheme.primary.replace('text-', 'border-')} group`}
                       >
                         <span>{link.text}</span>
                         <FaArrowRight className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 text-sm" />
@@ -306,7 +310,7 @@ export default function Nav() {
                       <div className="border-l-4 border-transparent">
                         <button
                           onClick={() => toggleMobileDropdown(index)}
-                          className="flex items-center justify-between w-full px-8 py-4 text-gray-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-50 hover:via-purple-50 hover:to-pink-50 dark:hover:from-indigo-900/50 dark:hover:via-purple-900/50 dark:hover:to-pink-900/50 transition-all duration-300 group"
+                          className={`flex items-center justify-between w-full px-8 py-4 text-gray-700 dark:text-slate-300 hover:${currentTheme.primary} hover:bg-gradient-to-r ${currentTheme.accentLight} transition-all duration-300 group`}
                         >
                           <span>{link.text}</span>
                           <FaChevronDown
@@ -336,9 +340,9 @@ export default function Nav() {
                                   <Link
                                     href={sublink.url || '#'}
                                     onClick={closeMobileMenu}
-                                    className="flex items-center px-6 py-3 text-sm text-gray-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white/50 dark:hover:bg-slate-600/50 transition-all duration-200 group"
+                                    className={`flex items-center px-6 py-3 text-sm text-gray-600 dark:text-slate-400 hover:${currentTheme.primary} hover:bg-white/50 dark:hover:bg-slate-600/50 transition-all duration-200 group`}
                                   >
-                                    <FaChevronRight className="mr-3 text-xs opacity-60 group-hover:opacity-100 group-hover:text-indigo-500 transition-all duration-200" />
+                                    <FaChevronRight className={`mr-3 text-xs opacity-60 group-hover:opacity-100 group-hover:${currentTheme.primary} transition-all duration-200`} />
                                     <span>{sublink.text}</span>
                                   </Link>
                                 </li>
@@ -354,9 +358,9 @@ export default function Nav() {
                   <Link
                     href="/auth/admin"
                     onClick={closeMobileMenu}
-                    className="flex items-center px-8 py-4 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-50 hover:via-purple-50 hover:to-pink-50 dark:hover:from-indigo-900/50 dark:hover:via-purple-900/50 dark:hover:to-pink-900/50 transition-all duration-300 border-l-4 border-transparent hover:border-indigo-500 dark:hover:border-indigo-400 group"
+                    className={`flex items-center px-8 py-4 text-gray-500 dark:text-slate-400 hover:${currentTheme.primary} hover:bg-gradient-to-r ${currentTheme.accentLight} transition-all duration-300 border-l-4 border-transparent hover:${currentTheme.primary.replace('text-', 'border-')} group`}
                   >
-                    <FaThLarge className="mr-3 group-hover:text-indigo-500 transition-colors" />
+                    <FaThLarge className={`mr-3 group-hover:${currentTheme.primary} transition-colors`} />
                     <span>Admin Dashboard</span>
                     <FaArrowRight className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 text-sm" />
                   </Link>

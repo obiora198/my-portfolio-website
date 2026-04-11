@@ -3,16 +3,19 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Github, Linkedin, Mail, Download } from 'lucide-react'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { useTheme } from '../ThemeContext'
 
 export function HeroSection() {
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
+  const pathname = usePathname()
+  const isHomePage = pathname === '/'
 
   return (
     <section
       id="home"
-      className={`relative min-h-screen flex items-center justify-center px-6 sm:px-8 lg:px-12 py-20 overflow-hidden ${
+      className={`relative min-h-screen flex items-center justify-center py-20 overflow-hidden ${
         isDarkMode ? 'bg-gray-900' : 'bg-white'
       }`}
     >
@@ -26,7 +29,7 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <motion.div
@@ -98,7 +101,7 @@ export function HeroSection() {
               transition={{ delay: 0.6 }}
             >
               <a
-                href="#projects"
+                href={isHomePage ? '#projects' : '/#projects'}
                 className={`inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl`}
               >
                 View My Work
@@ -178,7 +181,7 @@ export function HeroSection() {
               {/* Image Container */}
               <div className="relative rounded-3xl overflow-hidden w-full shadow-2xl">
                 <Image
-                  src="/hero-new.jpg"
+                  src="/hero-img.jpg"
                   alt="Emmanuel Obiora - Full-Stack Developer"
                   width={500}
                   height={650}

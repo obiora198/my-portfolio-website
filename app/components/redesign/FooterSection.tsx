@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { usePathname } from 'next/navigation'
 import { Github, Linkedin, Mail, Heart } from 'lucide-react'
 import { useTheme } from '../ThemeContext'
 
@@ -8,10 +9,12 @@ export function FooterSection() {
   const currentYear = new Date().getFullYear()
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
+  const pathname = usePathname()
+  const isHomePage = pathname === '/'
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-16 px-6 sm:px-8 lg:px-12">
-      <div className="max-w-7xl mx-auto">
+    <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-16">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           {/* Brand Section */}
           <motion.div
@@ -44,7 +47,7 @@ export function FooterSection() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="#about"
+                  href={isHomePage ? '#about' : '/#about'}
                   className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   About Me
@@ -52,7 +55,7 @@ export function FooterSection() {
               </li>
               <li>
                 <a
-                  href="#projects"
+                  href={isHomePage ? '#projects' : '/#projects'}
                   className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   Projects
@@ -76,7 +79,7 @@ export function FooterSection() {
               </li>
               <li>
                 <a
-                  href="#contact"
+                  href={isHomePage ? '#contact' : '/#contact'}
                   className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   Contact

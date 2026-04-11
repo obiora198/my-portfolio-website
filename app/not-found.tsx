@@ -50,7 +50,7 @@ export default function NotFound() {
             }}
             className="flex items-center justify-center p-4"
           >
-            <Ghost className={`w-28 h-28 ${currentTheme.primary} drop-shadow-[0_0_30px_rgba(99,102,241,0.5)] dark:drop-shadow-[0_0_40px_rgba(129,140,248,0.3)] filter brightness-110`} />
+            <Ghost className={`w-28 h-28 ${currentTheme.primary} filter brightness-110`} style={{ filter: 'drop-shadow(0 0 30px currentColor)' }} />
           </motion.div>
           </div>
 
@@ -78,7 +78,7 @@ export default function NotFound() {
             transition={{ delay: 0.6 }}
             className="text-gray-600 dark:text-gray-400 text-lg mb-10 max-w-md mx-auto"
           >
-            The page you're looking for has vanished or never existed. Let's get
+            The page you&apos;re looking for has vanished or never existed. Let&apos;s get
             you back on track.
           </motion.p>
 
@@ -90,7 +90,7 @@ export default function NotFound() {
           >
             <Link
               href="/"
-              className={`group px-8 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-2xl font-bold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-indigo-500/40 hover:scale-105 active:scale-95`}
+              className={`group px-8 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-2xl font-bold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95`}
             >
               <Home className="w-5 h-5" />
               Return Home

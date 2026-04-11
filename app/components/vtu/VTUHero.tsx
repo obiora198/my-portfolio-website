@@ -18,7 +18,7 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
     >
       {/* Background gradient */}
       <div
-        className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-[#1a1d29] via-[#0B0D17] to-[#0B0D17]' : 'bg-gradient-to-br from-indigo-50 via-white to-white'}`}
+        className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-[#1a1d29] via-[#0B0D17] to-[#0B0D17]' : `bg-gradient-to-br ${currentTheme.accentLight} via-white to-white`}`}
       />
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -35,7 +35,7 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${isDarkMode ? 'bg-[#1C1E2E] text-orange-400' : 'bg-indigo-100 text-indigo-700'}`}
+                className={`inline-block px-4 py-2 rounded-full text-sm font-semibold border ${isDarkMode ? 'bg-[#1C1E2E] text-orange-400 border-orange-400/20' : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} ${currentTheme.badgeBorder}`}`}
               >
                 🚀 Fast & Secure Transactions
               </motion.div>
@@ -68,7 +68,7 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
                 Get Started Now
               </button>
               <a
-                href="#how-it-works"
+                href="/vtu#how-it-works"
                 className={`px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 ${isDarkMode ? 'bg-[#1C1E2E] text-white hover:bg-[#252836]' : 'bg-white text-gray-900 hover:bg-gray-100 border border-gray-200'}`}
               >
                 Learn More

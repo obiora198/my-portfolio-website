@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import Project from '../models/Project'
-import Blog from '../models/Blog'
+import Post from '../models/Post'
 
 dotenv.config()
 
@@ -44,8 +44,8 @@ async function update() {
       console.log('Alorpedia project not found.')
     }
 
-    // 2. Update Blog
-    const blog = await Blog.findOneAndUpdate(
+    // 2. Update Post
+    const post = await Post.findOneAndUpdate(
       { slug: 'alorpedia-preserving-culture-and-roots' },
       {
         coverImage: images.primary,
@@ -54,7 +54,7 @@ async function update() {
       },
       { new: true }
     )
-    if (blog) {
+    if (post) {
       console.log(`Updated Alorpedia blog cover image.`)
     } else {
       console.log('Alorpedia blog post not found.')

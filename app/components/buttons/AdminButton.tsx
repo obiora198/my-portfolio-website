@@ -2,7 +2,7 @@
 import React, { ChangeEvent, FormEvent, useState, useRef } from 'react'
 import { useAuth } from '../../context/authContext'
 import { useRouter } from 'next/navigation'
-import addProject from '../../../firebase/firestore/addProject'
+import addProject from '../../lib/addProject'
 import { FaPlus, FaTrash } from "react-icons/fa";
 import Image from 'next/image'
 import uploadImage from '../../../firebase/firestore/uploadImage'
@@ -14,9 +14,11 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from '../../../components/ui/dialog' // Assuming these are part of Shadcn UI
+} from '../../../components/ui/dialog'
+import { useTheme } from '../../components/ThemeContext'
 
 export default function Page() {
+  const { currentTheme } = useTheme()
   const { user } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
@@ -26,6 +28,7 @@ export default function Page() {
   const [image, setImage] = useState<File | null | undefined>(null)
   const [description, setDescription] = useState<string>('')
   const [stack, setStack] = useState<string>('')
+  const [category, setCategory] = useState<string>('web')
   const buttonRef = useRef<HTMLInputElement | null>(null)
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -49,12 +52,12 @@ export default function Page() {
 
       const res = await addProject({
         title: title,
-        link: link,
-        githubLink: githubLink,
+        liveUrl: link,
+        githubUrl: githubLink,
         image: imageUrl,
         description: description,
-        stack: stack,
-        createdAt: new Date().getTime(),
+        technologies: stack.split('|').map((s) => s.trim()),
+        category: category,
       })
 
       if (res.status === 201) {
@@ -79,14 +82,14 @@ export default function Page() {
     <DialogTrigger asChild>
       <Button
         variant="default"
-        className="w-full sm:w-auto rounded-full px-8 py-3 font-semibold bg-indigo-500 hover:bg-indigo-600 text-white transition-colors duration-300"
+        className={`w-full sm:w-auto rounded-full px-8 py-3 font-semibold bg-gradient-to-r ${currentTheme.buttonGradient} text-white transition-colors duration-300 shadow-lg hover:${currentTheme.buttonHover}`}
       >
         Create Project
       </Button>
     </DialogTrigger>
 
     <DialogContent className="max-w-2xl w-full px-6 py-8 bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
-      <DialogTitle className="text-2xl font-bold text-center text-indigo-600 mb-2">
+      <DialogTitle className={`text-2xl font-bold text-center ${currentTheme.primary} mb-2`}>
         Upload a New Project
       </DialogTitle>
       <DialogDescription className="text-center text-gray-500 mb-6">
@@ -109,7 +112,7 @@ export default function Page() {
               type="text"
               placeholder="Portfolio Website"
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-${currentTheme.primary.replace('text-', '').replace('dark:', '')}`}
               required
             />
           </div>
@@ -125,7 +128,7 @@ export default function Page() {
               type="url"
               placeholder="https://your-live-demo-link.com"
               onChange={(e) => setLink(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-${currentTheme.primary.replace('text-', '').replace('dark:', '')}`}
               required
             />
           </div>
@@ -141,7 +144,7 @@ export default function Page() {
               type="url"
               placeholder="https://github.com/your-repo"
               onChange={(e) => setGithubLink(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-${currentTheme.primary.replace('text-', '').replace('dark:', '')}`}
               required
             />
           </div>
@@ -157,7 +160,7 @@ export default function Page() {
               type="text"
               placeholder="React.js | Next.js | TailwindCSS"
               onChange={(e) => setStack(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-${currentTheme.primary.replace('text-', '').replace('dark:', '')}`}
               required
             />
           </div>
@@ -173,7 +176,7 @@ export default function Page() {
               rows={4}
               placeholder="A responsive personal portfolio website with admin authentication and CRUD for projects."
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-${currentTheme.primary.replace('text-', '').replace('dark:', '')}`}
               required
             />
           </div>
@@ -203,7 +206,7 @@ export default function Page() {
               ) : (
                 <label
                   htmlFor="upload-image"
-                  className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-400 rounded-xl p-8 cursor-pointer hover:border-indigo-500 transition"
+                  className={`flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-400 rounded-xl p-8 cursor-pointer hover:border-${currentTheme.primary.replace('text-', '').replace('dark:', '')} transition`}
                 >
                   <FaPlus className="w-12 h-12 text-gray-400" />
                   <p className="mt-2 text-gray-500">Upload Screenshot</p>
@@ -219,6 +222,28 @@ export default function Page() {
                 required
               />
             </div>
+          </div>
+
+          {/* Category */}
+          <div className="sm:col-span-2">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+              Project Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            >
+              <option value="web">Web</option>
+              <option value="mobile">Mobile</option>
+              <option value="fullstack">Fullstack</option>
+              <option value="backend">Backend</option>
+              <option value="frontend">Frontend</option>
+              <option value="other">Other</option>
+            </select>
           </div>
         </div>
 
@@ -236,7 +261,7 @@ export default function Page() {
             type="submit"
             variant="default"
             disabled={loading}
-            className="rounded-full px-8 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold transition"
+            className={`rounded-full px-8 py-2 bg-gradient-to-r ${currentTheme.buttonGradient} text-white font-semibold transition shadow-lg hover:${currentTheme.buttonHover}`}
           >
             {loading ? 'Uploading...' : 'Submit'}
           </Button>

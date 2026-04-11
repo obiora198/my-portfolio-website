@@ -47,6 +47,8 @@ export function ProjectCard({
           alt={title}
           width={600}
           height={400}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          unoptimized={imageUrl.includes('placehold.co')}
           className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
@@ -104,19 +106,21 @@ export function ProjectCard({
             <ExternalLink className="w-4 h-4" />
             Live Demo
           </a>
-          <a
-            href={codeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-4 py-2.5 border-2 rounded-xl font-medium text-sm transition-all duration-200 ${
-              isDarkMode
-                ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600'
-                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <Code className="w-4 h-4" />
-            Code
-          </a>
+          {codeUrl && codeUrl !== '#' && codeUrl !== '' && (
+            <a
+              href={codeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-4 py-2.5 border-2 rounded-xl font-medium text-sm transition-all duration-200 ${
+                isDarkMode
+                  ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Code className="w-4 h-4" />
+              Code
+            </a>
+          )}
         </div>
       </div>
     </motion.div>

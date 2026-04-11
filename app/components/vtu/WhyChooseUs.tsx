@@ -31,7 +31,7 @@ export function WhyChooseUs() {
       icon: Headphones,
       title: '24/7 Support',
       description: 'Round-the-clock customer assistance',
-      gradient: 'from-purple-500 to-pink-500',
+      gradient: `bg-gradient-to-br ${currentTheme.iconBg}`,
     },
   ]
 
@@ -85,7 +85,7 @@ export function WhyChooseUs() {
               >
                 {/* Icon */}
                 <div
-                  className={`w-14 h-14 rounded-xl mb-6 flex items-center justify-center bg-gradient-to-br ${feature.gradient}`}
+                  className={`w-14 h-14 rounded-xl mb-6 flex items-center justify-center ${feature.gradient.startsWith('bg-') ? feature.gradient : `bg-gradient-to-br ${feature.gradient}`}`}
                 >
                   <Icon className="w-7 h-7 text-white" />
                 </div>

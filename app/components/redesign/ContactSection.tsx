@@ -54,11 +54,11 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      className={`py-20 px-6 sm:px-8 lg:px-12 ${
+      className={`py-20 ${
         isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-br from-gray-50 to-white'
       }`}
     >
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <motion.div
           className="text-center mb-16 space-y-4"

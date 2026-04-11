@@ -31,7 +31,6 @@ const PostSchema = new Schema<IPost>(
       unique: true,
       trim: true,
       lowercase: true,
-      index: true,
     },
     content: {
       type: String,

@@ -1,6 +1,10 @@
-export default async function fetchProjects() {
+import { MongoProjectType } from '../configs/tsTypes'
+
+export default async function fetchProjects(): Promise<MongoProjectType[]> {
   try {
-    const response = await fetch('/api/projects', { cache: 'no-store' })
+    const response = await fetch('/api/projects', {
+      next: { revalidate: 3600 }, // Cache for 1 hour on the server
+    })
 
     if (!response.ok) {
       console.error('Failed to fetch projects:', response.status)

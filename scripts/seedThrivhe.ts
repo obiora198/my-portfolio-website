@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import Project from '../models/Project'
-import Blog from '../models/Blog'
+import Post from '../models/Post'
 
 dotenv.config()
 
@@ -128,13 +128,16 @@ async function seed() {
     await mongoose.connect(MONGODB_URI!)
     console.log('Connected to MongoDB')
 
-    // 1. Create Blog Entry
-    const existingBlog = await Blog.findOne({ slug: data.blog.slug })
+    // 1. Create Blog Entry using Post model
+    const existingBlog = await Post.findOne({ slug: data.blog.slug })
     if (existingBlog) {
       console.log('Blog post already exists. Updating...')
-      await Blog.findByIdAndUpdate(existingBlog._id, data.blog)
+      await Post.findByIdAndUpdate(existingBlog._id, {
+        ...data.blog,
+        published: true,
+      })
     } else {
-      await Blog.create(data.blog)
+      await Post.create({ ...data.blog, published: true })
       console.log('Blog post created')
     }
 

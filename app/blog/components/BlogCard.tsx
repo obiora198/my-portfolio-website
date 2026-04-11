@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { BsClock, BsEye, BsTag } from 'react-icons/bs'
+import { useTheme } from '../../components/ThemeContext'
 
 interface BlogCardProps {
   post: {
@@ -26,6 +27,7 @@ export const BlogCard = ({ post, index = 0 }: BlogCardProps) => {
     month: 'long',
     day: 'numeric',
   })
+  const { currentTheme } = useTheme()
 
   return (
     <motion.div
@@ -35,9 +37,9 @@ export const BlogCard = ({ post, index = 0 }: BlogCardProps) => {
       className="group"
     >
       <Link href={`/blog/${post.slug}`}>
-        <div className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 h-full flex flex-col">
+        <div className={`bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:${currentTheme.primary.replace('text-', 'border-')} transition-all duration-300 hover:shadow-xl h-full flex flex-col`}>
           {/* Cover Image */}
-          <div className="relative h-48 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 overflow-hidden">
+          <div className={`relative h-48 bg-gradient-to-br ${currentTheme.accentLight} overflow-hidden`}>
             {post.coverImage ? (
               <Image
                 src={post.coverImage}
@@ -48,7 +50,7 @@ export const BlogCard = ({ post, index = 0 }: BlogCardProps) => {
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
-                <BsTag className="text-6xl text-indigo-300 dark:text-indigo-700" />
+                <BsTag className={`text-6xl ${currentTheme.primary} opacity-30`} />
               </div>
             )}
           </div>
@@ -61,7 +63,7 @@ export const BlogCard = ({ post, index = 0 }: BlogCardProps) => {
                 {post.tags.slice(0, 3).map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-xs font-bold"
+                    className={`px-3 py-1 bg-gradient-to-r ${currentTheme.badgeBg} text-${currentTheme.badgeText} rounded-full text-xs font-bold border border-${currentTheme.badgeBorder}`}
                   >
                     {tag}
                   </span>
@@ -70,7 +72,7 @@ export const BlogCard = ({ post, index = 0 }: BlogCardProps) => {
             )}
 
             {/* Title */}
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+            <h3 className={`text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:${currentTheme.primary} transition-colors line-clamp-2`}>
               {post.title}
             </h3>
 

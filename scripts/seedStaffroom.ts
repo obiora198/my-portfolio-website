@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import Project from '../models/Project'
-import Blog from '../models/Blog'
+import Post from '../models/Post'
 
 dotenv.config()
 
@@ -17,55 +17,79 @@ const staffroomData = {
     title: "Cox Teachers App (CTA): The Professional Educator's Network",
     description:
       'I designed and built CTA (Cox Teachers App), a mobile-first professional network for educators that combines a localized social feed with a full-featured marketplace. The platform connects teachers across schools and LGAs while providing a secure, high-performance ecosystem for collaboration and resource exchange.',
-    longDescription: `Cox Teachers App (CTA): Engineering a Digital Staffroom for Educators
+    longDescription: `Cox Teachers App (CTA): Building a Digital Staffroom for Educators
 
-When I began building CTA (Cox Teachers App), the vision was clear: create a digital staffroom where teachers across different schools could connect, collaborate, and exchange resources — without being limited by geography.
+CTA (Cox Teachers App) started from a simple idea — teachers shouldn’t be limited to collaboration within just their school.
 
-In many regions, educators operate in silos. Professional collaboration often ends at the school gate. I wanted to design a platform that removed that barrier while still respecting privacy, locality, and trust.
+In many places, once you leave your school environment, professional interaction with other educators becomes almost nonexistent. I wanted to explore what it would look like to create a shared digital space — something like a modern staffroom — where teachers could connect, share ideas, and even exchange resources within their local communities.
 
-But this wasn’t just a social platform. It needed to feel intentional, secure, and fast.
+### A Practical, Product-First Approach
 
-### Designing for Real-World Usage
-From day one, I approached CTA as a mobile-first Progressive Web App, knowing that most teachers primarily access the internet through their phones.
+Rather than over-engineering things from the start, I focused on building something that works well in the real world.
 
-The interface had to be:
-- Fast even on mid-range Android devices
-- Clean and distraction-free
-- Easy to navigate with one hand
-- Low in data consumption
+I chose to build CTA using Next.js with the App Router so I could keep everything in a single, cohesive codebase — frontend and backend logic together. Instead of spinning up a separate backend, I leaned on Supabase for authentication and database needs. It allowed me to move faster, simplify infrastructure, and focus more on the product experience.
 
-Using Next.js 16 (App Router) and React 19, I focused heavily on performance and server rendering strategies to ensure fast initial loads. Tailwind CSS 4 allowed me to craft a clean, modern UI while maintaining consistency and scalability.
+This decision wasn’t just about convenience — it was about reducing complexity while still building something scalable and reliable.
 
-### Building the Intelligent Localized Feed
-One of the most interesting architectural challenges was designing the feed system.
+### Designing for Mobile First
 
-The platform needed to:
-- Prioritize updates within a teacher’s LGA
-- Allow school-based visibility controls
-- Maintain privacy boundaries between institutions
-- Scale efficiently as the user base grows
+From the beginning, I knew most users would access CTA on their phones, so I approached it as a mobile-first Progressive Web App.
 
-To achieve this, I designed a structured relational schema using Prisma 7 with PostgreSQL, carefully modeling relationships between users, posts, schools, LGAs, and engagement metrics.
+The goal was to make it feel close to a native app:
+- Smooth navigation
+- Fast load times
+- Minimal data usage
+- A clean, focused interface
 
-### Engineering the Marketplace Layer
-I extended CTA beyond networking by building a fully integrated educational marketplace.
+Every UI decision was made with that in mind — simple layouts, clear actions, and an experience that works well even on mid-range devices.
 
-Teachers can:
-- List classroom materials
-- Browse and filter listings by location
-- Contact sellers directly
-- Manage conversations within the platform
+### Making the Feed Feel Relevant
 
-This required architecting a robust database design that supports user-to-listing relationships, conversation threads, and notification tracking.
+One of the key ideas behind CTA is locality.
 
-### System Design & Security
-Security was non-negotiable. I implemented custom authentication flows using Jose, ensuring secure token handling. Supabase was integrated for backend services where appropriate, while PostgreSQL handles relational consistency.`,
+Instead of a generic global feed, I wanted users to feel like they were interacting with people within their actual environment — their school, their area, their local network.
+
+So I structured the feed to prioritize relevance:
+- Content closer to your location shows up first
+- Visibility is controlled at the school and local level
+- Interactions feel more intentional, not noisy
+
+It’s less about volume and more about meaningful connection.
+
+### Extending Into a Marketplace
+
+As the idea evolved, it made sense to go beyond just conversations.
+
+Teachers often share or sell materials — lesson notes, resources, tools — so I built a simple marketplace into the platform.
+
+Users can:
+- List items
+- Discover resources nearby
+- Reach out and have conversations directly
+
+Keeping this within the same platform makes the experience feel unified instead of fragmented.
+
+### How I Build
+
+This project reflects how I like to work as a developer.
+
+I don’t always start by trying to design the most complex system possible. Instead, I focus on:
+- Choosing tools that reduce friction
+- Leveraging modern frameworks like Next.js to their full potential
+- Using AI as part of my workflow to move faster and explore ideas quickly
+- Iterating based on how the product actually feels to use
+
+CTA is less about showcasing deep technical complexity, and more about building something thoughtful, usable, and grounded in real-world needs.`,
     image:
-      'https://placehold.co/1200x630/4f46e5/ffffff?text=Staffroom+Main+Preview',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862359/portfolio/projects/cta/syjy72glhacnkz9uxerh.jpg',
     images: [
-      'https://placehold.co/800x600/6366f1/ffffff?text=Dashboard+View',
-      'https://placehold.co/800x600/818cf8/ffffff?text=Marketplace+Listings',
-      'https://placehold.co/800x600/a5b4fc/ffffff?text=Profile+Settings',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862359/portfolio/projects/cta/syjy72glhacnkz9uxerh.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862360/portfolio/projects/cta/pwd3qyurcmpp5of17pmv.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862361/portfolio/projects/cta/vvayooj1ths45aryg9gt.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862362/portfolio/projects/cta/chcvl2zadl8dotnl4w34.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862363/portfolio/projects/cta/fed05kgyrqndqxzjvzu2.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862363/portfolio/projects/cta/l8spubwi1xh46dd0oovh.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862364/portfolio/projects/cta/zddselisuy08elodcxyr.jpg',
     ],
     technologies: [
       'Next.js 16',
@@ -79,7 +103,7 @@ Security was non-negotiable. I implemented custom authentication flows using Jos
     ],
     liveUrl: 'https://coxteachersapp.netlify.app/',
     githubUrl: '', // Update if available
-    blogUrl: '/blog/staffroom-development-journey',
+    blogUrl: '/blog/CTA-development-journey',
     category: 'fullstack',
     featured: true,
     order: 2,
@@ -89,24 +113,84 @@ Security was non-negotiable. I implemented custom authentication flows using Jos
     slug: 'CTA-development-journey',
     excerpt:
       'Deep dive into the architecture and product thinking behind CTA, a localized professional network and marketplace for educators.',
-    content: `## The Vision
-When I began building CTA (Cox Teachers App), the vision was clear: create a digital staffroom where teachers across different schools could connect, collaborate, and exchange resources — without being limited by geography.
+    content: `Cox Teachers App (CTA): Building a Digital Staffroom for Educators
 
-### Designing for Performance
-From day one, I approached CTA as a mobile-first Progressive Web App. Using Next.js 16 (App Router) and React 19, I focused heavily on performance and server rendering strategies to ensure fast initial loads even on mid-range devices.
+CTA (Cox Teachers App) started from a simple idea — teachers shouldn’t be limited to collaboration within just their school.
 
-### Relational Complexity
-To handle the localized feed and school-based visibility, I designed a structured relational schema using Prisma 7 with PostgreSQL. This allowed for granular control over post visibility and user relationships.
+In many places, once you leave your school environment, professional interaction with other educators becomes almost nonexistent. I wanted to explore what it would look like to create a shared digital space — something like a modern staffroom — where teachers could connect, share ideas, and even exchange resources within their local communities.
 
-### The Marketplace
-The integrated educational marketplace supports classroom material listings, location-based filtering, and direct messaging between sellers and buyers.
+### A Practical, Product-First Approach
 
-### Security
-I implemented secure authentication using Jose for token handling, ensuring that professional boundaries and institution privacy are maintained.`,
+Rather than over-engineering things from the start, I focused on building something that works well in the real world.
+
+I chose to build CTA using Next.js with the App Router so I could keep everything in a single, cohesive codebase — frontend and backend logic together. Instead of spinning up a separate backend, I leaned on Supabase for authentication and database needs. It allowed me to move faster, simplify infrastructure, and focus more on the product experience.
+
+This decision wasn’t just about convenience — it was about reducing complexity while still building something scalable and reliable.
+
+### Designing for Mobile First
+
+From the beginning, I knew most users would access CTA on their phones, so I approached it as a mobile-first Progressive Web App.
+
+The goal was to make it feel close to a native app:
+- Smooth navigation
+- Fast load times
+- Minimal data usage
+- A clean, focused interface
+
+Every UI decision was made with that in mind — simple layouts, clear actions, and an experience that works well even on mid-range devices.
+
+### Making the Feed Feel Relevant
+
+One of the key ideas behind CTA is locality.
+
+Instead of a generic global feed, I wanted users to feel like they were interacting with people within their actual environment — their school, their area, their local network.
+
+So I structured the feed to prioritize relevance:
+- Content closer to your location shows up first
+- Visibility is controlled at the school and local level
+- Interactions feel more intentional, not noisy
+
+It’s less about volume and more about meaningful connection.
+
+### Extending Into a Marketplace
+
+As the idea evolved, it made sense to go beyond just conversations.
+
+Teachers often share or sell materials — lesson notes, resources, tools — so I built a simple marketplace into the platform.
+
+Users can:
+- List items
+- Discover resources nearby
+- Reach out and have conversations directly
+
+Keeping this within the same platform makes the experience feel unified instead of fragmented.
+
+### How I Build
+
+This project reflects how I like to work as a developer.
+
+I don’t always start by trying to design the most complex system possible. Instead, I focus on:
+- Choosing tools that reduce friction
+- Leveraging modern frameworks like Next.js to their full potential
+- Using AI as part of my workflow to move faster and explore ideas quickly
+- Iterating based on how the product actually feels to use
+
+CTA is less about showcasing deep technical complexity, and more about building something thoughtful, usable, and grounded in real-world needs.`,
     author: 'Emmanuel Obiora',
     tags: ['Fullstack', 'Next.js', 'Prisma', 'PostgreSQL', 'Product Design'],
+    liveUrl: 'https://coxteachersapp.netlify.app/',
     coverImage:
-      'https://placehold.co/1200x630/4f46e5/ffffff?text=Staffroom+Development+Journey',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862359/portfolio/projects/cta/syjy72glhacnkz9uxerh.jpg',
+    images: [
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862359/portfolio/projects/cta/syjy72glhacnkz9uxerh.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862360/portfolio/projects/cta/pwd3qyurcmpp5of17pmv.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862361/portfolio/projects/cta/vvayooj1ths45aryg9gt.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862362/portfolio/projects/cta/chcvl2zadl8dotnl4w34.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862363/portfolio/projects/cta/fed05kgyrqndqxzjvzu2.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862363/portfolio/projects/cta/l8spubwi1xh46dd0oovh.jpg',
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1775862364/portfolio/projects/cta/zddselisuy08elodcxyr.jpg',
+    ],
+    published: true,
   },
 }
 
@@ -115,17 +199,17 @@ async function seed() {
     await mongoose.connect(MONGODB_URI!)
     console.log('Connected to MongoDB')
 
-    // 1. Create Blog Post
-    const existingBlog = await Blog.findOne({ slug: staffroomData.blog.slug })
+    // 1. Create Blog Post using Post model
+    const existingBlog = await Post.findOne({ slug: staffroomData.blog.slug })
     if (existingBlog) {
-      console.log('Blog post already exists, updating...')
-      await Blog.updateOne(
+      console.log('Blog post already exists (Post model), updating...')
+      await Post.updateOne(
         { slug: staffroomData.blog.slug },
         staffroomData.blog
       )
     } else {
-      await Blog.create(staffroomData.blog)
-      console.log('Blog post created')
+      await Post.create(staffroomData.blog)
+      console.log('Blog post created (Post model)')
     }
 
     // 2. Create Project

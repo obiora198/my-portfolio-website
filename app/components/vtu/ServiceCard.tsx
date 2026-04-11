@@ -2,13 +2,14 @@
 
 import { motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
+import { useTheme } from '../ThemeContext'
 
 interface ServiceCardProps {
   icon: LucideIcon
   title: string
   description: string
   buttonText: string
-  buttonColor: 'blue' | 'magenta' | 'orange' | 'green' | 'purple' | 'red'
+  buttonColor: 'blue' | 'magenta' | 'orange' | 'green' | 'purple' | 'red' | 'theme'
   index: number
   onClick?: () => void
 }
@@ -38,6 +39,10 @@ const colorVariants = {
     iconBg: 'from-red-500 to-red-600',
     button: 'from-red-500 to-red-600 hover:shadow-red-500/50',
   },
+  theme: {
+    iconBg: '', // Will be handled dynamically
+    button: '', // Will be handled dynamically
+  },
 }
 
 export function ServiceCard({
@@ -49,7 +54,13 @@ export function ServiceCard({
   index,
   onClick,
 }: ServiceCardProps) {
-  const colors = colorVariants[buttonColor]
+  const { currentTheme } = useTheme()
+  const colors = buttonColor === 'theme' 
+    ? { 
+        iconBg: currentTheme.iconBg, 
+        button: currentTheme.buttonGradient + ' hover:' + currentTheme.buttonHover 
+      } 
+    : colorVariants[buttonColor]
 
   return (
     <motion.div

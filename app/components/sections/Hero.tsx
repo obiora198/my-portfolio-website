@@ -44,11 +44,12 @@ export default function Hero() {
           </div>
         </div>
         <Image
-          src="/hero-img.png"
-          className="h-auto mt-8 sm:mt-0 sm:justify-self-end"
-          alt=""
+          src="/hero-img.jpg"
+          className="h-auto mt-8 sm:mt-0 sm:justify-self-end rounded-2xl shadow-xl object-cover max-h-[500px]"
+          alt="Emmanuel Obiora - Fullstack Developer"
           width={400}
-          height={400}
+          height={500}
+          priority
         />
       </section>
     </>

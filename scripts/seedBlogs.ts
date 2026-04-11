@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 config() // Load .env file
 
 import dbConnect from '@/lib/mongodb'
-import Blog from '@/models/Blog'
+import Post from '@/models/Post'
 
 const sampleBlogs = [
   {
@@ -153,17 +153,45 @@ Create dynamic, maintainable designs:
 These modern CSS techniques will help you build more flexible and maintainable stylesheets.
     `,
   },
+  {
+    title: 'Alorpedia: Preserving Culture and Roots',
+    slug: 'alorpedia-preserving-culture-and-roots',
+    excerpt:
+      'Exploring how I built Alorpedia, a digital archive dedicated to documenting and preserving the rich cultural heritage of Alor.',
+    coverImage:
+      'https://res.cloudinary.com/dgd3z5vbo/image/upload/v1772142027/portfolio/projects/alorpedia/vgxqozip8hxtym5rftvx.png',
+    author: 'Emmanuel Obiora',
+    tags: ['Culture', 'Next.js', 'Preservation'],
+    views: 0,
+    liveUrl: 'https://alorpedia.com',
+    content: `
+# Alorpedia: A Digital Archive for Cultural Heritage
+
+Alorpedia is a platform I built to preserve and showcase the history, traditions, and culture of the Alor people. 
+
+## The Mission
+
+The goal was to create a centralized, accessible digital repository where future generations can learn about their roots.
+
+## technical Implementation
+
+Built with **Next.js** and **PostgreSQL**, Alorpedia features a robust search system, interactive cultural maps, and a community-driven content management workflow.
+
+I focused on high-performance image delivery using Cloudinary and a clean, respectful UI that reflects the weight of the cultural assets being preserved.
+    `,
+  },
 ]
 
 async function seedBlogs() {
   try {
     await dbConnect()
 
-    // Clear existing blogs
-    await Blog.deleteMany({})
+    // Clear existing posts (optional, but keep it consistent with the reset nature of this script)
+    await Post.deleteMany({})
 
-    // Insert sample blogs
-    await Blog.insertMany(sampleBlogs)
+    // Insert sample posts with published: true
+    const postsToInsert = sampleBlogs.map(blog => ({ ...blog, published: true }))
+    await Post.insertMany(postsToInsert)
 
     console.log('✅ Successfully seeded blog database with sample posts')
     process.exit(0)
