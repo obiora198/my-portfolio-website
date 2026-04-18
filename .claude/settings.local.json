@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright:*)",
+      "Bash(npm install:*)",
+      "Bash(curl http://localhost:3000/vtu)",
+      "Bash(curl *)"
+    ]
+  }
+}

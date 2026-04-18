@@ -12,12 +12,17 @@ import { HowItWorks } from '../components/vtu/HowItWorks'
 import { RecentTransactions } from '../components/vtu/RecentTransactions'
 import { WhyChooseUs } from '../components/vtu/WhyChooseUs'
 import { VTUPurchaseModal } from '../components/vtu/VTUPurchaseModal'
+import VTUComingSoon from '../components/vtu/VTUComingSoon'
 
 export default function VTUPage() {
   const { theme } = useTheme()
   const isDarkMode = theme === 'dark'
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false)
+
+  // Show coming soon in production/local based on environment
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  const showComingSoon = !isDevelopment
 
   // Fetch transaction history from MongoDB
   const { data: transactionHistory = [], refetch: refetchHistory } = useQuery({
@@ -46,6 +51,10 @@ export default function VTUPage() {
 
   const handleTransactionSuccess = () => {
     refetchHistory()
+  }
+
+  if (showComingSoon) {
+    return <VTUComingSoon />
   }
 
   return (
