@@ -13,9 +13,9 @@ export async function POST(request: Request) {
       )
     }
 
-    const apiKey = process.env.NEXT_PUBLIC_VTPASS_API_KEY
-    const secretKey = process.env.NEXT_PUBLIC_VTPASS_SECRET_KEY
-    const baseURL = process.env.NEXT_PUBLIC_VTPASS_BASE_URL?.replace(/\/$/, '')
+    const apiKey = process.env.VTPASS_API_KEY || process.env.NEXT_PUBLIC_VTPASS_API_KEY
+    const secretKey = process.env.VTPASS_SECRET_KEY || process.env.NEXT_PUBLIC_VTPASS_SECRET_KEY
+    const baseURL = (process.env.VTPASS_BASE_URL || process.env.NEXT_PUBLIC_VTPASS_BASE_URL)?.replace(/\/$/, '')
 
     const payload: any = {
       billersCode,

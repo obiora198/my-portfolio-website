@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Check, AlertCircle } from 'lucide-react'
+import { X, Check, AlertCircle, Zap, CreditCard } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
 import { useQuery } from '@tanstack/react-query'
 import AxiosInstance from '@/app/utils/axiosInstance'
@@ -19,7 +19,7 @@ interface VTUPurchaseModalProps {
   onSuccess: () => void
 }
 
-type VTUTab = 'airtime' | 'data' | 'tv' | 'electricity' | 'international'
+type VTUTab = 'airtime' | 'data' | 'tv' | 'electricity' | 'international' | 'wallet'
 
 interface Service {
   serviceID: string
@@ -48,6 +48,7 @@ export function VTUPurchaseModal({
       showmax: 'tv',
       electricity: 'electricity',
       international: 'international',
+      wallet: 'wallet',
     }
     return (service ? map[service] : null) || 'airtime'
   }
@@ -526,55 +527,59 @@ export function VTUPurchaseModal({
         {/* Main Modal */}
         {!showResultModal ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 sm:p-8 shadow-2xl ${
-              isDarkMode ? 'bg-[#1C1E2E] border border-gray-800' : 'bg-white'
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] p-8 sm:p-10 shadow-2xl backdrop-blur-xl ${
+              isDarkMode ? 'bg-[#1C1E2E]/90 border border-white/10' : 'bg-white/95 border border-gray-100'
             }`}
           >
             {/* Close Button */}
             <button
               onClick={onClose}
-              className={`absolute top-6 right-6 p-2 rounded-lg transition-colors ${
+              className={`absolute top-8 right-8 p-3 rounded-2xl transition-all ${
                 isDarkMode
-                  ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
-                  : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+                  ? 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
               }`}
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Header */}
-            <div className="mb-6">
+            <div className="mb-8">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
+                <Zap className="w-6 h-6 text-indigo-500" />
+              </div>
               <h2
-                className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                className={`text-3xl font-black tracking-tight mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
               >
-                Purchase Services
+                {activeTab === 'wallet' ? 'Wallet Balance' : 'Complete Purchase'}
               </h2>
-              <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                Select a service and complete your purchase
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                {activeTab === 'wallet' ? 'View and fund your account' : 'Fill in the details below to proceed'}
               </p>
             </div>
 
             {/* Service Tabs */}
-            <div className="flex overflow-x-auto pb-4 sm:grid sm:grid-cols-5 gap-2 mb-6 scrollbar-hide">
+            <div className="flex overflow-x-auto pb-4 sm:grid sm:grid-cols-6 gap-2 mb-10 scrollbar-hide">
               {[
                 { id: 'airtime', label: 'Airtime' },
                 { id: 'data', label: 'Data' },
                 { id: 'tv', label: 'TV' },
                 { id: 'electricity', label: 'Electric' },
                 { id: 'international', label: 'Intl' },
+                { id: 'wallet', label: 'Wallet' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as VTUTab)}
-                  className={`px-4 py-2.5 rounded-lg font-medium text-sm transition-all whitespace-nowrap min-w-[100px] sm:min-w-0 ${
+                  className={`px-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all whitespace-nowrap min-w-[100px] sm:min-w-0 ${
                     activeTab === tab.id
-                      ? `bg-gradient-to-r ${currentTheme.buttonGradient} text-white shadow-lg`
+                      ? `bg-gradient-to-r ${currentTheme.buttonGradient} text-white shadow-xl shadow-orange-500/20 scale-105`
                       : isDarkMode
-                        ? 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-white/5 text-gray-400 hover:bg-white/10'
+                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
                   }`}
                 >
                   {tab.label}
@@ -582,8 +587,41 @@ export function VTUPurchaseModal({
               ))}
             </div>
 
-            {/* Purchase Form */}
-            <form onSubmit={handlePurchase} className="space-y-5">
+              {/* Wallet Funding Section */}
+              {activeTab === 'wallet' && (
+                <div className="space-y-6 py-4">
+                  <div className={`p-6 rounded-2xl border backdrop-blur-sm ${isDarkMode ? 'bg-white/[0.03] border-white/[0.06]' : 'bg-gray-50 border-gray-100'}`}>
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-sm font-bold opacity-60 uppercase tracking-wider">Current Balance</p>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
+                        <CreditCard className="w-5 h-5 text-indigo-500" />
+                      </div>
+                    </div>
+                    <p className="text-4xl font-black">₦0.00</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className={`text-sm font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Funding Instructions</p>
+                    <div className={`p-5 rounded-xl border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/20' : 'bg-orange-50 border-orange-100'}`}>
+                      <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-orange-800/70'}`}>
+                        To fund your wallet, please contact our support team or make a direct transfer to our verified accounts.
+                        Automatic funding via Paystack will be available soon.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all bg-gradient-to-r ${currentTheme.buttonGradient} text-white shadow-lg shadow-orange-500/20`}
+                  >
+                    Contact Support to Fund
+                  </button>
+                </div>
+              )}
+
+              {/* Purchase Form */}
+              {activeTab !== 'wallet' && (
+                <form onSubmit={handlePurchase} className="space-y-5">
               {/* Service/Provider Selection */}
               {activeTab !== 'international' && (
                 <div>
@@ -608,28 +646,28 @@ export function VTUPurchaseModal({
                           onClick={() =>
                             setSelectedServiceId(service.serviceID)
                           }
-                          className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                          className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 ${
                             selectedServiceId === service.serviceID
                               ? isDarkMode
-                                ? 'border-orange-500 bg-orange-500/10'
-                                : 'border-indigo-500 bg-indigo-50'
+                                ? 'border-orange-500 bg-orange-500/10 scale-105 shadow-lg'
+                                : 'border-indigo-500 bg-indigo-50 scale-105 shadow-lg'
                               : isDarkMode
-                                ? 'border-gray-700 hover:border-gray-600'
-                                : 'border-gray-200 hover:border-gray-300'
+                                ? 'border-white/5 bg-white/5 hover:border-white/20'
+                                : 'border-gray-100 bg-gray-50 hover:border-gray-200'
                           }`}
                         >
-                          <div className="w-8 h-8 rounded-full overflow-hidden relative">
+                          <div className="w-10 h-10 rounded-full overflow-hidden relative shadow-md ring-2 ring-white/10">
                             <Image
                               src={service.image}
                               alt={service.name}
-                              width={32}
-                              height={32}
+                              width={40}
+                              height={40}
                               className="w-full h-full object-cover"
                               unoptimized
                             />
                           </div>
                           <span
-                            className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                            className={`text-[10px] font-black uppercase tracking-tighter ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
                           >
                             {service.name.split(' ')[0]}
                           </span>
@@ -1129,6 +1167,7 @@ export function VTUPurchaseModal({
                 </button>
               </div>
             </form>
+          )}
           </motion.div>
         ) : (
           // Result Modal

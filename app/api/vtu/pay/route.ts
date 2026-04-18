@@ -23,9 +23,9 @@ export async function POST(request: Request) {
       activeTab,
     } = body
 
-    const apiKey = process.env.NEXT_PUBLIC_VTPASS_API_KEY
-    const secretKey = process.env.NEXT_PUBLIC_VTPASS_SECRET_KEY
-    const baseURL = process.env.NEXT_PUBLIC_VTPASS_BASE_URL?.replace(/\/$/, '')
+    const apiKey = process.env.VTPASS_API_KEY || process.env.NEXT_PUBLIC_VTPASS_API_KEY
+    const secretKey = process.env.VTPASS_SECRET_KEY || process.env.NEXT_PUBLIC_VTPASS_SECRET_KEY
+    const baseURL = (process.env.VTPASS_BASE_URL || process.env.NEXT_PUBLIC_VTPASS_BASE_URL)?.replace(/\/$/, '')
 
     console.log('VTpass Pay Request:', {
       request_id,
@@ -89,9 +89,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ...response.data, token })
   } catch (error: any) {
-    console.error('API Pay Error:', error.response?.data || error.message)
+    console.error('API Pay Error Details:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url,
+    })
     return NextResponse.json(
-      error.response?.data || { message: 'Internal Server Error' },
+      error.response?.data || { message: 'Internal Server Error', error: error.message },
       { status: error.response?.status || 500 }
     )
   }
