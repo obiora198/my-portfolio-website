@@ -1,9 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Code2, Palette, Rocket, Users, Award, TrendingUp } from 'lucide-react'
+import { Code2, Palette, Rocket, Users, Award, Cpu } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from '../ThemeContext'
+import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import fetchProjects from '../../lib/fetchProjects'
 
 const skills = [
   {
@@ -23,30 +26,50 @@ const skills = [
   },
 ]
 
-const achievements = [
-  {
-    icon: Users,
-    value: '20+',
-    label: 'Projects',
-    description: 'Successfully delivered',
-  },
-  {
-    icon: Award,
-    value: '2+',
-    label: 'Years',
-    description: 'Professional Experience',
-  },
-  {
-    icon: TrendingUp,
-    value: '98%',
-    label: 'Client Satisfaction',
-    description: '5-star ratings',
-  },
-]
-
 export function AboutSection() {
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
+
+  // Calculate experience dynamically from Sept 2023 without hydration mismatch
+  const [experience, setExperience] = useState('2+')
+  useEffect(() => {
+    const start = new Date('2023-09-01')
+    const diff = new Date().getTime() - start.getTime()
+    const years = diff / (1000 * 60 * 60 * 24 * 365.25)
+    setExperience(`${years.toFixed(1)}+`)
+  }, [])
+
+  // Fetch actual projects count
+  const { data: projects = [] } = useQuery({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    staleTime: 5 * 60 * 1000,
+  })
+  const projectCount = projects.length > 0 ? `${projects.length}+` : '20+'
+
+  // Calculate dynamic technologies count
+  const techCount = skills.reduce((acc, skill) => acc + skill.items.length, 0)
+
+  const achievements = [
+    {
+      icon: Users,
+      value: projectCount,
+      label: 'Projects',
+      description: 'Successfully delivered',
+    },
+    {
+      icon: Award,
+      value: experience,
+      label: 'Years',
+      description: 'Professional Experience',
+    },
+    {
+      icon: Cpu,
+      value: `${techCount}+`,
+      label: 'Technologies',
+      description: 'Tools & frameworks mastered',
+    },
+  ]
 
   return (
     <section
@@ -84,6 +107,18 @@ export function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
+            {/* Image */}
+            <div className="relative rounded-2xl overflow-hidden shadow-lg">
+              <Image
+                src="/about-new.jpg"
+                alt="Emmanuel Obiora - Developer at work"
+                width={600}
+                height={400}
+                className="w-full h-64 object-cover object-top"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </div>
+
             <div className="space-y-4">
               <h3
                 className={`text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
@@ -108,18 +143,6 @@ export function AboutSection() {
                 backend, I approach each project with dedication and attention
                 to detail.
               </p>
-            </div>
-
-            {/* Image */}
-            <div className="relative rounded-2xl overflow-hidden shadow-lg">
-              <Image
-                src="/about-new.jpg"
-                alt="Emmanuel Obiora - Developer at work"
-                width={600}
-                height={400}
-                className="w-full h-64 object-cover object-top"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
           </motion.div>
 

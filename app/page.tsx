@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic'
 import { Navigation } from './components/redesign/Navigation'
 import { HeroSection } from './components/redesign/HeroSection'
-import { AboutSection } from './components/redesign/AboutSection'
 
 // Keep heavy/below-the-fold sections dynamic for performance
 const ProjectsSection = dynamic(
@@ -73,7 +72,6 @@ export default function Home() {
     <main className="min-h-screen">
       <Navigation />
       <HeroSection />
-      <AboutSection />
       <ProjectsSection />
       <BlogSection />
       <VTUSection />

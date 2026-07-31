@@ -47,7 +47,7 @@ export function FooterSection() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href={isHomePage ? '#about' : '/#about'}
+                  href="/about"
                   className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   About Me
