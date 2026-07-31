@@ -10,7 +10,7 @@ import { Logo } from '../Logo'
 
 const baseNavLinks = [
   { name: 'Home', href: '#home', homeHref: '#home' },
-  { name: 'About', href: '#about', homeHref: '#about' },
+  { name: 'About', href: '/about', homeHref: '/about' },
   { name: 'Projects', href: '#projects', homeHref: '#projects' },
   { name: 'Blog', href: '/blog', homeHref: '/blog' },
   { name: 'VTU Services', href: '/vtu', homeHref: '/vtu' },
