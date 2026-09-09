@@ -86,7 +86,7 @@ export function RecentTransactions({
 
   return (
     <section
-      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#1C1E2E]' : 'bg-white'}`}
+      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       {/* Background accent */}
       <div className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.02] blur-3xl bg-gradient-to-br ${currentTheme.buttonGradient}`} />
@@ -122,7 +122,7 @@ export function RecentTransactions({
         <motion.div
           className={`hidden lg:block rounded-3xl border overflow-hidden backdrop-blur-sm ${
             isDarkMode
-              ? 'bg-white/[0.02] border-white/[0.06] shadow-2xl'
+              ? 'bg-[#0d0d0d] border-neutral-800 shadow-2xl shadow-black/80'
               : 'bg-white border-gray-100 shadow-xl'
           }`}
           initial={{ opacity: 0, y: 20 }}
@@ -132,7 +132,7 @@ export function RecentTransactions({
         >
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className={`border-b ${isDarkMode ? 'border-white/[0.06]' : 'border-gray-100'}`}>
+              <tr className={`border-b ${isDarkMode ? 'border-neutral-800' : 'border-gray-100'}`}>
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50">Transaction ID</th>
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50">Service</th>
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50">Amount</th>
@@ -140,11 +140,11 @@ export function RecentTransactions({
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50 text-right">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.03]">
+            <tbody className={`divide-y ${isDarkMode ? 'divide-neutral-800/60' : 'divide-gray-100'}`}>
               {displayTransactions.map((transaction, index) => (
                 <motion.tr
                   key={transaction.requestId}
-                  className={`group transition-colors ${isDarkMode ? 'hover:bg-white/[0.02]' : 'hover:bg-gray-50'}`}
+                  className={`group transition-colors ${isDarkMode ? 'hover:bg-[#141414]' : 'hover:bg-gray-50'}`}
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -209,7 +209,7 @@ export function RecentTransactions({
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
-                    <ExternalLink className="w-5 h-5 text-indigo-500" />
+                    <ExternalLink className={`w-5 h-5 ${currentTheme.primary.replace('dark:', '')}`} />
                   </div>
                   <div>
                     <p className="font-black text-base capitalize leading-tight">{transaction.serviceID.replace('-', ' ')}</p>

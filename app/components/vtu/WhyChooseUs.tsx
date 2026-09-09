@@ -37,7 +37,7 @@ export function WhyChooseUs() {
 
   return (
     <section
-      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#0B0D17]' : 'bg-gray-50'}`}
+      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}
     >
       {/* Background accent */}
       <div
@@ -84,7 +84,7 @@ export function WhyChooseUs() {
                 key={feature.title}
                 className={`group relative p-7 rounded-2xl transition-all duration-300 overflow-hidden ${
                   isDarkMode
-                    ? 'bg-white/[0.03] border border-white/[0.06] hover:border-white/[0.12]'
+                    ? 'bg-[#121212] border border-neutral-800/80 hover:border-neutral-700 shadow-md shadow-black/40'
                     : 'bg-white border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg'
                 }`}
                 initial={{ opacity: 0, y: 20 }}

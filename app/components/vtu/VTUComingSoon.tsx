@@ -10,9 +10,9 @@ export default function VTUComingSoon() {
   const isDarkMode = theme === 'dark'
 
   return (
-    <div className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-[#0B0D17]' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-[#000000]' : 'bg-gray-50'}`}>
       {/* Background elements */}
-      <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-[#1a1d29] via-[#0B0D17] to-[#0B0D17]' : `bg-gradient-to-br ${currentTheme.accentLight} via-white to-white`}`} />
+      <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-black via-[#050505] to-[#0a0a0a]' : `bg-gradient-to-br ${currentTheme.accentLight} via-white to-white`}`} />
 
       {/* Animated grid pattern */}
       <div
@@ -42,7 +42,7 @@ export default function VTUComingSoon() {
           transition={{ duration: 0.6 }}
         >
           {/* Icon/Badge */}
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-sm mb-8 ${isDarkMode ? 'bg-[#1C1E2E]/80 text-orange-400 border-orange-400/20' : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} ${currentTheme.badgeBorder}`}`}>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-sm mb-8 ${isDarkMode ? 'bg-[#121212] text-orange-400 border-neutral-800' : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} ${currentTheme.badgeBorder}`}`}>
             <Timer className="w-4 h-4" />
             Under Development
           </div>
@@ -54,7 +54,7 @@ export default function VTUComingSoon() {
             </span>
           </h1>
 
-          <p className={`text-lg sm:text-xl leading-relaxed mb-10 max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-lg sm:text-xl leading-relaxed mb-10 max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}>
             We&apos;re building a premium experience for airtime, data, and bill payments.
             Stay tuned for a faster, more secure way to stay connected.
           </p>
@@ -62,7 +62,7 @@ export default function VTUComingSoon() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/"
-              className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border backdrop-blur-sm ${isDarkMode ? 'bg-white/5 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-900 border-gray-200 hover:bg-gray-50 shadow-sm'}`}
+              className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border backdrop-blur-sm ${isDarkMode ? 'bg-[#121212] text-white border-neutral-800 hover:bg-[#181818]' : 'bg-white text-gray-900 border-gray-200 hover:bg-gray-50 shadow-sm'}`}
             >
               <ArrowLeft className="w-5 h-5" />
               Back to Home

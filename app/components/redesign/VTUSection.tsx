@@ -14,6 +14,7 @@ import { useTheme } from '../ThemeContext'
 
 const services = [
   {
+    id: 'airtime',
     icon: Smartphone,
     title: 'Airtime Top-Up',
     description:
@@ -21,6 +22,7 @@ const services = [
     features: ['All Networks', 'Instant Delivery', '24/7 Available'],
   },
   {
+    id: 'data',
     icon: Wifi,
     title: 'Data Bundles',
     description:
@@ -28,12 +30,14 @@ const services = [
     features: ['Cheap Rates', 'Auto Delivery', 'Multiple Plans'],
   },
   {
+    id: 'electricity',
     icon: Zap,
     title: 'Electricity Bills',
     description: 'Pay your electricity bills quickly and conveniently online.',
     features: ['All DISCOs', 'Instant Token', 'Secure Payment'],
   },
   {
+    id: 'cable-tv',
     icon: TrendingUp,
     title: 'Cable TV Subscription',
     description: 'Subscribe to DSTV, GOTV, and Startimes packages hassle-free.',
@@ -66,7 +70,7 @@ export function VTUSection() {
   return (
     <section
       id="vtu"
-      className={`py-20 ${isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-br from-gray-50 to-white'}`}
+      className={`py-20 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-gradient-to-br from-gray-50 to-white'}`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
@@ -83,7 +87,7 @@ export function VTUSection() {
             VTU Services
           </h2>
           <p
-            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
             Fast, reliable, and affordable virtual top-up services
           </p>
@@ -92,11 +96,11 @@ export function VTUSection() {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {services.map((service, index) => (
-            <Link href="/vtu" key={service.title} className="block">
+            <Link href={`/vtu?service=${service.id}`} key={service.title} className="block">
               <motion.div
                 className={`rounded-2xl p-6 transition-all duration-300 cursor-pointer ${
                   isDarkMode
-                    ? `bg-gray-900 hover:bg-gray-850 border border-gray-700 ${currentTheme.primary.replace('text-', 'hover:border-')}`
+                    ? `bg-[#121212] hover:bg-[#161616] border border-neutral-800/80 shadow-black/50 ${currentTheme.primary.replace('text-', 'hover:border-')}`
                     : `bg-white hover:shadow-2xl border border-gray-100 ${currentTheme.primary.replace('text-', 'hover:border-')}`
                 }`}
                 initial={{ opacity: 0, y: 20 }}
@@ -118,7 +122,7 @@ export function VTUSection() {
                 </h3>
 
                 <p
-                  className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                  className={`text-sm mb-4 ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
                 >
                   {service.description}
                 </p>
@@ -130,7 +134,7 @@ export function VTUSection() {
                         className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${currentTheme.gradient}`}
                       />
                       <span
-                        className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                        className={`text-xs ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
                       >
                         {feature}
                       </span>
@@ -154,11 +158,11 @@ export function VTUSection() {
             <div
               key={feature.title}
               className={`flex flex-col items-center text-center p-6 rounded-2xl ${
-                isDarkMode ? 'bg-gray-900/50' : 'bg-white/50'
+                isDarkMode ? 'bg-[#121212]/80 border border-neutral-800/80' : 'bg-white/50'
               }`}
             >
               <div
-                className={`w-16 h-16 rounded-full bg-gradient-to-br ${currentTheme.badgeBg} border-2 border-${currentTheme.badgeBorder} flex items-center justify-center mb-4`}
+                className={`w-16 h-16 rounded-full bg-gradient-to-br ${currentTheme.badgeBg} border-2 ${currentTheme.badgeBorder} flex items-center justify-center mb-4`}
               >
                 <feature.icon
                   className={`w-8 h-8 ${currentTheme.primary}`}
@@ -170,7 +174,7 @@ export function VTUSection() {
                 {feature.title}
               </h4>
               <p
-                className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
               >
                 {feature.description}
               </p>

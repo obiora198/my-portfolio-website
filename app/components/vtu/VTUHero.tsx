@@ -3,15 +3,26 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useTheme } from '@/app/components/ThemeContext'
-import { ArrowRight, Shield, Zap } from 'lucide-react'
+import { ArrowRight, Shield, Zap, CheckCircle2, Wifi } from 'lucide-react'
+
+const heroThemeImages = [
+  { key: 'sunset', src: '/vtu-hero-sunset.png' },
+  { key: 'sky', src: '/vtu-hero-sky.png' },
+  { key: 'emerald', src: '/vtu-hero-emerald.png' },
+  { key: 'minimal', src: '/vtu-hero-minimal.png' },
+] as const
 
 interface VTUHeroProps {
   onGetStarted: () => void
 }
 
 export function VTUHero({ onGetStarted }: VTUHeroProps) {
-  const { theme, currentTheme } = useTheme()
+  const { theme, currentTheme, themeName } = useTheme()
   const isDarkMode = theme === 'dark'
+
+  const activeKey = ['sunset', 'sky', 'emerald', 'minimal'].includes(themeName)
+    ? themeName
+    : 'sunset'
 
   const stats = [
     { value: '500+', label: 'Daily Transactions' },
@@ -21,11 +32,11 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
 
   return (
     <section
-      className={`relative pt-32 pb-24 px-6 sm:px-8 lg:px-12 overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-[#0B0D17]' : 'bg-white'}`}
+      className={`relative pt-32 pb-24 px-6 sm:px-8 lg:px-12 overflow-hidden transition-colors duration-300 bg-white dark:bg-[#000000] ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       {/* Background gradient */}
       <div
-        className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-[#1a1d29] via-[#0B0D17] to-[#0B0D17]' : `bg-gradient-to-br ${currentTheme.accentLight} via-white to-white`}`}
+        className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-black via-[#050505] to-[#0a0a0a]' : `bg-gradient-to-br ${currentTheme.accentLight} via-white to-white`}`}
       />
 
       {/* Animated grid pattern */}
@@ -63,7 +74,7 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-sm ${isDarkMode ? 'bg-[#1C1E2E]/80 text-orange-400 border-orange-400/20' : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} ${currentTheme.badgeBorder}`}`}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-sm ${isDarkMode ? `bg-[#121212] ${currentTheme.badgeText} border-neutral-800` : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} ${currentTheme.badgeBorder}`}`}
               >
                 <Zap className="w-4 h-4" />
                 Fast & Secure Transactions
@@ -148,84 +159,181 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
             </motion.div>
           </motion.div>
 
-          {/* Right Content - Phone Mockup */}
+          {/* Right Content - Hero Image with Provider Bubbles */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative hidden lg:flex items-center justify-center"
           >
-            {/* Radial glow behind image */}
+            {/* Ambient Radial Glow behind image matching dynamic theme */}
             <div
-              className={`absolute w-[500px] h-[500px] rounded-full opacity-30`}
-              style={{
-                background: `radial-gradient(circle, ${isDarkMode ? 'rgba(249,115,22,0.4)' : 'rgba(249,115,22,0.15)'} 0%, transparent 70%)`,
-              }}
+              className={`absolute w-[460px] h-[460px] rounded-full opacity-35 blur-3xl transition-all duration-700 bg-gradient-to-br ${currentTheme.buttonGradient}`}
             />
             <motion.div
-              className={`absolute w-[400px] h-[400px] rounded-full opacity-20`}
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              style={{
-                background: `radial-gradient(circle, ${isDarkMode ? 'rgba(225,29,72,0.3)' : 'rgba(225,29,72,0.1)'} 0%, transparent 70%)`,
-              }}
+              className={`absolute w-[360px] h-[360px] rounded-full opacity-25 blur-2xl transition-all duration-700 bg-gradient-to-tr ${currentTheme.buttonGradient}`}
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             />
 
-            {/* Phone mockup with blend mode to remove dark bg */}
-            <div className="relative w-full h-[600px]">
-              <Image
-                src="/vtu-phone-mockup2.png"
-                alt="VTU Platform"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain drop-shadow-2xl"
-                priority
-              />
+            {/* Transparent PNG Hero Images - All mounted and stacked for instant, zero-reload theme switching */}
+            <div className="relative w-full max-w-[480px] h-[580px] flex items-center justify-center">
+              {heroThemeImages.map((item) => {
+                const isActive = activeKey === item.key
+                return (
+                  <div
+                    key={item.key}
+                    className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${
+                      isActive
+                        ? 'opacity-100 z-10'
+                        : 'opacity-0 z-0 pointer-events-none'
+                    }`}
+                  >
+                    <Image
+                      src={item.src}
+                      alt={`VTU Services - ${item.key}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-contain object-bottom drop-shadow-2xl"
+                      priority
+                    />
+                  </div>
+                )
+              })}
             </div>
 
-            {/* Small floating badges */}
+            {/* Floating Graphic 1: Real-time Transaction Success Card */}
             <motion.div
-              className={`absolute top-16 right-4 px-4 py-2 rounded-xl backdrop-blur-md shadow-lg ${isDarkMode ? 'bg-white/10 border border-white/10' : 'bg-white border border-gray-200'}`}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className={`absolute top-10 -right-2 sm:-right-4 p-3.5 rounded-2xl backdrop-blur-xl shadow-2xl z-20 transition-all ${
+                isDarkMode
+                  ? 'bg-[#0c0c0e]/85 border border-white/10 shadow-black/70'
+                  : 'bg-white/95 border border-gray-200/80 shadow-gray-300/40'
+              }`}
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span
-                  className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
-                >
-                  Live
-                </span>
+              <div className="flex items-center gap-3">
+                {/* Animated Status Icon Orb */}
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                  </div>
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-black animate-ping" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-black" />
+                </div>
+
+                {/* Content */}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                    >
+                      Airtime Top-Up
+                    </span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold">
+                      Success
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span
+                      className={`text-xs font-black bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
+                    >
+                      +₦2,500
+                    </span>
+                    <span
+                      className={`text-[10px] ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}
+                    >
+                      • 0.4s ago
+                    </span>
+                  </div>
+                </div>
               </div>
             </motion.div>
 
+            {/* Floating Graphic 2: 5G Connectivity Chip */}
             <motion.div
-              className={`absolute bottom-24 left-0 px-4 py-3 rounded-xl backdrop-blur-md shadow-lg ${isDarkMode ? 'bg-white/10 border border-white/10' : 'bg-white border border-gray-200'}`}
+              className={`absolute top-1/2 -right-4 px-3 py-1.5 rounded-xl backdrop-blur-md shadow-lg z-20 flex items-center gap-1.5 ${
+                isDarkMode
+                  ? 'bg-black/70 border border-white/10 text-neutral-200'
+                  : 'bg-white/90 border border-gray-200 text-gray-700'
+              }`}
+              animate={{ y: [0, -6, 0] }}
+              transition={{
+                duration: 3.5,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: 0.5,
+              }}
+            >
+              <Wifi className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-[11px] font-bold tracking-wide">5G Fast</span>
+            </motion.div>
+
+            {/* Floating Graphic 3: High-Speed Automated Dispatch Metric */}
+            <motion.div
+              className={`absolute bottom-8 -left-2 sm:-left-4 p-3.5 rounded-2xl backdrop-blur-xl shadow-2xl z-20 transition-all ${
+                isDarkMode
+                  ? 'bg-[#0c0c0e]/85 border border-white/10 shadow-black/70'
+                  : 'bg-white/95 border border-gray-200/80 shadow-gray-300/40'
+              }`}
               animate={{ y: [0, 8, 0] }}
               transition={{
-                duration: 4,
+                duration: 4.5,
                 repeat: Infinity,
                 ease: 'easeInOut',
                 delay: 1,
               }}
             >
               <div className="flex items-center gap-3">
+                {/* Glowing Theme Icon */}
                 <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient}`}
+                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${currentTheme.buttonGradient} flex items-center justify-center shadow-lg shadow-orange-500/20`}
                 >
-                  <Zap className="w-4 h-4 text-white" />
+                  <Zap className="w-5 h-5 text-white animate-pulse" />
                 </div>
+
                 <div>
-                  <p
-                    className={`text-xs font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
-                  >
-                    Instant Delivery
-                  </p>
-                  <p
-                    className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
-                  >
-                    Under 5 seconds
-                  </p>
+                  <div className="flex items-center justify-between gap-4">
+                    <span
+                      className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                    >
+                      Automated Dispatch
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-500 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      99.9%
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    {/* Animated mini signal / speed meter bars */}
+                    <div className="flex items-end gap-1 h-3">
+                      <span
+                        className={`w-1 h-2 rounded-full bg-gradient-to-t ${currentTheme.buttonGradient} animate-pulse`}
+                      />
+                      <span
+                        className={`w-1 h-3 rounded-full bg-gradient-to-t ${currentTheme.buttonGradient} animate-pulse`}
+                        style={{ animationDelay: '150ms' }}
+                      />
+                      <span
+                        className={`w-1 h-2.5 rounded-full bg-gradient-to-t ${currentTheme.buttonGradient} animate-pulse`}
+                        style={{ animationDelay: '300ms' }}
+                      />
+                      <span
+                        className={`w-1 h-3 rounded-full bg-gradient-to-t ${currentTheme.buttonGradient} animate-pulse`}
+                        style={{ animationDelay: '450ms' }}
+                      />
+                    </div>
+                    <span
+                      className={`text-[11px] font-semibold ${isDarkMode ? 'text-neutral-300' : 'text-gray-600'}`}
+                    >
+                      Avg. Speed:{' '}
+                      <strong
+                        className={isDarkMode ? 'text-white' : 'text-gray-900'}
+                      >
+                        0.8s
+                      </strong>
+                    </span>
+                  </div>
                 </div>
               </div>
             </motion.div>

@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import AxiosInstance from '../utils/axiosInstance'
 import { Navigation } from '../components/redesign/Navigation'
 import { ThemeSwitcher } from '../components/redesign/ThemeSwitcher'
 import { useTheme } from '../components/ThemeContext'
@@ -14,11 +16,88 @@ import { WhyChooseUs } from '../components/vtu/WhyChooseUs'
 import { VTUPurchaseModal } from '../components/vtu/VTUPurchaseModal'
 import VTUComingSoon from '../components/vtu/VTUComingSoon'
 
+function VTUQueryParamsListener({
+  onSelectService,
+}: {
+  onSelectService: (service: string) => void
+}) {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const service = searchParams.get('service')
+    if (service) {
+      onSelectService(service)
+    }
+  }, [searchParams, onSelectService])
+
+  return null
+}
+
 export default function VTUPage() {
   const { theme } = useTheme()
   const isDarkMode = theme === 'dark'
+  const queryClient = useQueryClient()
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false)
+
+  // Prewarm services and common variations in the background so modal and plans load instantly
+  useEffect(() => {
+    const prewarmData = () => {
+      const identifiers: Record<string, string> = {
+        airtime: 'airtime',
+        data: 'data',
+        tv: 'tv-subscription',
+        electricity: 'electricity-bill',
+      }
+
+      // Prefetch services into React Query cache
+      Object.entries(identifiers).forEach(([tabKey, identifier]) => {
+        queryClient.prefetchQuery({
+          queryKey: ['services', tabKey],
+          queryFn: async () => {
+            const response = await AxiosInstance.get(
+              `/services?identifier=${identifier}`
+            )
+            return response.data.content
+              .filter((service: any) => service.serviceID !== 'foreign-airtime')
+              .map((service: any) => ({
+                ...service,
+                image: service.image.replace('-VTU', ''),
+              }))
+          },
+          staleTime: 1000 * 60 * 30,
+        })
+      })
+
+      // Prefetch top data providers' variations into React Query cache
+      const topProviders = [
+        'mtn-data',
+        'airtel-data',
+        'glo-data',
+        'glo-sme-data',
+        'etisalat-data',
+      ]
+      topProviders.forEach((serviceID) => {
+        queryClient.prefetchQuery({
+          queryKey: ['variations', serviceID, '', null],
+          queryFn: async () => {
+            const response = await AxiosInstance.get(
+              `/service-variations?serviceID=${serviceID}`
+            )
+            return (
+              response.data.content.variations ||
+              response.data.content.varations ||
+              []
+            )
+          },
+          staleTime: 1000 * 60 * 30,
+        })
+      })
+    }
+
+    const timer = setTimeout(prewarmData, 250)
+    return () => clearTimeout(timer)
+  }, [queryClient])
 
   // Show coming soon in production/local based on environment
   const isDevelopment = process.env.NODE_ENV === 'development'
@@ -35,10 +114,10 @@ export default function VTUPage() {
     refetchInterval: 30000,
   })
 
-  const handleServiceClick = (service: string) => {
+  const handleServiceClick = useCallback((service: string) => {
     setSelectedService(service)
     setIsPurchaseModalOpen(true)
-  }
+  }, [])
 
   const handleGetStarted = () => {
     setIsPurchaseModalOpen(true)
@@ -59,8 +138,11 @@ export default function VTUPage() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#0B0D17]' : 'bg-gray-50'}`}
+      className={`min-h-screen bg-gray-50 dark:bg-[#000000] ${isDarkMode ? 'bg-[#000000]' : 'bg-gray-50'}`}
     >
+      <Suspense fallback={null}>
+        <VTUQueryParamsListener onSelectService={handleServiceClick} />
+      </Suspense>
       <Navigation />
       <ThemeSwitcher />
 
