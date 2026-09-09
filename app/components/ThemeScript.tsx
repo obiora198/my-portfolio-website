@@ -1,20 +1,29 @@
-'use client'
-
-import { useEffect } from 'react'
-
 export default function ThemeScript() {
-  useEffect(() => {
-    // This runs only on client side, avoiding hydration mismatch
-    const savedTheme = localStorage.getItem('theme')
-    const savedPalette = localStorage.getItem('palette')
-    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const theme = savedTheme || (systemDark ? 'dark' : 'light')
+  const scriptContent = `(function() {
+    try {
+      var getCookie = function(name) {
+        var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : null;
+      };
+      var savedTheme = localStorage.getItem('theme') || getCookie('theme');
+      var savedPalette = localStorage.getItem('palette') || getCookie('palette');
+      var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : (systemDark ? 'dark' : 'light');
+      
+      var root = document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(theme);
+      
+      if (savedPalette) {
+        root.setAttribute('data-palette', savedPalette);
+      }
+    } catch (e) {}
+  })();`
 
-    document.documentElement.classList.add(theme)
-    if (savedPalette) {
-      document.documentElement.setAttribute('data-palette', savedPalette)
-    }
-  }, [])
-
-  return null
+  return (
+    <script
+      id="theme-initializer"
+      dangerouslySetInnerHTML={{ __html: scriptContent }}
+    />
+  )
 }

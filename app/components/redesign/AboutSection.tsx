@@ -74,7 +74,7 @@ export function AboutSection() {
   return (
     <section
       id="about"
-      className={`py-20 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+      className={`py-20 bg-white dark:bg-[#000000] ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
@@ -91,7 +91,7 @@ export function AboutSection() {
             About Me
           </h2>
           <p
-            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
             Passionate about creating exceptional digital experiences
           </p>
@@ -126,7 +126,7 @@ export function AboutSection() {
                 Building digital products, brands, and experiences
               </h3>
               <p
-                className={`leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                className={`leading-relaxed ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
               >
                 With over 3 years of experience in web development, I&apos;ve
                 had the privilege of working with startups and businesses to
@@ -135,7 +135,7 @@ export function AboutSection() {
                 into a passion for creating seamless, user-centric applications.
               </p>
               <p
-                className={`leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                className={`leading-relaxed ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
               >
                 I believe in the power of clean code, intuitive design, and
                 continuous learning. Whether it&apos;s building a complex
@@ -164,7 +164,7 @@ export function AboutSection() {
                 key={skill.category}
                 className={`rounded-2xl p-6 border hover:shadow-lg transition-shadow duration-300 ${
                   isDarkMode
-                    ? 'bg-gray-900 border-gray-700'
+                    ? 'bg-[#121212] border-neutral-800/80 shadow-black/40'
                     : 'bg-gradient-to-br from-gray-50 to-white border-gray-100'
                 }`}
                 initial={{ opacity: 0, y: 20 }}
@@ -190,7 +190,7 @@ export function AboutSection() {
                           key={item}
                           className={`px-3 py-1 rounded-full text-sm border ${
                             isDarkMode
-                              ? 'bg-gray-800 border-gray-700 text-gray-300'
+                              ? 'bg-[#1a1a1a] border-neutral-800 text-neutral-300'
                               : 'bg-white border-gray-200 text-gray-700'
                           }`}
                         >
@@ -225,8 +225,8 @@ export function AboutSection() {
               <div
                 className={`h-full rounded-2xl p-8 border hover:shadow-xl transition-all duration-300 ${
                   isDarkMode
-                    ? 'bg-gray-900 border-gray-700'
-                    : `bg-gradient-to-br ${currentTheme.badgeBg} border-${currentTheme.badgeBorder}`
+                    ? 'bg-[#121212] border-neutral-800/80 shadow-black/40'
+                    : `bg-gradient-to-br ${currentTheme.badgeBg} ${currentTheme.badgeBorder}`
                 }`}
               >
                 <div className="flex flex-col items-center text-center space-y-3">

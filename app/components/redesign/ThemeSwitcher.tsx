@@ -65,7 +65,7 @@ export function ThemeSwitcher() {
 
             {/* Panel - Mobile responsive */}
             <motion.div
-              className="fixed left-4 right-4 bottom-20 sm:left-auto sm:right-8 sm:bottom-28 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6 w-auto sm:w-80 max-h-[70vh] sm:max-h-[600px] overflow-y-auto"
+              className="fixed left-4 right-4 bottom-20 sm:left-auto sm:right-8 sm:bottom-28 bg-white dark:bg-[#121212] border dark:border-neutral-800 rounded-2xl shadow-2xl shadow-black/80 p-4 sm:p-6 w-auto sm:w-80 max-h-[70vh] sm:max-h-[600px] overflow-y-auto"
               style={{ zIndex: 9999 }}
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -78,15 +78,15 @@ export function ThemeSwitcher() {
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                     Choose Theme
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-neutral-400">
                     Select your preferred color palette
                   </p>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1c1c1c] transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <X className="w-5 h-5 text-gray-500 dark:text-neutral-400" />
                 </button>
               </div>
 
@@ -98,8 +98,8 @@ export function ThemeSwitcher() {
                     onClick={() => setTheme(key)}
                     className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                       themeName === key
-                        ? 'border-gray-900 dark:border-white bg-gray-50 dark:bg-gray-700'
-                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-white dark:bg-gray-800'
+                        ? 'border-gray-900 dark:border-white bg-gray-50 dark:bg-[#1c1c1c]'
+                        : 'border-gray-200 dark:border-neutral-800 hover:border-gray-300 dark:hover:border-neutral-700 bg-white dark:bg-[#121212]'
                     }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}

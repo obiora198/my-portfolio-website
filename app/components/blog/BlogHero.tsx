@@ -50,7 +50,7 @@ export function BlogHero() {
 
   return (
     <section
-      className={`py-20 px-6 sm:px-8 lg:px-12 transition-colors duration-300 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+      className={`py-20 px-6 sm:px-8 lg:px-12 transition-colors duration-300 ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Back to Home Link */}
@@ -81,7 +81,7 @@ export function BlogHero() {
             Blog & Insights
           </h1>
           <p
-            className={`text-lg sm:text-xl max-w-3xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            className={`text-lg sm:text-xl max-w-3xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
             Thoughts on web development, tech trends, and my learning journey
           </p>
@@ -96,14 +96,14 @@ export function BlogHero() {
         >
           <div className="relative">
             <Search
-              className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+              className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}
             />
             <input
               type="text"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search articles..."
-              className={`w-full pl-12 pr-4 py-4 border rounded-full focus:outline-none focus:ring-2 transition-colors duration-200 ${isDarkMode ? 'bg-[#252836] border-gray-700 text-white placeholder-gray-500 focus:ring-' + currentTheme.primary.replace('text-', '').replace('dark:', '').split('-')[0] + '-500/50' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-' + currentTheme.primary.replace('text-', '').split('-')[0] + '-500 focus:border-' + currentTheme.primary.replace('text-', '').split('-')[0] + '-500'}`}
+              className={`w-full pl-12 pr-4 py-4 border rounded-full focus:outline-none focus:ring-2 transition-colors duration-200 ${isDarkMode ? 'bg-[#0e0e0e] border-neutral-800 text-white placeholder-neutral-500 focus:ring-neutral-700/50' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-' + currentTheme.primary.replace('text-', '').split('-')[0] + '-500 focus:border-' + currentTheme.primary.replace('text-', '').split('-')[0] + '-500'}`}
             />
           </div>
         </motion.div>
@@ -123,7 +123,7 @@ export function BlogHero() {
                 selectedFilter === filter
                   ? `bg-gradient-to-r ${currentTheme.buttonGradient} text-white shadow-lg`
                   : isDarkMode
-                    ? 'bg-[#252836] text-gray-300 hover:bg-[#2f3241] border border-gray-700'
+                    ? 'bg-[#121212] text-neutral-300 hover:bg-[#1a1a1a] border border-neutral-800'
                     : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
               }`}
             >

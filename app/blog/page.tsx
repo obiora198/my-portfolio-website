@@ -47,19 +47,19 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#1a1d29] transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#000000] transition-colors duration-300">
       <Navigation />
       <ThemeSwitcher />
 
       <Suspense
         fallback={
-          <div className="h-[400px] animate-pulse bg-gray-200 dark:bg-gray-800" />
+          <div className="h-[400px] animate-pulse bg-gray-200 dark:bg-[#121212]" />
         }
       >
         <BlogHero />
       </Suspense>
 
-      <section className="py-16 px-6 sm:px-8 lg:px-12 bg-white dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-16 px-6 sm:px-8 lg:px-12 bg-white dark:bg-[#0a0a0a] transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           {posts.length === 0 ? (
             <div className="text-center py-20">

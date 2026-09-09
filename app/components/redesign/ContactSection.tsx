@@ -55,7 +55,7 @@ export function ContactSection() {
     <section
       id="contact"
       className={`py-20 ${
-        isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-br from-gray-50 to-white'
+        isDarkMode ? 'bg-[#000000]' : 'bg-gradient-to-br from-gray-50 to-white'
       }`}
     >
       <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -73,7 +73,7 @@ export function ContactSection() {
             Get In Touch
           </h2>
           <p
-            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
             Have a project in mind? Let&apos;s work together to create something
             amazing
@@ -96,7 +96,7 @@ export function ContactSection() {
                 Let&apos;s create something amazing together
               </h3>
               <p
-                className={`leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                className={`leading-relaxed ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
               >
                 I&apos;m always interested in hearing about new projects and
                 opportunities. Whether you have a question or just want to say
@@ -109,8 +109,8 @@ export function ContactSection() {
               <motion.div
                 className={`flex items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border ${
                   isDarkMode
-                    ? 'bg-gray-900 border-gray-700'
-                    : `bg-gradient-to-br ${currentTheme.badgeBg} border-${currentTheme.badgeBorder}`
+                    ? 'bg-[#121212] border-neutral-800/80 shadow-black/40'
+                    : `bg-gradient-to-br ${currentTheme.badgeBg} ${currentTheme.badgeBorder}`
                 }`}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
@@ -128,7 +128,7 @@ export function ContactSection() {
                   </h4>
                   <a
                     href="mailto:emmanuelobiora11@gmail.com"
-                    className={`text-${currentTheme.primary} hover:underline break-all`}
+                    className={`${currentTheme.primary} hover:underline break-all`}
                   >
                     emmanuelobiora11@gmail.com
                   </a>
@@ -138,8 +138,8 @@ export function ContactSection() {
               <motion.div
                 className={`flex items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border ${
                   isDarkMode
-                    ? 'bg-gray-900 border-gray-700'
-                    : `bg-gradient-to-br ${currentTheme.badgeBg} border-${currentTheme.badgeBorder}`
+                    ? 'bg-[#121212] border-neutral-800/80 shadow-black/40'
+                    : `bg-gradient-to-br ${currentTheme.badgeBg} ${currentTheme.badgeBorder}`
                 }`}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
@@ -155,7 +155,7 @@ export function ContactSection() {
                   >
                     Response Time
                   </h4>
-                  <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                  <p className={isDarkMode ? 'text-neutral-400' : 'text-gray-600'}>
                     Usually within 24 hours
                   </p>
                 </div>
@@ -176,7 +176,7 @@ export function ContactSection() {
               onSubmit={handleSubmit}
               className={`rounded-3xl shadow-xl border p-6 sm:p-8 space-y-4 sm:space-y-6 ${
                 isDarkMode
-                  ? 'bg-gray-900 border-gray-700'
+                  ? 'bg-[#121212] border-neutral-800/80 shadow-2xl shadow-black/50'
                   : 'bg-white border-gray-100'
               }`}
             >
@@ -185,7 +185,7 @@ export function ContactSection() {
                 <label
                   htmlFor="name"
                   className={`flex items-center gap-2 text-sm font-medium ${
-                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                    isDarkMode ? 'text-neutral-300' : 'text-gray-700'
                   }`}
                 >
                   <User className="w-4 h-4" />
@@ -200,7 +200,7 @@ export function ContactSection() {
                   required
                   className={`w-full px-4 py-3 text-base rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
                     isDarkMode
-                      ? 'bg-gray-800 border-gray-700 text-white focus:border-orange-600 focus:ring-orange-600/20'
+                      ? 'bg-[#0c0c0c] border-neutral-800 text-white placeholder-neutral-500 focus:border-neutral-600 focus:ring-neutral-700/30'
                       : 'border-gray-200 focus:border-orange-600 focus:ring-orange-600/20'
                   }`}
                   placeholder="John Doe"
@@ -212,7 +212,7 @@ export function ContactSection() {
                 <label
                   htmlFor="email"
                   className={`flex items-center gap-2 text-sm font-medium ${
-                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                    isDarkMode ? 'text-neutral-300' : 'text-gray-700'
                   }`}
                 >
                   <Mail className="w-4 h-4" />
@@ -227,7 +227,7 @@ export function ContactSection() {
                   required
                   className={`w-full px-4 py-3 text-base rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
                     isDarkMode
-                      ? 'bg-gray-800 border-gray-700 text-white focus:border-orange-600 focus:ring-orange-600/20'
+                      ? 'bg-[#0c0c0c] border-neutral-800 text-white placeholder-neutral-500 focus:border-neutral-600 focus:ring-neutral-700/30'
                       : 'border-gray-200 focus:border-orange-600 focus:ring-orange-600/20'
                   }`}
                   placeholder="john@example.com"
@@ -239,7 +239,7 @@ export function ContactSection() {
                 <label
                   htmlFor="message"
                   className={`flex items-center gap-2 text-sm font-medium ${
-                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                    isDarkMode ? 'text-neutral-300' : 'text-gray-700'
                   }`}
                 >
                   <MessageSquare className="w-4 h-4" />
@@ -254,7 +254,7 @@ export function ContactSection() {
                   rows={5}
                   className={`w-full px-4 py-3 text-base rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
                     isDarkMode
-                      ? 'bg-gray-800 border-gray-700 text-white focus:border-orange-600 focus:ring-orange-600/20'
+                      ? 'bg-[#0c0c0c] border-neutral-800 text-white placeholder-neutral-500 focus:border-neutral-600 focus:ring-neutral-700/30'
                       : 'border-gray-200 focus:border-orange-600 focus:ring-orange-600/20'
                   }`}
                   placeholder="Tell me about your project..."

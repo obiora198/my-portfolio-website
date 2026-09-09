@@ -10,7 +10,7 @@ const ProjectsSection = dynamic(
     })),
   {
     loading: () => (
-      <div className="py-20 animate-pulse bg-gray-50/50 dark:bg-gray-900/50 min-h-[800px]" />
+      <div className="py-20 animate-pulse bg-gray-50/50 dark:bg-[#0a0a0a]/50 min-h-[800px]" />
     ),
   }
 )
@@ -22,7 +22,7 @@ const BlogSection = dynamic(
     })),
   {
     loading: () => (
-      <div className="py-20 animate-pulse bg-gray-50/50 dark:bg-gray-900/50 min-h-[600px]" />
+      <div className="py-20 animate-pulse bg-gray-50/50 dark:bg-[#000000]/50 min-h-[600px]" />
     ),
   }
 )
@@ -33,7 +33,7 @@ const VTUSection = dynamic(
       default: mod.VTUSection,
     })),
   {
-    loading: () => <div className="py-20 min-h-[400px]" />,
+    loading: () => <div className="py-20 min-h-[400px] dark:bg-[#0a0a0a]" />,
   }
 )
 
@@ -43,7 +43,7 @@ const ContactSection = dynamic(
       default: mod.ContactSection,
     })),
   {
-    loading: () => <div className="py-20 min-h-[600px]" />,
+    loading: () => <div className="py-20 min-h-[600px] dark:bg-[#000000]" />,
   }
 )
 
@@ -53,7 +53,7 @@ const FooterSection = dynamic(
       default: mod.FooterSection,
     })),
   {
-    loading: () => <footer className="h-64 bg-gray-900" />,
+    loading: () => <footer className="h-64 bg-white dark:bg-[#000000]" />,
   }
 )
 
@@ -69,7 +69,7 @@ const ThemeSwitcher = dynamic(
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white dark:bg-[#000000]">
       <Navigation />
       <HeroSection />
       <ProjectsSection />

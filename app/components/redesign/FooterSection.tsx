@@ -13,7 +13,7 @@ export function FooterSection() {
   const isHomePage = pathname === '/'
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-16">
+    <footer className="bg-[#000000] border-t border-neutral-900 text-white py-16">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           {/* Brand Section */}
@@ -29,7 +29,7 @@ export function FooterSection() {
             >
               Emmanuel Obiora
             </h3>
-            <p className="text-gray-400 leading-relaxed">
+            <p className="text-neutral-400 leading-relaxed">
               Building exceptional digital experiences with passion and
               precision. Let&apos;s build something amazing together.
             </p>
@@ -48,7 +48,7 @@ export function FooterSection() {
               <li>
                 <a
                   href="/about"
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  className="text-neutral-400 hover:text-white transition-colors duration-200"
                 >
                   About Me
                 </a>
@@ -56,7 +56,7 @@ export function FooterSection() {
               <li>
                 <a
                   href={isHomePage ? '#projects' : '/#projects'}
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  className="text-neutral-400 hover:text-white transition-colors duration-200"
                 >
                   Projects
                 </a>
@@ -64,7 +64,7 @@ export function FooterSection() {
               <li>
                 <a
                   href="/blog"
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  className="text-neutral-400 hover:text-white transition-colors duration-200"
                 >
                   Blog
                 </a>
@@ -72,7 +72,7 @@ export function FooterSection() {
               <li>
                 <a
                   href="/vtu"
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  className="text-neutral-400 hover:text-white transition-colors duration-200"
                 >
                   VTU Services
                 </a>
@@ -80,7 +80,7 @@ export function FooterSection() {
               <li>
                 <a
                   href={isHomePage ? '#contact' : '/#contact'}
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  className="text-neutral-400 hover:text-white transition-colors duration-200"
                 >
                   Contact
                 </a>
@@ -97,7 +97,7 @@ export function FooterSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h4 className="font-semibold text-lg">Get In Touch</h4>
-            <p className="text-gray-400">
+            <p className="text-neutral-400">
               <a
                 href="mailto:emmanuelobiora196@gmail.com"
                 className="hover:text-white transition-colors duration-200"
@@ -110,7 +110,7 @@ export function FooterSection() {
                 href="https://github.com/obiora198"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`p-3 rounded-lg bg-gray-800 hover:bg-gradient-to-r hover:${currentTheme.buttonGradient} transition-all duration-200`}
+                className="p-3 rounded-lg bg-[#121212] border border-neutral-800 text-neutral-300 hover:bg-[#1a1a1a] hover:text-white hover:border-neutral-700 transition-all duration-200"
               >
                 <Github className="w-5 h-5" />
               </a>
@@ -118,13 +118,13 @@ export function FooterSection() {
                 href="https://www.linkedin.com/in/emmanuel-obiora-9b8495192/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`p-3 rounded-lg bg-gray-800 hover:bg-gradient-to-r hover:${currentTheme.buttonGradient} transition-all duration-200`}
+                className="p-3 rounded-lg bg-[#121212] border border-neutral-800 text-neutral-300 hover:bg-[#1a1a1a] hover:text-white hover:border-neutral-700 transition-all duration-200"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
               <a
                 href="mailto:emmanuelobiora196@gmail.com"
-                className={`p-3 rounded-lg bg-gray-800 hover:bg-gradient-to-r hover:${currentTheme.buttonGradient} transition-all duration-200`}
+                className="p-3 rounded-lg bg-[#121212] border border-neutral-800 text-neutral-300 hover:bg-[#1a1a1a] hover:text-white hover:border-neutral-700 transition-all duration-200"
               >
                 <Mail className="w-5 h-5" />
               </a>
@@ -134,13 +134,13 @@ export function FooterSection() {
 
         {/* Bottom Bar */}
         <motion.div
-          className="pt-8 border-t border-gray-700 text-center"
+          className="pt-8 border-t border-neutral-900 text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <p className="text-gray-400 flex items-center justify-center gap-2 flex-wrap">
+          <p className="text-neutral-500 flex items-center justify-center gap-2 flex-wrap text-sm">
             <span>© {currentYear} Emmanuel Obiora. All rights reserved.</span>
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1">
