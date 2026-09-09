@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       amount,
       phone,
       variation_code,
-      billersCode,
+      billersCode: billersCode || phone,
     }
 
     // Add international fields if they exist

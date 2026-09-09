@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Check, ExternalLink, Clock } from 'lucide-react'
+import { Copy, Check, Clock } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
 import toast from 'react-hot-toast'
+import { getProviderImage, formatServiceName } from '@/app/utils/vtuProviders'
 
 interface Transaction {
   requestId: string
@@ -171,11 +173,17 @@ export function RecentTransactions({
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
-                        <ExternalLink className={`w-4 h-4 bg-gradient-to-br ${currentTheme.gradientText} bg-clip-text text-transparent`} />
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-black/5 dark:border-white/10 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 shadow-sm">
+                        <Image
+                          src={getProviderImage(transaction.serviceID)}
+                          alt={transaction.serviceID}
+                          fill
+                          sizes="32px"
+                          className="object-cover"
+                        />
                       </div>
-                      <span className="font-bold text-sm capitalize">{transaction.serviceID.replace('-', ' ')}</span>
+                      <span className="font-bold text-sm">{formatServiceName(transaction.serviceID)}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5 font-black text-lg">{formatAmount(transaction.amount)}</td>
@@ -208,11 +216,17 @@ export function RecentTransactions({
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
-                    <ExternalLink className={`w-5 h-5 ${currentTheme.primary.replace('dark:', '')}`} />
+                  <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-black/5 dark:border-white/10 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 shadow-sm">
+                    <Image
+                      src={getProviderImage(transaction.serviceID)}
+                      alt={transaction.serviceID}
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                    />
                   </div>
                   <div>
-                    <p className="font-black text-base capitalize leading-tight">{transaction.serviceID.replace('-', ' ')}</p>
+                    <p className="font-black text-base leading-tight">{formatServiceName(transaction.serviceID)}</p>
                     <p className="text-[10px] opacity-50 font-bold uppercase tracking-widest mt-1">{formatDate(transaction.timestamp)}</p>
                   </div>
                 </div>

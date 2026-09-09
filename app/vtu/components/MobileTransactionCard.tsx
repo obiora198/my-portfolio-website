@@ -1,8 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Copy, Check, ArrowRight, ExternalLink } from 'lucide-react'
+import { Copy, Check, ArrowRight } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
+import { getProviderImage, formatServiceName } from '@/app/utils/vtuProviders'
 
 interface MobileTransactionCardProps {
   transaction: {
@@ -73,12 +75,18 @@ export const MobileTransactionCard = ({
     >
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
-            <ExternalLink className={`w-5 h-5 bg-gradient-to-br ${currentTheme.gradientText} bg-clip-text text-transparent`} />
+          <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-black/5 dark:border-white/10 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 shadow-sm">
+            <Image
+              src={getProviderImage(transaction.serviceID)}
+              alt={transaction.serviceID}
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
           </div>
           <div>
-            <h4 className="font-black text-base capitalize leading-tight">
-              {transaction.serviceID.replace('-', ' ')}
+            <h4 className="font-black text-base leading-tight">
+              {formatServiceName(transaction.serviceID)}
             </h4>
             <p className="text-[10px] opacity-50 font-bold uppercase tracking-widest mt-1">
               {formatDate(transaction.timestamp)}
