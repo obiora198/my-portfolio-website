@@ -98,3 +98,27 @@ export function formatServiceName(serviceID: string): string {
   }
   return serviceID.replace('-', ' ')
 }
+
+export function generateRequestId(): string {
+  const now = new Date()
+  const options = {
+    timeZone: 'Africa/Lagos',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  } as const
+  const parts = new Intl.DateTimeFormat('en-GB', options).formatToParts(now)
+  const d = parts.find((p) => p.type === 'day')?.value
+  const m = parts.find((p) => p.type === 'month')?.value
+  const y = parts.find((p) => p.type === 'year')?.value
+  const h = parts.find((p) => p.type === 'hour')?.value
+  const min = parts.find((p) => p.type === 'minute')?.value
+
+  const requestIdBase = `${y}${m}${d}${h}${min}`
+  const randomStr = Math.random().toString(36).substring(2, 10)
+  return `${requestIdBase}${randomStr}`
+}
+

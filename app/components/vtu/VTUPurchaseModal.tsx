@@ -319,6 +319,7 @@ export function VTUPurchaseModal({
   const [phoneError, setPhoneError] = useState('')
   const [whatsappError, setWhatsappError] = useState('')
   const [meterVerifyError, setMeterVerifyError] = useState('')
+  const [fullName, setFullName] = useState('')
 
   // Verification state
   const [isVerifying, setIsVerifying] = useState(false)
@@ -340,12 +341,36 @@ export function VTUPurchaseModal({
   const [showResultModal, setShowResultModal] = useState(false)
   const [lastTransaction, setLastTransaction] = useState<any>(null)
 
+  const resetForm = () => {
+    setAmount('')
+    setPhone('')
+    setBillersCode('')
+    setVariationCode('')
+    setFullName('')
+    setEmail('')
+    setCustomerName('')
+    setIsVerified(false)
+    setMeterVerifyError('')
+    setPhoneError('')
+    setWhatsappError('')
+  }
+
   // Update tab when selectedService changes
   useEffect(() => {
     if (selectedService && isOpen) {
       setActiveTab(getTabFromService(selectedService))
     }
   }, [selectedService, isOpen])
+
+  // Dynamically load Paystack Inline JS on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+      const script = document.createElement('script')
+      script.src = 'https://js.paystack.co/v1/inline.js'
+      script.async = true
+      document.body.appendChild(script)
+    }
+  }, [])
 
   // Clear form on tab change
   useEffect(() => {
@@ -358,6 +383,7 @@ export function VTUPurchaseModal({
     setSelectedProductTypeId(null)
     setSelectedOperatorId('')
     setEmail('')
+    setFullName('')
     setPlanSearch('')
     setIsPlansExpanded(false)
     setPhoneError('')
@@ -677,51 +703,87 @@ export function VTUPurchaseModal({
   }
 
   // Check Transaction Status (Requery)
-  const checkTransactionStatus = async (
-    requestId: string
+  // Poll payment and fulfillment verification
+  const pollPaymentVerification = async (
+    reference: string,
+    attempts = 0
   ): Promise<boolean> => {
     try {
-      const response = await axios.post('/api/vtu/requery', {
-        request_id: requestId,
-      })
+      const response = await axios.get(
+        `/api/payment/verify?reference=${reference}`
+      )
+      const data = response.data
 
-      const code = response.data.code
-      const status = response.data.content?.transactions?.status
-
-      if (code === '000') {
-        if (status === 'delivered' || status === 'successful') {
-          setModalType('success')
-          setModalMessage('Transaction successful!')
-          setShowResultModal(true)
-          onSuccess()
-          return true
-        } else if (
-          status === 'pending' ||
-          status === 'initiated' ||
-          status === 'processing'
-        ) {
-          setModalType('pending')
-          setModalMessage('Processing... Retrying in 5s')
-          setTimeout(() => checkTransactionStatus(requestId), 5000)
-          return false
-        } else {
-          setModalType('error')
-          setModalMessage(`Transaction failed: ${status}`)
-          setShowResultModal(true)
-          return false
+      if (data.deliveryStatus === 'delivered' || (data.success && data.token)) {
+        if (data.token) {
+          setLastTransaction((prev: any) => ({ ...prev, token: data.token }))
         }
-      } else if (code === '099' || code === '089') {
-        setTimeout(() => checkTransactionStatus(requestId), 5000)
-        return false
-      } else {
+        setModalType('success')
+        setModalMessage('Transaction successful!')
+        toast.success('Transaction successful! Your service has been activated.')
+        setShowResultModal(true)
+        resetForm()
+        onSuccess()
+        return true
+      }
+
+      if (data.deliveryStatus === 'failed') {
         setModalType('error')
-        setModalMessage('Transaction verification failed')
+        setModalMessage(
+          data.message ||
+            'Delivery could not be completed. If debited, please contact support with your reference for reversal.'
+        )
         setShowResultModal(true)
         return false
       }
+
+      if (
+        data.paymentStatus === 'failed' ||
+        data.paymentStatus === 'abandoned'
+      ) {
+        setModalType('error')
+        setModalMessage('Payment was cancelled or failed.')
+        setShowResultModal(true)
+        return false
+      }
+
+      // If still processing or pending and under 25 attempts (~60s)
+      if (attempts < 25) {
+        setModalType('pending')
+        setModalMessage(
+          data.deliveryStatus === 'processing'
+            ? 'Payment confirmed! Activating service with provider...'
+            : 'Verifying payment...'
+        )
+        setTimeout(
+          () => pollPaymentVerification(reference, attempts + 1),
+          2500
+        )
+        return false
+      } else {
+        // Polling reached max duration without final failure
+        setModalType('pending')
+        setModalMessage(
+          'Your transaction is currently processing with the provider. It will reflect in your Recent Transactions shortly.'
+        )
+        setShowResultModal(true)
+        onSuccess()
+        return false
+      }
     } catch (err) {
-      console.error('Requery error:', err)
-      setTimeout(() => checkTransactionStatus(requestId), 10000)
+      console.error('Verify poll error:', err)
+      if (attempts < 25) {
+        setTimeout(
+          () => pollPaymentVerification(reference, attempts + 1),
+          3000
+        )
+      } else {
+        setModalType('error')
+        setModalMessage(
+          'Could not verify status. Please check your Recent Transactions.'
+        )
+        setShowResultModal(true)
+      }
       return false
     }
   }
@@ -771,7 +833,7 @@ export function VTUPurchaseModal({
     }
   }
 
-  // Handle Purchase
+  // Handle Purchase via Paystack Guest Checkout
   const handlePurchase = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -797,9 +859,7 @@ export function VTUPurchaseModal({
     setLoading(true)
 
     try {
-      const requestId = generateRequestId()
       const payload: any = {
-        request_id: requestId,
         serviceID:
           activeTab === 'international' ? 'foreign-airtime' : selectedServiceId,
         amount: Number(amount),
@@ -811,74 +871,76 @@ export function VTUPurchaseModal({
           activeTab === 'tv' || activeTab === 'electricity'
             ? billersCode
             : phone,
+        name: fullName.trim() || customerName || undefined,
+        email: email && email.includes('@') ? email.trim() : undefined,
+        whatsappNumber: useTransactionNumber ? phone : whatsappNumber,
+        activeTab: activeTab,
       }
 
       if (activeTab === 'international') {
         payload.operator_id = selectedOperatorId
         payload.country_code = selectedCountryCode
         payload.product_type_id = selectedProductTypeId
-        payload.email = email
       }
 
       if (activeTab === 'tv') {
         payload.subscription_type = subscriptionType
       }
 
-      payload.whatsappNumber = useTransactionNumber ? phone : whatsappNumber
-      payload.activeTab = activeTab
+      // Initialize Paystack transaction on server
+      const initRes = await axios.post('/api/payment/initialize', payload)
+      const { reference, amount: verifiedAmount } = initRes.data
 
-      // Store for receipt
+      // Store for receipt modal
       setLastTransaction({
-        requestId,
+        requestId: reference,
         serviceID: payload.serviceID,
-        amount: payload.amount,
+        amount: verifiedAmount,
         phone: payload.phone,
         billersCode: payload.billersCode,
         whatsappNumber: payload.whatsappNumber,
       })
 
-      const response = await axios.post('/api/vtu/pay', payload)
-      const code = response.data.code
-      const status = response.data.content?.transactions?.status
+      const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY
+      const PaystackPop = (window as any).PaystackPop
 
-      if (code === '000') {
-        // Look for token in response
-        const token = response.data.token
-        if (token) {
-          setLastTransaction((prev: any) => ({ ...prev, token }))
-        }
-
-        if (status === 'delivered' || status === 'successful') {
-          setModalType('success')
-          setModalMessage('Transaction successful!')
-          setShowResultModal(true)
-          setAmount('')
-          setPhone('')
-          onSuccess()
-        } else {
-          setModalType('pending')
-          setModalMessage('Processing transaction...')
-          setShowResultModal(true)
-          setTimeout(() => checkTransactionStatus(requestId), 5000)
-        }
-      } else if (code === '099' || code === '089') {
-        setModalType('pending')
-        setModalMessage('Processing...')
-        setShowResultModal(true)
-        setTimeout(() => checkTransactionStatus(requestId), 5000)
-      } else {
-        setModalType('error')
-        setModalMessage(
-          response.data.response_description ||
-            'Transaction failed. Please try again.'
+      if (!PaystackPop || !paystackKey) {
+        toast.error(
+          'Paystack gateway is initializing. Please configure NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY in .env.'
         )
-        setShowResultModal(true)
+        setLoading(false)
+        return
       }
+
+      const handler = PaystackPop.setup({
+        key: paystackKey,
+        email:
+          email && email.includes('@')
+            ? email.trim()
+            : `guest_${phone.replace(/\D/g, '')}@obiora.dev`,
+        amount: Math.round(verifiedAmount * 100),
+        ref: reference,
+        onClose: () => {
+          setLoading(false)
+          toast('Payment cancelled or window closed', { icon: 'ℹ️' })
+        },
+        callback: (response: any) => {
+          setLoading(false)
+          setModalType('pending')
+          setModalMessage('Payment received! Activating your service...')
+          setShowResultModal(true)
+          pollPaymentVerification(reference)
+        },
+      })
+
+      handler.openIframe()
     } catch (err: any) {
       console.error('Purchase error:', err)
+      setLoading(false)
       setModalType('error')
       setModalMessage(
-        err.response?.data?.message || 'Network error. Please try again.'
+        err.response?.data?.message ||
+          'Payment initialization failed. Please try again.'
       )
       setShowResultModal(true)
     } finally {
@@ -914,7 +976,7 @@ export function VTUPurchaseModal({
         isVerified
       )
     } else if (activeTab === 'international') {
-      if (email && selectedOperatorId) {
+      if (selectedOperatorId) {
         if (variations.length > 0) {
           return !!variationCode
         }
@@ -1873,25 +1935,60 @@ export function VTUPurchaseModal({
                 </div>
               )}
 
-              {/* International Email */}
-              {activeTab === 'international' && selectedOperatorId && (
+              {/* Optional KYC Full Name */}
+              {phone && (
                 <div>
-                  <label
-                    className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-neutral-300' : 'text-gray-700'}`}
-                  >
-                    Email Address
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label
+                      className={`block text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-neutral-300' : 'text-gray-700'}`}
+                    >
+                      Full Name
+                    </label>
+                    <span
+                      className={`text-[10px] sm:text-xs ${isDarkMode ? 'text-neutral-500' : 'text-gray-400'}`}
+                    >
+                      Optional (KYC)
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="e.g. Emmanuel Obiora"
+                    className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all outline-none text-xs sm:text-sm ${themeStyles.focusRing} ${themeStyles.focusBorder} ${
+                      isDarkMode
+                        ? 'bg-[#0c0c0c] border-neutral-800 text-white placeholder-neutral-500'
+                        : 'bg-gray-50 border-gray-300 text-gray-900'
+                    }`}
+                  />
+                </div>
+              )}
+
+              {/* Optional Email for receipt */}
+              {phone && (
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label
+                      className={`block text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-neutral-300' : 'text-gray-700'}`}
+                    >
+                      Email Address
+                    </label>
+                    <span
+                      className={`text-[10px] sm:text-xs ${isDarkMode ? 'text-neutral-500' : 'text-gray-400'}`}
+                    >
+                      Optional (for receipt)
+                    </span>
+                  </div>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${themeStyles.focusRing} ${themeStyles.focusBorder} ${
+                    className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all outline-none text-xs sm:text-sm ${themeStyles.focusRing} ${themeStyles.focusBorder} ${
                       isDarkMode
                         ? 'bg-[#0c0c0c] border-neutral-800 text-white placeholder-neutral-500'
                         : 'bg-gray-50 border-gray-300 text-gray-900'
                     }`}
-                    required
                   />
                 </div>
               )}
@@ -2013,32 +2110,38 @@ export function VTUPurchaseModal({
             </div>
 
             {/* Submit Button - Fixed at bottom of modal */}
-            <div className="flex-shrink-0 flex gap-3 pt-3 border-t border-neutral-800/40 mt-1">
-              <button
-                type="button"
-                onClick={onClose}
-                className={`flex-1 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                  isDarkMode
-                    ? 'bg-[#181818] border border-neutral-800 text-neutral-300 hover:bg-[#222222]'
-                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                }`}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading || !canSubmit()}
-                className={`flex-1 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white transition-all disabled:opacity-50 bg-gradient-to-r ${currentTheme.buttonGradient} hover:shadow-lg flex items-center justify-center gap-2`}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  'Pay Now'
-                )}
-              </button>
+            <div className="flex-shrink-0 flex flex-col gap-2 pt-3 border-t border-neutral-800/40 mt-1">
+              <div className="flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] text-[11px] text-gray-500 dark:text-neutral-400">
+                <CreditCard className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+                <span>A small Paystack convenience fee is added at checkout</span>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className={`flex-1 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                    isDarkMode
+                      ? 'bg-[#181818] border border-neutral-800 text-neutral-300 hover:bg-[#222222]'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading || !canSubmit()}
+                  className={`flex-1 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white transition-all disabled:opacity-50 bg-gradient-to-r ${currentTheme.buttonGradient} hover:shadow-lg flex items-center justify-center gap-2`}
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Pay Now'
+                  )}
+                </button>
+              </div>
             </div>
           </form>
         )}
@@ -2056,7 +2159,10 @@ export function VTUPurchaseModal({
             <button
               onClick={() => {
                 setShowResultModal(false)
-                if (modalType === 'success') onClose()
+                if (modalType === 'success' || modalType === 'pending') {
+                  resetForm()
+                  onClose()
+                }
               }}
               className={`absolute top-6 right-6 p-2 rounded-lg transition-colors ${
                 isDarkMode
@@ -2124,7 +2230,10 @@ export function VTUPurchaseModal({
               <button
                 onClick={() => {
                   setShowResultModal(false)
-                  if (modalType === 'success') onClose()
+                  if (modalType === 'success' || modalType === 'pending') {
+                    resetForm()
+                    onClose()
+                  }
                 }}
                 className={`w-full py-3 rounded-lg font-semibold transition-all bg-gradient-to-r ${currentTheme.buttonGradient} text-white`}
               >

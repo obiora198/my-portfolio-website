@@ -7,16 +7,31 @@ export interface ITransaction {
   phone: string
   billersCode?: string
   variationCode?: string
-  status: string
-  description: string
+  status: string // general status (delivered, successful, failed, initiated, pending)
+  description?: string
   whatsappNumber?: string
   email?: string
+  customerName?: string // KYC compliance
   operatorId?: string
   countryCode?: string
   productTypeId?: string
   token?: string
   timestamp: Date
-  activeTab: string
+  activeTab?: string
+
+  // Paystack & Payment fields
+  paymentReference?: string
+  paymentStatus?: 'pending' | 'success' | 'failed' | 'abandoned'
+  paymentGateway?: 'paystack'
+  deliveryStatus?: 'not_started' | 'processing' | 'delivered' | 'failed' | 'pending_review'
+  lockedAt?: Date
+  paidAt?: Date
+  refundRequired?: boolean
+  vtpassResponse?: any
+
+  // Dispute & Chargeback tracking
+  disputeStatus?: 'none' | 'pending' | 'resolved' | 'lost'
+  disputeData?: any
 }
 
 const TransactionSchema = new Schema<ITransaction>({
@@ -30,15 +45,51 @@ const TransactionSchema = new Schema<ITransaction>({
   description: { type: String },
   whatsappNumber: { type: String },
   email: { type: String },
+  customerName: { type: String }, // KYC compliance
   operatorId: { type: String },
   countryCode: { type: String },
   productTypeId: { type: String },
   token: { type: String },
   timestamp: { type: Date, default: Date.now },
   activeTab: { type: String },
+
+  // Paystack & Payment fields
+  paymentReference: { type: String, unique: true, sparse: true, index: true },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'success', 'failed', 'abandoned'],
+    default: 'pending',
+  },
+  paymentGateway: { type: String, default: 'paystack' },
+  deliveryStatus: {
+    type: String,
+    enum: ['not_started', 'processing', 'delivered', 'failed', 'pending_review'],
+    default: 'not_started',
+  },
+  lockedAt: { type: Date },
+  paidAt: { type: Date },
+  refundRequired: { type: Boolean, default: false },
+  vtpassResponse: { type: Schema.Types.Mixed },
+
+  // Dispute & Chargeback tracking
+  disputeStatus: {
+    type: String,
+    enum: ['none', 'pending', 'resolved', 'lost'],
+    default: 'none',
+  },
+  disputeData: { type: Schema.Types.Mixed },
 })
 
+if (
+  mongoose.models.Transaction &&
+  !mongoose.models.Transaction.schema.path('paymentReference')
+) {
+  delete mongoose.models.Transaction
+}
+
 const Transaction =
-  models.Transaction || model<ITransaction>('Transaction', TransactionSchema)
+  mongoose.models.Transaction ||
+  mongoose.model<ITransaction>('Transaction', TransactionSchema)
 
 export default Transaction
+
