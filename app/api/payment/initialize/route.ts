@@ -5,6 +5,10 @@ import Transaction from '@/models/Transaction'
 import { checkRateLimit } from '@/lib/rateLimiter'
 import { generateRequestId } from '@/app/utils/vtuProviders'
 import { calculateServiceFee } from '@/lib/vtuPricing'
+import {
+  verifyVariationAmount,
+  PriceVerificationError,
+} from '@/lib/verifyServicePrice'
 
 const variationsCache = new Map<string, { data: any[]; expires: number }>()
 
@@ -43,30 +47,6 @@ async function getServiceVariations(
   }
 
   return variations
-}
-
-async function getServiceVariationsWithRetry(
-  serviceID: string,
-  baseURL: string,
-  apiKey: string,
-  secretKey: string,
-  retries = 1,
-  delayMs = 1500
-): Promise<any[]> {
-  try {
-    return await getServiceVariations(serviceID, baseURL, apiKey, secretKey)
-  } catch (err) {
-    if (retries <= 0) throw err
-    await new Promise((resolve) => setTimeout(resolve, delayMs))
-    return getServiceVariationsWithRetry(
-      serviceID,
-      baseURL,
-      apiKey,
-      secretKey,
-      retries - 1,
-      delayMs
-    )
-  }
 }
 
 export async function POST(request: Request) {
@@ -130,37 +110,26 @@ export async function POST(request: Request) {
         : variation_code
 
       try {
-        const variations = await getServiceVariationsWithRetry(
+        verifiedAmount = await verifyVariationAmount(
           serviceID,
+          variation_code,
+          cleanCode,
           baseURL || 'https://sandbox.vtpass.com/api',
           apiKey || '',
-          secretKey || ''
+          secretKey || '',
+          getServiceVariations
         )
-
-        const matched = variations.find(
-          (v: any) =>
-            v.variation_code === cleanCode ||
-            String(v.variation_code) === cleanCode ||
-            v.variation_code === variation_code
-        )
-
-        if (!matched) {
-          return NextResponse.json(
-            { message: `Invalid plan selected (${cleanCode}).` },
-            { status: 400 }
-          )
-        }
-
-        verifiedAmount = Number(matched.variation_amount)
       } catch (err: any) {
         console.error(
           '[Payment Initialize] Failed to verify variation price:',
           err.message
         )
-        // Fail closed — never trust client-submitted amount for
-        // variation-priced services (Data, Cable TV, SME plans). A
-        // transient VTpass failure must not silently disable server-side
-        // price verification.
+        if (err instanceof PriceVerificationError) {
+          return NextResponse.json(
+            { message: err.message },
+            { status: err.status }
+          )
+        }
         return NextResponse.json(
           {
             message:
