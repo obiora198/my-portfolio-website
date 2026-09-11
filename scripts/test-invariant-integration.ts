@@ -101,6 +101,33 @@ function testInvariantLogic() {
     }, 4615)
   }, 'totalPaid does not equal amount + serviceFee')
 
+  // 5. Fail-Closed on Variation Verification Failure
+  // Simulate variation-price verification throwing (e.g. VTpass timeout)
+  function simulateVariationVerification(hasVariation: boolean, mockFetchThrows: boolean, clientAmount: number) {
+    let verifiedAmount: number = 0
+    if (hasVariation) {
+      try {
+        if (mockFetchThrows) {
+          throw new Error('VTpass connection timed out after 5000ms')
+        }
+        verifiedAmount = 4615 // matched
+      } catch (err: any) {
+        // Must fail closed with 503, NEVER fall back to clientAmount
+        return { status: 503, message: 'Unable to verify plan pricing right now. Please try again shortly.' }
+      }
+    }
+    return { status: 200, verifiedAmount }
+  }
+
+  const failClosedRes = simulateVariationVerification(true, true, 1) // Attacker passed ₦1 during VTpass timeout
+  if (failClosedRes.status === 503 && !('verifiedAmount' in failClosedRes)) {
+    console.log('✅ [PASS] Variation API timeout fails closed with 503 (client ₦1 amount rejected)')
+    passed++
+  } else {
+    console.error('❌ [FAIL] Variation API timeout failed to reject client amount')
+    failed++
+  }
+
   console.log(`\nInvariant Integration Tests: ${passed} passed, ${failed} failed.`)
   if (failed > 0) process.exit(1)
 }

@@ -45,6 +45,30 @@ async function getServiceVariations(
   return variations
 }
 
+async function getServiceVariationsWithRetry(
+  serviceID: string,
+  baseURL: string,
+  apiKey: string,
+  secretKey: string,
+  retries = 1,
+  delayMs = 1500
+): Promise<any[]> {
+  try {
+    return await getServiceVariations(serviceID, baseURL, apiKey, secretKey)
+  } catch (err) {
+    if (retries <= 0) throw err
+    await new Promise((resolve) => setTimeout(resolve, delayMs))
+    return getServiceVariationsWithRetry(
+      serviceID,
+      baseURL,
+      apiKey,
+      secretKey,
+      retries - 1,
+      delayMs
+    )
+  }
+}
+
 export async function POST(request: Request) {
   try {
     // 1. IP Rate Limiting
@@ -106,7 +130,7 @@ export async function POST(request: Request) {
         : variation_code
 
       try {
-        const variations = await getServiceVariations(
+        const variations = await getServiceVariationsWithRetry(
           serviceID,
           baseURL || 'https://sandbox.vtpass.com/api',
           apiKey || '',
@@ -129,9 +153,21 @@ export async function POST(request: Request) {
 
         verifiedAmount = Number(matched.variation_amount)
       } catch (err: any) {
-        console.error('[Payment Initialize] Failed to verify variation price:', err.message)
-        // Fallback to validated client amount if variation API temporarily fails
-        verifiedAmount = Number(amount)
+        console.error(
+          '[Payment Initialize] Failed to verify variation price:',
+          err.message
+        )
+        // Fail closed — never trust client-submitted amount for
+        // variation-priced services (Data, Cable TV, SME plans). A
+        // transient VTpass failure must not silently disable server-side
+        // price verification.
+        return NextResponse.json(
+          {
+            message:
+              'Unable to verify plan pricing right now. Please try again shortly.',
+          },
+          { status: 503 }
+        )
       }
     } else {
       // Direct amount (e.g. Airtime, Electricity)
