@@ -14,7 +14,8 @@ interface RequeryResult {
  */
 export async function claimDeliveryLock(
   paymentReference: string,
-  paystackPaidAt?: Date
+  paystackPaidAt?: Date,
+  paystackChargedAmount?: number
 ) {
   await dbConnect()
   const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000)
@@ -35,6 +36,9 @@ export async function claimDeliveryLock(
         deliveryStatus: 'processing',
         lockedAt: new Date(),
         ...(paystackPaidAt ? { paidAt: paystackPaidAt } : {}),
+        ...(typeof paystackChargedAmount === 'number'
+          ? { paystackChargedAmount }
+          : {}),
       },
     },
     { new: false } // Returns pre-update doc to verify we won the lock

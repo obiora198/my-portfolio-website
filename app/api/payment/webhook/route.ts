@@ -39,11 +39,19 @@ export async function POST(request: Request) {
       const data = event.data
       const reference = data.reference
       const paidAt = data.paid_at ? new Date(data.paid_at) : new Date()
+      const chargedAmount =
+        typeof data.amount === 'number' ? data.amount / 100 : undefined
 
-      console.log(`[Payment Webhook] Processing charge.success for ref: ${reference}`)
+      console.log(
+        `[Payment Webhook] Processing charge.success for ref: ${reference}, charged: ${chargedAmount}`
+      )
 
       // Single atomic lock write: claims the lock if not_started or expired processing (> 2min)
-      const lockAcquired = await claimDeliveryLock(reference, paidAt)
+      const lockAcquired = await claimDeliveryLock(
+        reference,
+        paidAt,
+        chargedAmount
+      )
 
       if (lockAcquired) {
         console.log(`[Payment Webhook] Lock acquired for ${reference}. Triggering fulfillment...`)

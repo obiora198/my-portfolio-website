@@ -145,8 +145,14 @@ export async function GET(request: Request) {
         const pData = paystackRes.data?.data
         if (pData?.status === 'success') {
           const paidAt = pData.paid_at ? new Date(pData.paid_at) : new Date()
+          const chargedAmount =
+            typeof pData.amount === 'number' ? pData.amount / 100 : undefined
           // Claim atomic lock
-          const lockAcquired = await claimDeliveryLock(reference, paidAt)
+          const lockAcquired = await claimDeliveryLock(
+            reference,
+            paidAt,
+            chargedAmount
+          )
           if (lockAcquired) {
             console.log(`[Payment Verify] Won atomic lock for ${reference}. Fulfilling...`)
             await fulfillVTUOrder(reference)
@@ -176,6 +182,9 @@ export async function GET(request: Request) {
       deliveryStatus: tx.deliveryStatus,
       token: tx.token,
       amount: tx.amount,
+      serviceFee: tx.serviceFee,
+      totalPaid: tx.totalPaid,
+      paystackChargedAmount: tx.paystackChargedAmount,
       serviceID: tx.serviceID,
       phone: tx.phone,
       billersCode: tx.billersCode,

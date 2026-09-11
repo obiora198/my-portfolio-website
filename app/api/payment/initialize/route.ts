@@ -4,6 +4,7 @@ import dbConnect from '@/lib/mongodb'
 import Transaction from '@/models/Transaction'
 import { checkRateLimit } from '@/lib/rateLimiter'
 import { generateRequestId } from '@/app/utils/vtuProviders'
+import { calculateServiceFee } from '@/lib/vtuPricing'
 
 const variationsCache = new Map<string, { data: any[]; expires: number }>()
 
@@ -160,52 +161,24 @@ export async function POST(request: Request) {
     const requestId = generateRequestId()
     const paymentReference = `VTU_${Date.now()}_${Math.random().toString(36).substring(2, 9).toUpperCase()}`
 
-    // 4. Initialize Paystack Transaction
-    const origin = request.headers.get('origin') || 'https://obiora.dev'
-    const paystackPayload = {
-      email: customerEmail,
-      amount: Math.round(verifiedAmount * 100), // In Kobo
-      reference: paymentReference,
-      callback_url: `${origin}/vtu?payment_ref=${paymentReference}`,
-      metadata: {
-        custom_fields: [
-          { display_name: 'Customer Name', variable_name: 'customer_name', value: name || 'Guest' },
-          { display_name: 'Service', variable_name: 'service_id', value: serviceID },
-          { display_name: 'Plan', variable_name: 'plan', value: variation_code || 'Custom Topup' },
-          { display_name: 'Recipient Phone', variable_name: 'recipient_phone', value: phone },
-          { display_name: 'Billers Code', variable_name: 'billers_code', value: billersCode || phone },
-        ],
-        customerName: name,
-        serviceID,
-        variationCode: variation_code,
-        phone,
-        billersCode: billersCode || phone,
-        requestId,
-        activeTab,
-        customerEmail,
-      },
+    // 4. Server-side Service Fee & Pricing Derivation
+    const serviceFee = calculateServiceFee(serviceID, verifiedAmount, activeTab)
+    const platformTotal = verifiedAmount + serviceFee
+
+    if (!Number.isFinite(verifiedAmount) || verifiedAmount <= 0) {
+      return NextResponse.json({ message: 'Invalid transaction amount.' }, { status: 400 })
     }
-
-    const paystackRes = await axios.post(
-      'https://api.paystack.co/transaction/initialize',
-      paystackPayload,
-      {
-        headers: {
-          Authorization: `Bearer ${paystackSecret}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-
-    if (!paystackRes.data?.status || !paystackRes.data?.data?.access_code) {
-      throw new Error(paystackRes.data?.message || 'Failed to initialize Paystack transaction')
+    if (!Number.isFinite(serviceFee) || serviceFee < 0) {
+      throw new Error(`Pricing error: Invalid computed serviceFee (${serviceFee})`)
     }
 
     // 5. Store pending transaction record in MongoDB
-    await Transaction.create({
+    const tx = await Transaction.create({
       requestId,
       serviceID,
       amount: verifiedAmount,
+      serviceFee,
+      totalPaid: platformTotal,
       phone,
       billersCode: billersCode || phone,
       variationCode: variation_code,
@@ -224,11 +197,78 @@ export async function POST(request: Request) {
       productTypeId: product_type_id,
     })
 
+    // 6. Independent Invariant Verification on Persisted Record
+    const savedTx = await Transaction.findById(tx._id).lean()
+    if (!savedTx) {
+      throw new Error('Failed to retrieve persisted transaction for invariant verification')
+    }
+
+    const recomputedFee = calculateServiceFee(savedTx.serviceID, savedTx.amount, savedTx.activeTab)
+    if (savedTx.amount !== verifiedAmount) {
+      throw new Error('Pricing invariant failed: persisted amount drifted from verified amount')
+    }
+    if (savedTx.serviceFee !== recomputedFee) {
+      throw new Error(`Pricing invariant failed: stored serviceFee (${savedTx.serviceFee}) != recomputed (${recomputedFee})`)
+    }
+    if (savedTx.totalPaid !== savedTx.amount + (savedTx.serviceFee || 0)) {
+      throw new Error('Pricing invariant failed: totalPaid does not equal amount + serviceFee')
+    }
+
+    const paystackKobo = Math.round(savedTx.totalPaid * 100)
+
+    // 7. Initialize Paystack Transaction with Invariant-Verified Total
+    const origin = request.headers.get('origin') || 'https://obiora.dev'
+    const paystackPayload = {
+      email: customerEmail,
+      amount: paystackKobo, // In Kobo
+      reference: paymentReference,
+      callback_url: `${origin}/vtu?payment_ref=${paymentReference}`,
+      metadata: {
+        custom_fields: [
+          { display_name: 'Customer Name', variable_name: 'customer_name', value: name || 'Guest' },
+          { display_name: 'Service', variable_name: 'service_id', value: serviceID },
+          { display_name: 'Plan', variable_name: 'plan', value: variation_code || 'Custom Topup' },
+          { display_name: 'Service Amount (₦)', variable_name: 'service_amount', value: String(verifiedAmount) },
+          { display_name: 'Service Fee (₦)', variable_name: 'service_fee', value: String(serviceFee) },
+          { display_name: 'Total (₦)', variable_name: 'total_amount', value: String(savedTx.totalPaid) },
+          { display_name: 'Recipient Phone', variable_name: 'recipient_phone', value: phone },
+          { display_name: 'Billers Code', variable_name: 'billers_code', value: billersCode || phone },
+        ],
+        customerName: name,
+        serviceID,
+        variationCode: variation_code,
+        phone,
+        billersCode: billersCode || phone,
+        requestId,
+        activeTab,
+        customerEmail,
+        serviceFee,
+        totalPaid: savedTx.totalPaid,
+      },
+    }
+
+    const paystackRes = await axios.post(
+      'https://api.paystack.co/transaction/initialize',
+      paystackPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${paystackSecret}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+
+    if (!paystackRes.data?.status || !paystackRes.data?.data?.access_code) {
+      throw new Error(paystackRes.data?.message || 'Failed to initialize Paystack transaction')
+    }
+
     return NextResponse.json({
       success: true,
       access_code: paystackRes.data.data.access_code,
       reference: paymentReference,
       amount: verifiedAmount,
+      serviceFee,
+      totalAmount: savedTx.totalPaid,
     })
   } catch (error: any) {
     console.error('[Payment Initialize Error]', error.response?.data || error.message)

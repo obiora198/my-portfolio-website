@@ -29,6 +29,11 @@ export interface ITransaction {
   refundRequired?: boolean
   vtpassResponse?: any
 
+  // Pricing breakdown & reconciliation
+  serviceFee?: number // Platform markup in Naira (direct margin)
+  totalPaid?: number // Platform total sent to Paystack (amount + serviceFee) in Naira
+  paystackChargedAmount?: number // Gross amount charged from customer's card (from Paystack webhook event.data.amount / 100)
+
   // Dispute & Chargeback tracking
   disputeStatus?: 'none' | 'pending' | 'resolved' | 'lost'
   disputeData?: any
@@ -71,6 +76,11 @@ const TransactionSchema = new Schema<ITransaction>({
   refundRequired: { type: Boolean, default: false },
   vtpassResponse: { type: Schema.Types.Mixed },
 
+  // Pricing breakdown & reconciliation
+  serviceFee: { type: Number, default: 0 },
+  totalPaid: { type: Number },
+  paystackChargedAmount: { type: Number },
+
   // Dispute & Chargeback tracking
   disputeStatus: {
     type: String,
@@ -82,7 +92,8 @@ const TransactionSchema = new Schema<ITransaction>({
 
 if (
   mongoose.models.Transaction &&
-  !mongoose.models.Transaction.schema.path('paymentReference')
+  (!mongoose.models.Transaction.schema.path('paymentReference') ||
+   !mongoose.models.Transaction.schema.path('totalPaid'))
 ) {
   delete mongoose.models.Transaction
 }

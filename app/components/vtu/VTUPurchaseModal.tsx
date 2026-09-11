@@ -24,6 +24,7 @@ import AxiosInstance from '@/app/utils/axiosInstance'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { CustomSelect } from '@/app/vtu/components/CustomSelect'
+import { calculateServiceFee } from '@/lib/vtuPricing'
 
 interface VTUPurchaseModalProps {
   isOpen: boolean
@@ -354,6 +355,14 @@ export function VTUPurchaseModal({
     setPhoneError('')
     setWhatsappError('')
   }
+
+  const numericAmount = Number(amount) || 0
+  const activeServiceID =
+    activeTab === 'international' ? 'foreign-airtime' : selectedServiceId
+  const liveServiceFee = useMemo(
+    () => calculateServiceFee(activeServiceID, numericAmount, activeTab),
+    [activeServiceID, numericAmount, activeTab]
+  )
 
   // Update tab when selectedService changes
   useEffect(() => {
@@ -889,13 +898,21 @@ export function VTUPurchaseModal({
 
       // Initialize Paystack transaction on server
       const initRes = await axios.post('/api/payment/initialize', payload)
-      const { reference, amount: verifiedAmount } = initRes.data
+      const {
+        reference,
+        amount: verifiedAmount,
+        serviceFee,
+        totalAmount,
+      } = initRes.data
+      const chargeTotal = totalAmount || verifiedAmount
 
       // Store for receipt modal
       setLastTransaction({
         requestId: reference,
         serviceID: payload.serviceID,
         amount: verifiedAmount,
+        serviceFee: serviceFee || 0,
+        totalAmount: chargeTotal,
         phone: payload.phone,
         billersCode: payload.billersCode,
         whatsappNumber: payload.whatsappNumber,
@@ -918,7 +935,7 @@ export function VTUPurchaseModal({
           email && email.includes('@')
             ? email.trim()
             : `guest_${phone.replace(/\D/g, '')}@obiora.dev`,
-        amount: Math.round(verifiedAmount * 100),
+        amount: Math.round(chargeTotal * 100),
         ref: reference,
         onClose: () => {
           setLoading(false)
@@ -2111,6 +2128,33 @@ export function VTUPurchaseModal({
 
             {/* Submit Button - Fixed at bottom of modal */}
             <div className="flex-shrink-0 flex flex-col gap-2 pt-3 border-t border-neutral-800/40 mt-1">
+              {liveServiceFee > 0 && numericAmount > 0 && (
+                <div
+                  className={`p-2.5 rounded-xl border text-xs space-y-1.5 ${
+                    isDarkMode
+                      ? 'bg-white/[0.02] border-white/10 text-neutral-300'
+                      : 'bg-black/[0.02] border-black/5 text-neutral-700'
+                  }`}
+                >
+                  <div className="flex justify-between items-center text-neutral-500">
+                    <span>Service face value:</span>
+                    <span>₦{numericAmount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-neutral-500">
+                    <span>Service & processing fee:</span>
+                    <span className="text-emerald-500 font-medium">
+                      + ₦{liveServiceFee.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center font-semibold pt-1 border-t border-black/5 dark:border-white/5 text-xs sm:text-sm">
+                    <span>Total:</span>
+                    <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>
+                      ₦{(numericAmount + liveServiceFee).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] text-[11px] text-gray-500 dark:text-neutral-400">
                 <CreditCard className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
                 <span>A small Paystack convenience fee is added at checkout</span>
