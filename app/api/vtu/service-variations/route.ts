@@ -34,8 +34,10 @@ export async function GET(request: Request) {
     const publicKey =
       process.env.VTPASS_PUBLIC_KEY || process.env.NEXT_PUBLIC_VTPASS_PUBLIC_KEY
     const baseURL = (
-      process.env.VTPASS_BASE_URL || process.env.NEXT_PUBLIC_VTPASS_BASE_URL
-    )?.replace(/\/$/, '')
+      process.env.VTPASS_BASE_URL ||
+      process.env.NEXT_PUBLIC_VTPASS_BASE_URL ||
+      'https://sandbox.vtpass.com/api'
+    ).replace(/\/$/, '')
 
     let url = `${baseURL}/service-variations?serviceID=${serviceID}`
     if (operator_id) url += `&operator_id=${operator_id}`
@@ -51,6 +53,15 @@ export async function GET(request: Request) {
     })
 
     if (response.data && response.status === 200) {
+      const content = response.data.content
+      const vars = content?.variations || content?.varations
+      if (Array.isArray(vars)) {
+        vars.sort((a: any, b: any) => {
+          const priceA = parseFloat(String(a.variation_amount ?? a.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+          const priceB = parseFloat(String(b.variation_amount ?? b.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+          return priceA - priceB
+        })
+      }
       setCached(cacheKey, response.data)
     }
 

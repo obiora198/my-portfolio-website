@@ -120,7 +120,7 @@ export async function fulfillVTUOrder(paymentReference: string) {
 
     const apiKey = process.env.VTPASS_API_KEY
     const secretKey = process.env.VTPASS_SECRET_KEY
-    const baseURL = (process.env.VTPASS_BASE_URL || process.env.NEXT_PUBLIC_VTPASS_BASE_URL)?.replace(/\/$/, '')
+    const baseURL = (process.env.VTPASS_BASE_URL || process.env.NEXT_PUBLIC_VTPASS_BASE_URL || 'https://sandbox.vtpass.com/api').replace(/\/$/, '')
 
     if (!apiKey || !baseURL) {
       throw new Error('VTpass API credentials or baseURL missing in environment')

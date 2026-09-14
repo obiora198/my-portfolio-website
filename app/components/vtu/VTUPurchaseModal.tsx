@@ -455,11 +455,15 @@ export function VTUPurchaseModal({
       const response = await AxiosInstance.get(
         `/service-variations?serviceID=${selectedServiceId}`
       )
-      return (
-        response.data.content.variations ||
-        response.data.content.varations ||
+      const list =
+        response.data.content?.variations ||
+        response.data.content?.varations ||
         []
-      )
+      return [...list].sort((a: any, b: any) => {
+        const priceA = parseFloat(String(a.variation_amount ?? a.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+        const priceB = parseFloat(String(b.variation_amount ?? b.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+        return priceA - priceB
+      })
     },
     enabled:
       activeTab !== 'airtime' &&
@@ -477,9 +481,14 @@ export function VTUPurchaseModal({
 
   const filteredVariations = useMemo(() => {
     if (!variations || variations.length === 0) return []
-    if (!planSearch.trim()) return variations
+    const sorted = [...variations].sort((a: any, b: any) => {
+      const priceA = parseFloat(String(a.variation_amount ?? a.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+      const priceB = parseFloat(String(b.variation_amount ?? b.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+      return priceA - priceB
+    })
+    if (!planSearch.trim()) return sorted
     const q = planSearch.toLowerCase().trim()
-    return variations.filter(
+    return sorted.filter(
       (v: any) =>
         (v.name || '').toLowerCase().includes(q) ||
         (v.variation_amount || '').toString().includes(q)
@@ -520,11 +529,15 @@ export function VTUPurchaseModal({
             const response = await AxiosInstance.get(
               `/service-variations?serviceID=${service.serviceID}`
             )
-            return (
-              response.data.content.variations ||
-              response.data.content.varations ||
+            const list =
+              response.data.content?.variations ||
+              response.data.content?.varations ||
               []
-            )
+            return [...list].sort((a: any, b: any) => {
+              const priceA = parseFloat(String(a.variation_amount ?? a.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+              const priceB = parseFloat(String(b.variation_amount ?? b.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+              return priceA - priceB
+            })
           },
           staleTime: 1000 * 60 * 30,
         })
@@ -957,6 +970,10 @@ export function VTUPurchaseModal({
       setModalType('error')
       setModalMessage(
         err.response?.data?.message ||
+          (typeof err.response?.data?.error === 'string'
+            ? err.response.data.error
+            : null) ||
+          err.message ||
           'Payment initialization failed. Please try again.'
       )
       setShowResultModal(true)

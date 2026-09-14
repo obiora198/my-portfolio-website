@@ -20,8 +20,10 @@ export async function GET() {
     const publicKey =
       process.env.VTPASS_PUBLIC_KEY || process.env.NEXT_PUBLIC_VTPASS_PUBLIC_KEY
     const baseURL = (
-      process.env.VTPASS_BASE_URL || process.env.NEXT_PUBLIC_VTPASS_BASE_URL
-    )?.replace(/\/$/, '')
+      process.env.VTPASS_BASE_URL ||
+      process.env.NEXT_PUBLIC_VTPASS_BASE_URL ||
+      'https://sandbox.vtpass.com/api'
+    ).replace(/\/$/, '')
 
     const response = await axios.get(
       `${baseURL}/get-international-airtime-countries`,

@@ -84,11 +84,15 @@ export default function VTUPage() {
             const response = await AxiosInstance.get(
               `/service-variations?serviceID=${serviceID}`
             )
-            return (
-              response.data.content.variations ||
-              response.data.content.varations ||
+            const list =
+              response.data.content?.variations ||
+              response.data.content?.varations ||
               []
-            )
+            return [...list].sort((a: any, b: any) => {
+              const priceA = parseFloat(String(a.variation_amount ?? a.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+              const priceB = parseFloat(String(b.variation_amount ?? b.amount ?? '0').replace(/[^0-9.]/g, '')) || 0
+              return priceA - priceB
+            })
           },
           staleTime: 1000 * 60 * 30,
         })
