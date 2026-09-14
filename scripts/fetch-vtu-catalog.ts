@@ -4,8 +4,8 @@ dotenv.config()
 
 async function fetchCatalog() {
   const baseURL = (process.env.VTPASS_BASE_URL || process.env.NEXT_PUBLIC_VTPASS_BASE_URL || 'https://sandbox.vtpass.com/api/').replace(/\/$/, '')
-  const apiKey = process.env.VTPASS_API_KEY || process.env.NEXT_PUBLIC_VTPASS_API_KEY
-  const secretKey = process.env.VTPASS_SECRET_KEY || process.env.NEXT_PUBLIC_VTPASS_SECRET_KEY
+  const apiKey = process.env.VTPASS_API_KEY
+  const secretKey = process.env.VTPASS_SECRET_KEY
 
   console.log('Connecting to VTpass baseURL:', baseURL)
   const headers = {

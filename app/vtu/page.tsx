@@ -99,9 +99,12 @@ export default function VTUPage() {
     return () => clearTimeout(timer)
   }, [queryClient])
 
-  // Show coming soon in production/local based on environment
-  const isDevelopment = process.env.NODE_ENV === 'development'
-  const showComingSoon = !isDevelopment
+  // Show coming soon unless VTU is explicitly enabled via env var.
+  // Set NEXT_PUBLIC_VTU_ENABLED=true in Vercel (dev branch) or .env to unlock.
+  const vtuEnabled =
+    process.env.NEXT_PUBLIC_VTU_ENABLED === 'true' ||
+    process.env.NODE_ENV === 'development'
+  const showComingSoon = !vtuEnabled
 
   // Fetch transaction history from MongoDB
   const { data: transactionHistory = [], refetch: refetchHistory } = useQuery({

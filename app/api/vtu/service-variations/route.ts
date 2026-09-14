@@ -30,8 +30,7 @@ export async function GET(request: Request) {
       })
     }
 
-    const apiKey =
-      process.env.VTPASS_API_KEY || process.env.NEXT_PUBLIC_VTPASS_API_KEY
+    const apiKey = process.env.VTPASS_API_KEY
     const publicKey =
       process.env.VTPASS_PUBLIC_KEY || process.env.NEXT_PUBLIC_VTPASS_PUBLIC_KEY
     const baseURL = (

@@ -67,9 +67,19 @@ const ThemeSwitcher = dynamic(
   }
 )
 
+const WelcomeModal = dynamic(
+  () =>
+    import('./components/redesign/WelcomeModal').then((mod) => ({
+      default: mod.WelcomeModal,
+    })),
+  {
+    ssr: false,
+  }
+)
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white dark:bg-[#000000]">
+    <main className="min-h-screen overflow-x-hidden bg-white dark:bg-[#000000]">
       <Navigation />
       <HeroSection />
       <ProjectsSection />
@@ -78,6 +88,7 @@ export default function Home() {
       <ContactSection />
       <FooterSection />
       <ThemeSwitcher />
+      <WelcomeModal />
     </main>
   )
 }
