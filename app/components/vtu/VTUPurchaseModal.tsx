@@ -2270,7 +2270,7 @@ export function VTUPurchaseModal({
 
               <div className="flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] text-[11px] text-gray-500 dark:text-neutral-400">
                 <CreditCard className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
-                <span>A small Paystack convenience fee is added at checkout</span>
+                <span>Secure payment powered by Paystack • No hidden fees</span>
               </div>
               <div className="flex gap-3">
                 <button

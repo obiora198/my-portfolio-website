@@ -79,19 +79,19 @@ async function testInvariantLogic() {
     return Math.round(savedTx.totalPaid * 100)
   }
 
-  // 1. Valid Cable TV transaction (DStv Confam: ₦4,615 + ₦100 = ₦4,715)
+  // 1. Valid Cable TV transaction (DStv Confam: ₦4,615 + ₦275 = ₦4,890)
   assertNoThrow('Valid DStv Confam passes invariant check', () => {
     const kobo = runPersistedInvariant(
       {
         serviceID: 'dstv',
         amount: 4615,
-        serviceFee: 100,
-        totalPaid: 4715,
+        serviceFee: 275,
+        totalPaid: 4890,
         activeTab: 'tv',
       },
       4615
     )
-    if (kobo !== 471500) throw new Error('Kobo conversion mismatch')
+    if (kobo !== 489000) throw new Error('Kobo conversion mismatch')
   })
 
   // 2. Tampered DB: serviceFee mutated to ₦0 (attacker tried to skip service fee)
@@ -109,7 +109,7 @@ async function testInvariantLogic() {
         4615
       )
     },
-    'stored serviceFee (0) != recomputed (100)'
+    'stored serviceFee (0) != recomputed (275)'
   )
 
   // 3. Tampered DB: amount drifted from server-verified amount
@@ -138,7 +138,7 @@ async function testInvariantLogic() {
         {
           serviceID: 'dstv',
           amount: 4615,
-          serviceFee: 100,
+          serviceFee: 275,
           totalPaid: 4000, // TAMPERED
           activeTab: 'tv',
         },

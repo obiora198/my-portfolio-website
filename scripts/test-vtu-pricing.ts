@@ -1,7 +1,11 @@
-import { calculateServiceFee, CABLE_TV_SERVICES } from '../lib/vtuPricing'
+import {
+  calculateServiceFee,
+  addPaystackGatewayFee,
+  CABLE_TV_SERVICES,
+} from '../lib/vtuPricing'
 
 function runTests() {
-  console.log('--- Running VTU Pricing Tests ---')
+  console.log('--- Running VTU Pricing & Gateway Fee Tests ---')
   let passed = 0
   let failed = 0
 
@@ -15,41 +19,70 @@ function runTests() {
     }
   }
 
-  // 1. Local Airtime: always 0
-  assert('MTN Airtime ₦1,000 has 0 markup', calculateServiceFee('mtn', 1000), 0)
-  assert('Airtel Airtime ₦5,000 has 0 markup', calculateServiceFee('airtel', 5000), 0)
-  assert('Glo Airtime ₦500 has 0 markup', calculateServiceFee('glo', 500), 0)
-  assert('9mobile (etisalat) ₦2,000 has 0 markup', calculateServiceFee('etisalat', 2000), 0)
+  // 1. Local Airtime: always 0 (face value preserved 1:1, discount absorbs gateway fee)
+  assert('MTN Airtime ₦1,000 has ₦0 fee', calculateServiceFee('mtn', 1000), 0)
+  assert('Airtel Airtime ₦5,000 has ₦0 fee', calculateServiceFee('airtel', 5000), 0)
+  assert('Glo Airtime ₦500 has ₦0 fee', calculateServiceFee('glo', 500), 0)
+  assert('9mobile (etisalat) ₦2,000 has ₦0 fee', calculateServiceFee('etisalat', 2000), 0)
 
-  // 2. International Airtime: 2.5% rounded
-  assert('International ₦10,000 has 2.5% fee (₦250)', calculateServiceFee('foreign-airtime', 10000), 250)
-  assert('International ₦1,500 has 2.5% fee (₦38)', calculateServiceFee('foreign-airtime', 1500), 38)
+  // 2. International Airtime: 2.5% target margin + rounded gateway fee
+  assert('International ₦10,000 has fee ₦510 (total ₦10,510)', calculateServiceFee('foreign-airtime', 10000), 510)
+  assert('International ₦1,500 has fee ₦70 (total ₦1,570)', calculateServiceFee('foreign-airtime', 1500), 70)
 
   // 3. Showmax Carve-out: always 0 markup
-  assert('Showmax ₦2,500 has 0 fee', calculateServiceFee('showmax', 2500), 0)
-  assert('Showmax ₦8,000 has 0 fee', calculateServiceFee('showmax', 8000), 0)
-  assert('Showmax ₦50,000 has 0 fee', calculateServiceFee('showmax', 50000), 0)
+  assert('Showmax ₦2,500 has ₦0 fee', calculateServiceFee('showmax', 2500), 0)
+  assert('Showmax ₦8,000 has ₦0 fee', calculateServiceFee('showmax', 8000), 0)
+  assert('Showmax ₦50,000 has ₦0 fee', calculateServiceFee('showmax', 50000), 0)
   assert('Showmax is NOT in CABLE_TV_SERVICES set', CABLE_TV_SERVICES.has('showmax'), false)
 
   // 4. Data Bundles
-  assert('MTN Data ₦100 has 0 fee (<= 500)', calculateServiceFee('mtn-data', 100), 0)
-  assert('Airtel Data ₦500 has 0 fee (<= 500)', calculateServiceFee('airtel-data', 500), 0)
-  assert('Glo Data ₦1,000 has ₦30 fee (501 - 5000)', calculateServiceFee('glo-data', 1000), 30)
-  assert('MTN Data ₦5,000 has ₦30 fee (501 - 5000)', calculateServiceFee('mtn-data', 5000), 30)
-  assert('Smile ₦19,800 has ₦100 fee (> 5000)', calculateServiceFee('smile-direct', 19800), 100)
+  assert('MTN Data ₦100 has ₦10 fee (total ₦110, covers 1.5% fee)', calculateServiceFee('mtn-data', 100), 10)
+  assert('Airtel Data ₦500 has ₦10 fee (total ₦510, covers 1.5% fee)', calculateServiceFee('airtel-data', 500), 10)
+  assert('Glo Data ₦1,000 has ₦50 fee (total ₦1,050, covers ₦30 margin + gateway)', calculateServiceFee('glo-data', 1000), 50)
+  assert('MTN Data ₦5,000 has ₦210 fee (total ₦5,210)', calculateServiceFee('mtn-data', 5000), 210)
+  assert('Smile ₦19,800 has ₦510 fee (total ₦20,310)', calculateServiceFee('smile-direct', 19800), 510)
 
   // 5. Cable TV (DStv, GOtv, StarTimes)
-  assert('GOtv Smallie ₦800 has ₦50 fee (<= 2500)', calculateServiceFee('gotv', 800), 50)
-  assert('DStv Padi ₦2,500 has ₦50 fee (<= 2500)', calculateServiceFee('dstv', 2500), 50)
-  assert('DStv Confam ₦4,615 has ₦100 fee (2501 - 8000)', calculateServiceFee('dstv', 4615), 100)
-  assert('DStv Compact ₦7,900 has ₦100 fee (2501 - 8000)', calculateServiceFee('dstv', 7900), 100)
-  assert('DStv Premium ₦21,000 has ₦150 fee (> 8000)', calculateServiceFee('dstv', 21000), 150)
+  assert('GOtv Smallie ₦800 has ₦70 fee (total ₦870)', calculateServiceFee('gotv', 800), 70)
+  assert('DStv Padi ₦2,500 has ₦200 fee (total ₦2,700)', calculateServiceFee('dstv', 2500), 200)
+  assert('DStv Confam ₦4,615 has ₦275 fee (total ₦4,890)', calculateServiceFee('dstv', 4615), 275)
+  assert('DStv Compact ₦7,900 has ₦330 fee (total ₦8,230)', calculateServiceFee('dstv', 7900), 330)
+  assert('DStv Premium ₦21,000 has ₦580 fee (total ₦21,580)', calculateServiceFee('dstv', 21000), 580)
 
   // 6. Electricity DISCOs
-  assert('IKEDC ₦1,500 has ₦50 fee (<= 2000)', calculateServiceFee('ikeja-electric', 1500), 50)
-  assert('EKEDC ₦5,000 has ₦100 fee (2001 - 10000)', calculateServiceFee('eko-electric', 5000), 100)
-  assert('AEDC ₦25,000 has ₦150 fee (10001 - 50000)', calculateServiceFee('abuja-electric', 25000), 150)
-  assert('IBEDC ₦100,000 has ₦200 fee (> 50000 capped)', calculateServiceFee('ibadan-electric', 100000), 200)
+  assert('IKEDC ₦1,500 has ₦80 fee (total ₦1,580)', calculateServiceFee('ikeja-electric', 1500), 80)
+  assert('EKEDC ₦5,000 has ₦280 fee (total ₦5,280)', calculateServiceFee('eko-electric', 5000), 280)
+  assert('AEDC ₦25,000 has ₦640 fee (total ₦25,640)', calculateServiceFee('abuja-electric', 25000), 640)
+  assert('IBEDC ₦100,000 has ₦1,830 fee (total ₦101,830)', calculateServiceFee('ibadan-electric', 100000), 1830)
+
+  // 7. Margin Preservation & Settlement Invariant across sample transactions
+  const samples = [
+    { serviceID: 'mtn-data', amount: 600, targetMargin: 30 },
+    { serviceID: 'mtn-data', amount: 1000, targetMargin: 30 },
+    { serviceID: 'mtn-data', amount: 2000, targetMargin: 30 },
+    { serviceID: 'mtn-data', amount: 3000, targetMargin: 30 },
+    { serviceID: 'dstv', amount: 4615, targetMargin: 100 },
+    { serviceID: 'ikeja-electric', amount: 1500, targetMargin: 50 },
+    { serviceID: 'eko-electric', amount: 5000, targetMargin: 100 },
+  ]
+
+  for (const s of samples) {
+    const fee = calculateServiceFee(s.serviceID, s.amount)
+    const gross = s.amount + fee
+    // Ensure gross is clean multiple of 10
+    const isMultipleOf10 = gross % 10 === 0
+    // Paystack fee calculation
+    const paystackFee = gross < 2500 ? gross * 0.015 : Math.min(2000, gross * 0.015 + 100)
+    const settled = gross - paystackFee
+    const netTarget = s.amount + s.targetMargin
+    const preservesMargin = settled >= netTarget
+
+    assert(
+      `${s.serviceID} ₦${s.amount} gross (₦${gross}) is multiple of ₦10 and settles >= net target (settled: ₦${settled.toFixed(2)} >= ₦${netTarget})`,
+      isMultipleOf10 && preservesMargin,
+      true
+    )
+  }
 
   console.log(`\nTests Completed: ${passed} passed, ${failed} failed.`)
   if (failed > 0) {
