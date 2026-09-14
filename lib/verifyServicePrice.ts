@@ -11,6 +11,7 @@ export class PriceVerificationError extends Error {
   status: number
   constructor(message: string, status: number) {
     super(message)
+    Object.setPrototypeOf(this, PriceVerificationError.prototype)
     this.name = 'PriceVerificationError'
     this.status = status
   }
