@@ -82,16 +82,14 @@ export function RecentTransactions({
 
   const displayTransactions = transactions.slice(0, 5)
 
-  if (displayTransactions.length === 0) {
-    return null
-  }
-
   return (
     <section
       className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       {/* Background accent */}
-      <div className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.02] blur-3xl bg-gradient-to-br ${currentTheme.buttonGradient}`} />
+      <div
+        className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.02] blur-3xl bg-gradient-to-br ${currentTheme.buttonGradient}`}
+      />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Heading */}
@@ -103,12 +101,18 @@ export function RecentTransactions({
           transition={{ duration: 0.6 }}
         >
           <div>
-            <span className={`inline-block text-sm font-semibold tracking-widest uppercase mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+            <span
+              className={`inline-block text-sm font-semibold tracking-widest uppercase mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}
+            >
               Activity Log
             </span>
-            <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <h2
+              className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+            >
               Recent{' '}
-              <span className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}>
+              <span
+                className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
+              >
                 Transactions
               </span>
             </h2>
@@ -120,18 +124,36 @@ export function RecentTransactions({
           </div>
         </motion.div>
 
-        {/* Desktop Table */}
-        <motion.div
-          className={`hidden lg:block rounded-3xl border overflow-hidden backdrop-blur-sm ${
-            isDarkMode
-              ? 'bg-[#0d0d0d] border-neutral-800 shadow-2xl shadow-black/80'
-              : 'bg-white border-gray-100 shadow-xl'
-          }`}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        {displayTransactions.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`rounded-3xl border p-12 text-center backdrop-blur-sm ${
+              isDarkMode
+                ? 'bg-[#0d0d0d] border-neutral-800 text-neutral-400'
+                : 'bg-white border-gray-100 text-gray-500 shadow-sm'
+            }`}
+          >
+            <Clock className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p className="text-base font-semibold">No recent transactions yet</p>
+            <p className="text-xs mt-1 opacity-70">
+              Purchases and bill payments will appear here in real-time.
+            </p>
+          </motion.div>
+        ) : (
+          <>
+            {/* Desktop Table */}
+            <motion.div
+              className={`hidden lg:block rounded-3xl border overflow-hidden backdrop-blur-sm ${
+                isDarkMode
+                  ? 'bg-[#0d0d0d] border-neutral-800 shadow-2xl shadow-black/80'
+                  : 'bg-white border-gray-100 shadow-xl'
+              }`}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className={`border-b ${isDarkMode ? 'border-neutral-800' : 'border-gray-100'}`}>
@@ -255,7 +277,9 @@ export function RecentTransactions({
             </motion.div>
           ))}
         </div>
-      </div>
-    </section>
+      </>
+    )}
+  </div>
+</section>
   )
 }

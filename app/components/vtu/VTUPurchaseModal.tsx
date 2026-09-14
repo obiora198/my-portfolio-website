@@ -17,6 +17,7 @@ import {
   Globe,
   ArrowLeft,
   Search,
+  Loader2,
 } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -144,8 +145,62 @@ function getProviderLabel(service: Service): string {
 }
 
 // Clean plan name to prevent repeating the price already shown as primary headline
-function cleanPlanName(name: string): string {
+// and enrich combo/hybrid packages with their actual data and voice breakdown
+function cleanPlanName(
+  name: string,
+  amount?: string | number,
+  code?: string
+): string {
   if (!name) return ''
+
+  const lowerName = name.toLowerCase()
+  const lowerCode = (code || '').toLowerCase()
+  const numAmount =
+    parseFloat(String(amount || '0').replace(/[^0-9.]/g, '')) || 0
+
+  // 1. MTN XtraData & XtraTalk combo packages
+  if (lowerName.includes('xtradata') || lowerCode.includes('xtradata')) {
+    if (numAmount === 200 || lowerName.includes('200')) {
+      return '200MB + ₦200 Airtime (3 days)'
+    }
+    return 'XtraData (Data + Airtime)'
+  }
+
+  if (lowerName.includes('xtratalk') || lowerCode.includes('xtratalk')) {
+    if (numAmount === 200 || lowerName.includes('200')) return '50MB + ₦1,000 Voice (3 days)'
+    if (numAmount === 300 || lowerName.includes('300')) return '100MB + ₦1,500 Voice (7 days)'
+    if (numAmount === 500 || lowerName.includes('500')) return '250MB + ₦2,500 Voice (7 days)'
+    if (numAmount === 1000 || lowerName.includes('1000')) return '500MB + ₦5,000 Voice (30 days)'
+    if (numAmount === 2000 || lowerName.includes('2000')) return '1GB + ₦10,000 Voice (30 days)'
+    if (numAmount === 5000 || lowerName.includes('5000')) return '2.5GB + ₦25,000 Voice (30 days)'
+    if (numAmount === 10000 || lowerName.includes('10000')) return '5GB + ₦50,000 Voice (30 days)'
+    if (numAmount === 15000 || lowerName.includes('15000')) return '7.5GB + ₦75,000 Voice (30 days)'
+    if (numAmount === 20000 || lowerName.includes('20000')) return '10GB + ₦100,000 Voice (30 days)'
+    return 'XtraTalk (Voice + Data)'
+  }
+
+  // 2. Airtel Voice Bundles
+  if (lowerName.includes('voice bundle') || lowerCode.includes('airt-voice')) {
+    if (numAmount === 100 || lowerName.includes('600')) return '₦600 Talk Time (Voice Bundle)'
+    if (numAmount === 200 || lowerName.includes('1200')) return '₦1,200 Talk Time (Voice Bundle)'
+    if (numAmount === 500 || lowerName.includes('3000')) return '₦3,000 Talk Time (Voice Bundle)'
+    if (numAmount === 1000 || lowerName.includes('6000')) return '₦6,000 Talk Time (Voice Bundle)'
+  }
+
+  // 3. Spectranet Wallet Topups
+  if (lowerName.includes('spectranet') && !/\d+\s*(?:gb|mb)/i.test(lowerName)) {
+    return 'Account Refill / Top-up'
+  }
+
+  // 4. SmileVoice plans
+  if (lowerName.includes('smilevoice')) {
+    const minsMatch = lowerName.match(/(\d+)\s*(?:for|days|mins?|minutes?)/i)
+    if (minsMatch) {
+      return `${minsMatch[1]} Voice Mins (30 days)`
+    }
+  }
+
+  // Standard cleanup:
   // 1. Remove provider + price prefix, e.g. 'Glo Data N100 – ', 'N1000 1.5GB', 'MTN N200 - ', 'NGN 1,000 - '
   let cleaned = name
     .replace(
@@ -491,6 +546,9 @@ export function VTUPurchaseModal({
     return sorted.filter(
       (v: any) =>
         (v.name || '').toLowerCase().includes(q) ||
+        cleanPlanName(v.name, v.variation_amount, v.variation_code)
+          .toLowerCase()
+          .includes(q) ||
         (v.variation_amount || '').toString().includes(q)
     )
   }, [variations, planSearch])
@@ -741,8 +799,11 @@ export function VTUPurchaseModal({
           setLastTransaction((prev: any) => ({ ...prev, token: data.token }))
         }
         setModalType('success')
-        setModalMessage('Transaction successful!')
-        toast.success('Transaction successful! Your service has been activated.')
+        setModalMessage('Transaction successful! Your service has been activated.')
+        toast.success(
+          'Transaction successful! Your service has been activated.',
+          { id: `vtu-tx-${reference}` }
+        )
         setShowResultModal(true)
         resetForm()
         onSuccess()
@@ -751,11 +812,13 @@ export function VTUPurchaseModal({
 
       if (data.deliveryStatus === 'failed') {
         setModalType('error')
-        setModalMessage(
+        const failMsg =
           data.message ||
-            'Delivery could not be completed. If debited, please contact support with your reference for reversal.'
-        )
+          'Delivery could not be completed. If debited, please contact support with your reference for reversal.'
+        setModalMessage(failMsg)
+        toast.error(failMsg, { id: `vtu-tx-${reference}` })
         setShowResultModal(true)
+        onSuccess()
         return false
       }
 
@@ -765,18 +828,23 @@ export function VTUPurchaseModal({
       ) {
         setModalType('error')
         setModalMessage('Payment was cancelled or failed.')
+        toast.error('Payment was cancelled or failed.', {
+          id: `vtu-tx-${reference}`,
+        })
         setShowResultModal(true)
+        onSuccess()
         return false
       }
 
       // If still processing or pending and under 25 attempts (~60s)
       if (attempts < 25) {
         setModalType('pending')
-        setModalMessage(
+        const progressMsg =
           data.deliveryStatus === 'processing'
-            ? 'Payment confirmed! Activating service with provider...'
-            : 'Verifying payment...'
-        )
+            ? 'Payment confirmed! Disbursing service with provider...'
+            : 'Payment received! Verifying payment status...'
+        setModalMessage(progressMsg)
+        toast.loading(progressMsg, { id: `vtu-tx-${reference}` })
         setTimeout(
           () => pollPaymentVerification(reference, attempts + 1),
           2500
@@ -787,6 +855,10 @@ export function VTUPurchaseModal({
         setModalType('pending')
         setModalMessage(
           'Your transaction is currently processing with the provider. It will reflect in your Recent Transactions shortly.'
+        )
+        toast.success(
+          'Transaction is processing with the provider and will reflect shortly.',
+          { id: `vtu-tx-${reference}` }
         )
         setShowResultModal(true)
         onSuccess()
@@ -801,10 +873,12 @@ export function VTUPurchaseModal({
         )
       } else {
         setModalType('error')
-        setModalMessage(
+        const errMsg =
           'Could not verify status. Please check your Recent Transactions.'
-        )
+        setModalMessage(errMsg)
+        toast.error(errMsg, { id: `vtu-tx-${reference}` })
         setShowResultModal(true)
+        onSuccess()
       }
       return false
     }
@@ -957,8 +1031,14 @@ export function VTUPurchaseModal({
         callback: (response: any) => {
           setLoading(false)
           setModalType('pending')
-          setModalMessage('Payment received! Activating your service...')
+          setModalMessage(
+            'Payment received! Connecting to provider network to disburse service...'
+          )
           setShowResultModal(true)
+          toast.loading('Payment confirmed! Disbursing service...', {
+            id: `vtu-tx-${reference}`,
+          })
+          onSuccess()
           pollPaymentVerification(reference)
         },
       })
@@ -1342,7 +1422,11 @@ export function VTUPurchaseModal({
                                     : 'text-gray-800 font-semibold'
                                 }`}
                               >
-                                {cleanPlanName(selectedPlan.name)}
+                                {cleanPlanName(
+                                  selectedPlan.name,
+                                  selectedPlan.variation_amount,
+                                  selectedPlan.variation_code
+                                )}
                               </span>
                             </button>
 
@@ -1511,7 +1595,11 @@ export function VTUPurchaseModal({
                                             : 'text-gray-600'
                                       }`}
                                     >
-                                      {cleanPlanName(v.name)}
+                                      {cleanPlanName(
+                                        v.name,
+                                        v.variation_amount,
+                                        v.variation_code
+                                      )}
                                     </span>
                                   </button>
                                 )
@@ -1744,7 +1832,11 @@ export function VTUPurchaseModal({
                               : 'text-gray-800 font-semibold'
                           }`}
                         >
-                          {cleanPlanName(selectedPlan.name)}
+                          {cleanPlanName(
+                            selectedPlan.name,
+                            selectedPlan.variation_amount,
+                            selectedPlan.variation_code
+                          )}
                         </span>
                       </button>
 
@@ -1837,7 +1929,11 @@ export function VTUPurchaseModal({
                                     : 'text-gray-600'
                               }`}
                             >
-                              {cleanPlanName(v.name)}
+                              {cleanPlanName(
+                                v.name,
+                                v.variation_amount,
+                                v.variation_code
+                              )}
                             </span>
                           </button>
                         )
@@ -2237,11 +2333,16 @@ export function VTUPurchaseModal({
             <div className="text-center space-y-6">
               <div className="flex justify-center">
                 {modalType === 'success' ? (
-                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                    <Check className="w-8 h-8" />
+                  <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950/50 border border-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400 shadow-lg shadow-green-500/10">
+                    <Check className="w-8 h-8 stroke-[3]" />
+                  </div>
+                ) : modalType === 'pending' ? (
+                  <div className="w-16 h-16 rounded-full bg-blue-500/10 border-2 border-blue-500/30 flex items-center justify-center text-blue-500 relative shadow-lg shadow-blue-500/10">
+                    <div className="absolute inset-0 rounded-full border-2 border-t-blue-500 border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                   </div>
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                  <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-950/50 border border-red-500/20 flex items-center justify-center text-red-600 dark:text-red-400 shadow-lg shadow-red-500/10">
                     <AlertCircle className="w-8 h-8" />
                   </div>
                 )}
@@ -2252,14 +2353,23 @@ export function VTUPurchaseModal({
                   className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
                 >
                   {modalType === 'success'
-                    ? 'Success!'
+                    ? 'Payment & Delivery Successful!'
                     : modalType === 'pending'
-                      ? 'Processing'
+                      ? 'Payment Received!'
                       : 'Transaction Failed'}
                 </h3>
-                <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   {modalMessage}
                 </p>
+
+                {modalType === 'pending' && (
+                  <div className="mt-4 p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-600 dark:text-blue-400 flex items-start sm:items-center gap-2.5 text-left">
+                    <Loader2 className="w-4 h-4 animate-spin flex-shrink-0 mt-0.5 sm:mt-0" />
+                    <span>
+                      Disbursing your service with the provider. You can wait here or close this window — activation will complete automatically in the background.
+                    </span>
+                  </div>
+                )}
 
                 {lastTransaction?.token && (
                   <div
@@ -2296,9 +2406,13 @@ export function VTUPurchaseModal({
                     onClose()
                   }
                 }}
-                className={`w-full py-3 rounded-lg font-semibold transition-all bg-gradient-to-r ${currentTheme.buttonGradient} text-white`}
+                className={`w-full py-3 rounded-xl font-semibold transition-all bg-gradient-to-r ${currentTheme.buttonGradient} text-white hover:opacity-95 shadow-md`}
               >
-                {modalType === 'success' ? 'Done' : 'Close'}
+                {modalType === 'success'
+                  ? 'Done'
+                  : modalType === 'pending'
+                    ? 'Close (Will Complete in Background)'
+                    : 'Close'}
               </button>
             </div>
           </motion.div>
