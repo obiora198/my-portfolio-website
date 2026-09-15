@@ -974,9 +974,9 @@ export function VTUPurchaseModal({
           activeTab === 'international' ? 'foreign-airtime' : selectedServiceId,
         amount: Number(amount),
         phone: phone,
-        variation_code: variationCode.includes('-')
-          ? variationCode.split('-').slice(0, -1).join('-')
-          : variationCode,
+        variation_code:
+          selectedPlan?.variation_code ||
+          (variationCode ? variationCode.replace(/-\d+$/, '') : variationCode),
         billersCode:
           activeTab === 'tv' || activeTab === 'electricity'
             ? billersCode

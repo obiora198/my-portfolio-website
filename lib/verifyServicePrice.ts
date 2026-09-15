@@ -57,15 +57,34 @@ export async function verifyVariationAmount(
     )
   }
 
-  const matched = variations.find(
+  // 1. Exact match on variationCode first (preserves hyphenated names like gotv-lite-3months)
+  let matched = variations.find(
     (v: any) =>
-      v.variation_code === cleanCode ||
-      String(v.variation_code) === cleanCode ||
-      v.variation_code === variationCode
+      v.variation_code === variationCode ||
+      String(v.variation_code) === variationCode
   )
 
+  // 2. Fallback to cleanCode only if different and exact match was not found
+  if (!matched && cleanCode && cleanCode !== variationCode) {
+    matched = variations.find(
+      (v: any) =>
+        v.variation_code === cleanCode ||
+        String(v.variation_code) === cleanCode
+    )
+  }
+
+  // 3. Fallback: if variationCode ends with a numeric index (-0, -1, etc.)
+  if (!matched && /-\d+$/.test(variationCode)) {
+    const stripped = variationCode.replace(/-\d+$/, '')
+    matched = variations.find(
+      (v: any) =>
+        v.variation_code === stripped ||
+        String(v.variation_code) === stripped
+    )
+  }
+
   if (!matched) {
-    throw new PriceVerificationError(`Invalid plan selected (${cleanCode}).`, 400)
+    throw new PriceVerificationError(`Invalid plan selected (${variationCode}).`, 400)
   }
 
   return Number(matched.variation_amount)

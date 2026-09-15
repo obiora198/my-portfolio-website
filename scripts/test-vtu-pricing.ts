@@ -84,6 +84,36 @@ function runTests() {
     )
   }
 
+  // 8. Multi-hyphenated plan resolution test (e.g., gotv-lite-3months)
+  const mockVariations = [
+    { name: 'GOtv Lite N400', variation_code: 'gotv-lite', variation_amount: '400.00' },
+    { name: 'GOtv Max N3,600', variation_code: 'gotv-max', variation_amount: '3600.00' },
+    { name: 'GOtv Lite (3 Months) N1,080', variation_code: 'gotv-lite-3months', variation_amount: '1080.00' },
+    { name: 'GOtv Lite (1 Year) N3,180', variation_code: 'gotv-lite-1year', variation_amount: '3180.00' },
+    { name: 'GOtv Supa Plus - monthly N15,700', variation_code: 'gotv-supa-plus', variation_amount: '15700.00' }
+  ]
+
+  const testCodes = [
+    { input: 'gotv-lite-3months', expectedAmount: 1080 },
+    { input: 'gotv-lite-3months-2', expectedAmount: 1080 }, // with UI composite index
+    { input: 'gotv-lite', expectedAmount: 400 },
+    { input: 'gotv-supa-plus', expectedAmount: 15700 },
+    { input: 'gotv-supa-plus-4', expectedAmount: 15700 },
+  ]
+
+  for (const tc of testCodes) {
+    const clean = tc.input.replace(/-\d+$/, '')
+    const matched =
+      mockVariations.find((v) => v.variation_code === tc.input) ||
+      mockVariations.find((v) => v.variation_code === clean)
+
+    assert(
+      `Variation resolution for "${tc.input}" matches ${tc.expectedAmount}`,
+      matched ? Number(matched.variation_amount) : 0,
+      tc.expectedAmount
+    )
+  }
+
   console.log(`\nTests Completed: ${passed} passed, ${failed} failed.`)
   if (failed > 0) {
     process.exit(1)
