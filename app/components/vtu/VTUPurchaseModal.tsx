@@ -529,6 +529,20 @@ export function VTUPurchaseModal({
     staleTime: 1000 * 60 * 30,
   })
 
+  // Auto-set variationCode for electricity based on prepaid/postpaid toggle
+  useEffect(() => {
+    if (activeTab === 'electricity' && variations.length > 0) {
+      const match = variations.find(
+        (v: any) =>
+          String(v.variation_code).toLowerCase() === electricityType
+      )
+      if (match) {
+        setVariationCode(match.variation_code)
+        setAmount('')
+      }
+    }
+  }, [activeTab, electricityType, variations])
+
   const selectedProvider = useMemo(
     () => services.find((s) => s.serviceID === selectedServiceId),
     [services, selectedServiceId]
@@ -1269,8 +1283,7 @@ export function VTUPurchaseModal({
                         }
                       >
                         {(activeTab === 'data' ||
-                          activeTab === 'tv' ||
-                          activeTab === 'electricity') &&
+                          activeTab === 'tv') &&
                         selectedServiceId ? (
                           /* Plans View with Back Button */
                           <div
@@ -1325,27 +1338,6 @@ export function VTUPurchaseModal({
                         )}
                       </div>
 
-                      {/* Electricity Sub-Type Toggle */}
-                      {activeTab === 'electricity' && (
-                        <div className="flex gap-2">
-                          {(['prepaid', 'postpaid'] as const).map((type) => (
-                            <button
-                              key={type}
-                              type="button"
-                              onClick={() => setElectricityType(type)}
-                              className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-bold border-2 transition-all capitalize ${
-                                electricityType === type
-                                  ? `${themeStyles.activeBorder} ${themeStyles.activeBg} ${themeStyles.activeText}`
-                                  : isDarkMode
-                                    ? 'border-neutral-800 bg-[#0c0c0c] text-neutral-400 hover:border-neutral-700'
-                                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              }`}
-                            >
-                              {type}
-                            </button>
-                          ))}
-                        </div>
-                      )}
 
                       {/* TV Subscription Sub-Type Toggle */}
                       {activeTab === 'tv' && (
@@ -1608,6 +1600,74 @@ export function VTUPurchaseModal({
                           </div>
                         </div>
                       )}
+                    </div>
+                  ) : activeTab === 'electricity' && selectedServiceId ? (
+                    /* Electricity: Provider selected → show Back + Toggle (meter/amount fields follow below) */
+                    <div className="space-y-2.5 sm:space-y-3">
+                      {/* Top bar: Back Button & Selected Provider Badge */}
+                      <div className="flex-shrink-0 flex items-center justify-between gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedServiceId('')
+                            setVariationCode('')
+                            setAmount('')
+                            setBillersCode('')
+                            setIsVerified(false)
+                            setCustomerName('')
+                            setMeterVerifyError('')
+                          }}
+                          className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl transition-all ${
+                            isDarkMode
+                              ? 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-800 hover:border-neutral-700'
+                              : 'bg-gray-100 text-gray-700 hover:text-gray-900 border border-gray-200 hover:bg-gray-200'
+                          }`}
+                        >
+                          <ArrowLeft className="w-4 h-4" />
+                          <span>Back to Providers</span>
+                        </button>
+
+                        {selectedProvider && (
+                          <div
+                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold ${themeStyles.badge}`}
+                          >
+                            <div className="w-5 h-5 rounded-full overflow-hidden relative flex-shrink-0">
+                              <Image
+                                src={getProviderImage(
+                                  selectedProvider.serviceID,
+                                  selectedProvider.image
+                                )}
+                                alt=""
+                                width={20}
+                                height={20}
+                                className="w-full h-full object-cover"
+                                unoptimized
+                              />
+                            </div>
+                            <span>{getProviderLabel(selectedProvider)}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Electricity Sub-Type Toggle */}
+                      <div className="flex gap-2">
+                        {(['prepaid', 'postpaid'] as const).map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => setElectricityType(type)}
+                            className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-bold border-2 transition-all capitalize ${
+                              electricityType === type
+                                ? `${themeStyles.activeBorder} ${themeStyles.activeBg} ${themeStyles.activeText}`
+                                : isDarkMode
+                                  ? 'border-neutral-800 bg-[#0c0c0c] text-neutral-400 hover:border-neutral-700'
+                                  : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     /* Service / Provider Selection Grid */
