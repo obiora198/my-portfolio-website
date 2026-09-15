@@ -356,6 +356,7 @@ export function VTUPurchaseModal({
   const [phone, setPhone] = useState('')
   const [billersCode, setBillersCode] = useState('')
   const [variationCode, setVariationCode] = useState('')
+  const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null)
   const [email, setEmail] = useState('')
   const [planSearch, setPlanSearch] = useState('')
   const [isPlansExpanded, setIsPlansExpanded] = useState(false)
@@ -402,6 +403,7 @@ export function VTUPurchaseModal({
     setPhone('')
     setBillersCode('')
     setVariationCode('')
+    setSelectedPlanIndex(null)
     setFullName('')
     setEmail('')
     setCustomerName('')
@@ -569,15 +571,17 @@ export function VTUPurchaseModal({
 
   const selectedPlan = useMemo(() => {
     if (!variationCode || !variations || variations.length === 0) return null
+    if (selectedPlanIndex !== null && variations[selectedPlanIndex]) {
+      return variations[selectedPlanIndex]
+    }
     return (
       variations.find(
-        (v: any, index: number) =>
-          `${v.variation_code}-${index}` === variationCode ||
-          String(v.variation_code) === variationCode ||
-          v.variation_code === variationCode
+        (v: any) =>
+          v.variation_code === variationCode ||
+          String(v.variation_code) === variationCode
       ) || null
     )
-  }, [variationCode, variations])
+  }, [variationCode, selectedPlanIndex, variations])
 
   const isGridExpanded = Boolean(
     (activeTab === 'data' ||
@@ -929,14 +933,15 @@ export function VTUPurchaseModal({
   }
 
   // Handle Plan/Variation Change
-  const handlePlanChange = (val: string) => {
-    setVariationCode(val)
+  const handlePlanChange = (code: string, idx?: number) => {
+    setVariationCode(code)
+    setSelectedPlanIndex(idx !== undefined ? idx : null)
     setIsPlansExpanded(false)
     const selected = variations.find(
       (v: any, index: number) =>
-        `${v.variation_code}-${index}` === val ||
-        String(v.variation_code) === val ||
-        v.variation_code === val
+        (idx !== undefined ? index === idx : false) ||
+        v.variation_code === code ||
+        String(v.variation_code) === code
     )
     if (selected?.variation_amount) {
       setAmount(selected.variation_amount)
@@ -974,9 +979,7 @@ export function VTUPurchaseModal({
           activeTab === 'international' ? 'foreign-airtime' : selectedServiceId,
         amount: Number(amount),
         phone: phone,
-        variation_code:
-          selectedPlan?.variation_code ||
-          (variationCode ? variationCode.replace(/-\d+$/, '') : variationCode),
+        variation_code: variationCode,
         billersCode:
           activeTab === 'tv' || activeTab === 'electricity'
             ? billersCode
@@ -1535,16 +1538,14 @@ export function VTUPurchaseModal({
                               </div>
                             ) : (
                               filteredVariations.map((v: any, index: number) => {
-                                const compositeCode = `${v.variation_code}-${index}`
                                 const isSelected =
-                                  variationCode === compositeCode ||
-                                  (variationCode === v.variation_code &&
-                                    !variationCode.includes('-'))
+                                  variationCode === v.variation_code &&
+                                  (selectedPlanIndex === null || selectedPlanIndex === index)
                                 return (
                                   <button
-                                    key={compositeCode}
+                                    key={`${v.variation_code}-${index}`}
                                     type="button"
-                                    onClick={() => handlePlanChange(compositeCode)}
+                                    onClick={() => handlePlanChange(v.variation_code, index)}
                                     className={`p-3 rounded-2xl border-2 text-left transition-all flex flex-col justify-between gap-1.5 relative group ${
                                       isSelected
                                         ? `${themeStyles.activeBorder} ${themeStyles.activeBg} ${themeStyles.glow} shadow-md`
@@ -1935,16 +1936,14 @@ export function VTUPurchaseModal({
                     </div>
                     <div className="flex-1 min-h-[160px] max-h-[320px] sm:max-h-[360px] overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                       {variations.map((v: any, index: number) => {
-                        const compositeCode = `${v.variation_code}-${index}`
                         const isSelected =
-                          variationCode === compositeCode ||
-                          (variationCode === v.variation_code &&
-                            !variationCode.includes('-'))
+                          variationCode === v.variation_code &&
+                          (selectedPlanIndex === null || selectedPlanIndex === index)
                         return (
                           <button
-                            key={compositeCode}
+                            key={`${v.variation_code}-${index}`}
                             type="button"
-                            onClick={() => handlePlanChange(compositeCode)}
+                            onClick={() => handlePlanChange(v.variation_code, index)}
                             className={`p-3 rounded-2xl border-2 text-left transition-all flex flex-col justify-between gap-1.5 relative group ${
                               isSelected
                                 ? `${themeStyles.activeBorder} ${themeStyles.activeBg} ${themeStyles.glow} shadow-md`

@@ -3,8 +3,12 @@ import {
   addPaystackGatewayFee,
   CABLE_TV_SERVICES,
 } from '../lib/vtuPricing'
+import {
+  verifyVariationAmount,
+  PriceVerificationError,
+} from '../lib/verifyServicePrice'
 
-function runTests() {
+async function runTests() {
   console.log('--- Running VTU Pricing & Gateway Fee Tests ---')
   let passed = 0
   let failed = 0
@@ -84,35 +88,64 @@ function runTests() {
     )
   }
 
-  // 8. Multi-hyphenated plan resolution test (e.g., gotv-lite-3months)
-  const mockVariations = [
+  // 8. Exact-match Catalog Lookup Tests (Zero Heuristics)
+  const mockCatalog = [
     { name: 'GOtv Lite N400', variation_code: 'gotv-lite', variation_amount: '400.00' },
     { name: 'GOtv Max N3,600', variation_code: 'gotv-max', variation_amount: '3600.00' },
     { name: 'GOtv Lite (3 Months) N1,080', variation_code: 'gotv-lite-3months', variation_amount: '1080.00' },
     { name: 'GOtv Lite (1 Year) N3,180', variation_code: 'gotv-lite-1year', variation_amount: '3180.00' },
-    { name: 'GOtv Supa Plus - monthly N15,700', variation_code: 'gotv-supa-plus', variation_amount: '15700.00' }
+    { name: 'GOtv Supa Plus - monthly N15,700', variation_code: 'gotv-supa-plus', variation_amount: '15700.00' },
+    { name: 'Airtel 100MB - 100 Naira', variation_code: 'airt-100', variation_amount: '100.00' },
+    { name: 'Airtel 200MB - 200 Naira', variation_code: 'airt-200', variation_amount: '200.00' },
+    { name: 'Airtel Binge Data - 1,500 Naira - 6GB', variation_code: 'airt-1500-2', variation_amount: '1500.00' },
+    { name: 'MTN 10MB - 100 Naira', variation_code: 'mtn-10mb-100', variation_amount: '100.00' },
   ]
 
-  const testCodes = [
-    { input: 'gotv-lite-3months', expectedAmount: 1080 },
-    { input: 'gotv-lite-3months-2', expectedAmount: 1080 }, // with UI composite index
-    { input: 'gotv-lite', expectedAmount: 400 },
-    { input: 'gotv-supa-plus', expectedAmount: 15700 },
-    { input: 'gotv-supa-plus-4', expectedAmount: 15700 },
-  ]
+  const mockFetcher = async () => mockCatalog
 
-  for (const tc of testCodes) {
-    const clean = tc.input.replace(/-\d+$/, '')
-    const matched =
-      mockVariations.find((v) => v.variation_code === tc.input) ||
-      mockVariations.find((v) => v.variation_code === clean)
+  // A. Exact Multi-hyphenated plans (preserves -3months, -1year, -plus)
+  const gotvLite3M = await verifyVariationAmount('gotv', 'gotv-lite-3months', '', '', '', mockFetcher)
+  assert('Exact match for "gotv-lite-3months" returns ₦1,080', gotvLite3M, 1080)
 
-    assert(
-      `Variation resolution for "${tc.input}" matches ${tc.expectedAmount}`,
-      matched ? Number(matched.variation_amount) : 0,
-      tc.expectedAmount
-    )
+  const gotvLite1Y = await verifyVariationAmount('gotv', 'gotv-lite-1year', '', '', '', mockFetcher)
+  assert('Exact match for "gotv-lite-1year" returns ₦3,180', gotvLite1Y, 3180)
+
+  const gotvSupaPlus = await verifyVariationAmount('gotv', 'gotv-supa-plus', '', '', '', mockFetcher)
+  assert('Exact match for "gotv-supa-plus" returns ₦15,700', gotvSupaPlus, 15700)
+
+  const gotvLite = await verifyVariationAmount('gotv', 'gotv-lite', '', '', '', mockFetcher)
+  assert('Exact match for "gotv-lite" returns ₦400', gotvLite, 400)
+
+  // B. Legitimate Numeric Suffix Plans (must NOT be stripped by regex)
+  const airt100 = await verifyVariationAmount('airtel-data', 'airt-100', '', '', '', mockFetcher)
+  assert('Exact match for legitimate numeric suffix "airt-100" returns ₦100', airt100, 100)
+
+  const airt15002 = await verifyVariationAmount('airtel-data', 'airt-1500-2', '', '', '', mockFetcher)
+  assert('Exact match for "airt-1500-2" returns ₦1,500', airt15002, 1500)
+
+  const mtn10mb100 = await verifyVariationAmount('mtn-data', 'mtn-10mb-100', '', '', '', mockFetcher)
+  assert('Exact match for "mtn-10mb-100" returns ₦100', mtn10mb100, 100)
+
+  // C. Hard Rejection on invalid / tampered / legacy composite codes (Zero heuristic guessing)
+  let rejectedLegacyComposite = false
+  try {
+    await verifyVariationAmount('gotv', 'gotv-lite-3months-2', '', '', '', mockFetcher)
+  } catch (err) {
+    if (err instanceof PriceVerificationError && err.status === 400) {
+      rejectedLegacyComposite = true
+    }
   }
+  assert('Invalid composite code "gotv-lite-3months-2" is strictly rejected (status 400)', rejectedLegacyComposite, true)
+
+  let rejectedNonExistent = false
+  try {
+    await verifyVariationAmount('gotv', 'gotv-nonexistent-plan', '', '', '', mockFetcher)
+  } catch (err) {
+    if (err instanceof PriceVerificationError && err.status === 400) {
+      rejectedNonExistent = true
+    }
+  }
+  assert('Non-existent plan code "gotv-nonexistent-plan" is strictly rejected (status 400)', rejectedNonExistent, true)
 
   console.log(`\nTests Completed: ${passed} passed, ${failed} failed.`)
   if (failed > 0) {

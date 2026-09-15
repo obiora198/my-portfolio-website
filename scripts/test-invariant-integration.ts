@@ -156,7 +156,6 @@ async function testInvariantLogic() {
   try {
     await verifyVariationAmount(
       'dstv',
-      'dstv-confam-2',
       'dstv-confam',
       'https://sandbox.vtpass.com/api',
       'test-key',
@@ -188,7 +187,6 @@ async function testInvariantLogic() {
     await verifyVariationAmount(
       'dstv',
       'dstv-nonexistent',
-      'dstv-nonexistent',
       'https://sandbox.vtpass.com/api',
       'test-key',
       'test-secret',
@@ -218,7 +216,6 @@ async function testInvariantLogic() {
   try {
     const verified = await verifyVariationAmount(
       'dstv',
-      'dstv-confam-1',
       'dstv-confam',
       'https://sandbox.vtpass.com/api',
       'test-key',

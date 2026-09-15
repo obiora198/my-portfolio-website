@@ -104,16 +104,11 @@ export async function POST(request: Request) {
     // 2. Server-side Price Verification
     let verifiedAmount: number = 0
 
-    const cleanVariationCode = variation_code
-      ? String(variation_code).replace(/-\d+$/, '')
-      : variation_code
-
-    if (cleanVariationCode) {
+    if (variation_code) {
       try {
         verifiedAmount = await verifyVariationAmount(
           serviceID,
-          cleanVariationCode,
-          cleanVariationCode,
+          String(variation_code),
           baseURL || 'https://sandbox.vtpass.com/api',
           apiKey || '',
           secretKey || '',
@@ -186,7 +181,7 @@ export async function POST(request: Request) {
       totalPaid: platformTotal,
       phone,
       billersCode: billersCode || phone,
-      variationCode: cleanVariationCode,
+      variationCode: variation_code,
       status: 'initiated',
       description: `Payment pending for ${serviceID}`,
       email: customerEmail,
@@ -232,7 +227,7 @@ export async function POST(request: Request) {
         custom_fields: [
           { display_name: 'Customer Name', variable_name: 'customer_name', value: name || 'Guest' },
           { display_name: 'Service', variable_name: 'service_id', value: serviceID },
-          { display_name: 'Plan', variable_name: 'plan', value: cleanVariationCode || 'Custom Topup' },
+          { display_name: 'Plan', variable_name: 'plan', value: variation_code || 'Custom Topup' },
           { display_name: 'Service Amount (₦)', variable_name: 'service_amount', value: String(verifiedAmount) },
           { display_name: 'Service Fee (₦)', variable_name: 'service_fee', value: String(serviceFee) },
           { display_name: 'Total (₦)', variable_name: 'total_amount', value: String(savedTx.totalPaid) },
@@ -241,7 +236,7 @@ export async function POST(request: Request) {
         ],
         customerName: name,
         serviceID,
-        variationCode: cleanVariationCode,
+        variationCode: variation_code,
         phone,
         billersCode: billersCode || phone,
         requestId,
