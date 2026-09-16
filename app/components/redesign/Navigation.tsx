@@ -58,7 +58,7 @@ export function Navigation() {
         className={`fixed top-0 left-0 right-0 transition-all duration-300 ${
           isScrolled
             ? isDarkMode
-              ? 'bg-gray-900/95 backdrop-blur-lg shadow-lg'
+              ? 'bg-black/90 backdrop-blur-xl border-b border-neutral-800/80 shadow-2xl shadow-black/50'
               : 'bg-white/95 backdrop-blur-lg shadow-lg'
             : 'bg-transparent'
         }`}
@@ -101,7 +101,7 @@ export function Navigation() {
                 onClick={toggleTheme}
                 className={`p-2 rounded-lg transition-colors duration-200 ${
                   isDarkMode
-                    ? 'bg-gray-800 text-yellow-400 hover:bg-gray-700'
+                    ? 'bg-[#121212] text-yellow-400 hover:bg-[#1c1c1c] border border-neutral-800'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
                 initial={{ opacity: 0, y: -20 }}
@@ -124,7 +124,7 @@ export function Navigation() {
                 onClick={toggleTheme}
                 className={`p-2 rounded-lg transition-colors duration-200 ${
                   isDarkMode
-                    ? 'bg-gray-800 text-yellow-400 hover:bg-gray-700'
+                    ? 'bg-[#121212] text-yellow-400 hover:bg-[#1c1c1c] border border-neutral-800'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -139,7 +139,7 @@ export function Navigation() {
                 onClick={() => setIsOpen(!isOpen)}
                 className={`p-2 rounded-lg transition-colors duration-200 ${
                   isDarkMode
-                    ? 'bg-gray-800 text-white hover:bg-gray-700'
+                    ? 'bg-[#121212] text-white hover:bg-[#1c1c1c] border border-neutral-800'
                     : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                 }`}
               >
@@ -171,7 +171,7 @@ export function Navigation() {
             {/* Menu Drawer - Slides from right */}
             <motion.div
               className={`fixed top-0 right-0 bottom-0 w-80 lg:hidden overflow-y-auto ${
-                isDarkMode ? 'bg-gray-900' : 'bg-white'
+                isDarkMode ? 'bg-[#0a0a0a] border-l border-neutral-800' : 'bg-white'
               } shadow-2xl`}
               style={{ zIndex: 9999 }}
               initial={{ x: 320 }}
@@ -181,13 +181,13 @@ export function Navigation() {
             >
               {/* Close Button */}
               <div
-                className={`flex justify-end p-6 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
+                className={`flex justify-end p-6 border-b ${isDarkMode ? 'border-neutral-800' : 'border-gray-200'}`}
               >
                 <button
                   onClick={() => setIsOpen(false)}
                   className={`p-2 rounded-lg transition-colors duration-200 ${
                     isDarkMode
-                      ? 'hover:bg-gray-800 text-gray-300'
+                      ? 'hover:bg-[#181818] text-neutral-300'
                       : 'hover:bg-gray-100 text-gray-700'
                   }`}
                   aria-label="Close menu"
@@ -205,7 +205,7 @@ export function Navigation() {
                     onClick={handleLinkClick}
                     className={`block px-4 py-4 rounded-lg text-base font-medium transition-all duration-200 ${
                       isDarkMode
-                        ? 'text-gray-300 hover:bg-gray-800 hover:text-white active:scale-95'
+                        ? 'text-neutral-300 hover:bg-[#141414] hover:text-white active:scale-95'
                         : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 active:scale-95'
                     }`}
                   >

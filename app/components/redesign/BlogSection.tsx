@@ -25,25 +25,45 @@ function BlogCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <div
       className={`rounded-2xl overflow-hidden border ${
-        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        isDarkMode ? 'bg-[#121212] border-neutral-800' : 'bg-white border-gray-200'
       }`}
     >
-      <div className="aspect-video relative overflow-hidden bg-gray-700">
-        <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+      <div className={`aspect-video relative overflow-hidden ${isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-200'}`}>
+        <div className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
+          isDarkMode
+            ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
+            : 'bg-gradient-to-r from-transparent via-gray-300 to-transparent'
+        }`} />
       </div>
       <div className="p-6 space-y-4">
-        <div className="h-4 bg-gray-700 rounded w-1/3 relative overflow-hidden">
-          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+        <div className={`h-4 ${isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-200'} rounded w-1/3 relative overflow-hidden`}>
+          <div className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
+            isDarkMode
+              ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
+              : 'bg-gradient-to-r from-transparent via-gray-300 to-transparent'
+          }`} />
         </div>
-        <div className="h-6 bg-gray-700 rounded w-3/4 relative overflow-hidden">
-          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+        <div className={`h-6 ${isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-200'} rounded w-3/4 relative overflow-hidden`}>
+          <div className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
+            isDarkMode
+              ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
+              : 'bg-gradient-to-r from-transparent via-gray-300 to-transparent'
+          }`} />
         </div>
         <div className="space-y-2">
-          <div className="h-4 bg-gray-700 rounded w-full relative overflow-hidden">
-            <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+          <div className={`h-4 ${isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-200'} rounded w-full relative overflow-hidden`}>
+            <div className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
+              isDarkMode
+                ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
+                : 'bg-gradient-to-r from-transparent via-gray-300 to-transparent'
+            }`} />
           </div>
-          <div className="h-4 bg-gray-700 rounded w-5/6 relative overflow-hidden">
-            <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+          <div className={`h-4 ${isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-200'} rounded w-5/6 relative overflow-hidden`}>
+            <div className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
+              isDarkMode
+                ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
+                : 'bg-gradient-to-r from-transparent via-gray-300 to-transparent'
+            }`} />
           </div>
         </div>
       </div>
@@ -66,7 +86,7 @@ export function BlogSection() {
   return (
     <section
       id="blog"
-      className={`py-20 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+      className={`py-20 ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
@@ -83,7 +103,7 @@ export function BlogSection() {
             Latest Blog Posts
           </h2>
           <p
-            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
             Thoughts, tutorials, and insights on web development
           </p>
@@ -101,7 +121,7 @@ export function BlogSection() {
                 key={post._id}
                 className={`group rounded-2xl overflow-hidden transition-all duration-300 ${
                   isDarkMode
-                    ? 'bg-gray-800 hover:bg-gray-750 border border-gray-700'
+                    ? 'bg-[#121212] hover:bg-[#161616] border border-neutral-800/80 shadow-black/50'
                     : 'bg-white hover:shadow-xl border border-gray-100'
                 }`}
                 initial={{ opacity: 0, y: 20 }}
@@ -122,7 +142,7 @@ export function BlogSection() {
                     />
                   )}
                   <div
-                    className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${currentTheme.badgeBg} text-${currentTheme.badgeText} border border-${currentTheme.badgeBorder}`}
+                    className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} border ${currentTheme.badgeBorder}`}
                   >
                     {post.tags?.[0] || 'Article'}
                   </div>
@@ -132,7 +152,7 @@ export function BlogSection() {
                 <div className="p-6 space-y-4">
                   {/* Meta */}
                   <div
-                    className={`flex items-center gap-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                    className={`flex items-center gap-4 text-sm ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
                   >
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
@@ -157,7 +177,7 @@ export function BlogSection() {
 
                   {/* Excerpt */}
                   <p
-                    className={`text-sm leading-relaxed line-clamp-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                    className={`text-sm leading-relaxed line-clamp-3 ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
                   >
                     {post.excerpt}
                   </p>
@@ -175,7 +195,7 @@ export function BlogSection() {
             ))
           ) : (
             <div className="col-span-full text-center py-10">
-              <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+              <p className={isDarkMode ? 'text-neutral-400' : 'text-gray-600'}>
                 No blog posts found.
               </p>
             </div>

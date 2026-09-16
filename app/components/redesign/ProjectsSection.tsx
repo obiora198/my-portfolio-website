@@ -14,20 +14,20 @@ function ProjectCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <div
       className={`rounded-2xl overflow-hidden border ${
-        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        isDarkMode ? 'bg-[#121212] border-neutral-800' : 'bg-white border-gray-200'
       }`}
     >
       {/* Image skeleton with shimmer */}
       <div className="relative w-full h-48 overflow-hidden">
         <div
           className={`w-full h-full ${
-            isDarkMode ? 'bg-gray-700' : 'bg-gray-300'
+            isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-300'
           }`}
         >
           <div
             className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
               isDarkMode
-                ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent'
+                ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
                 : 'bg-gradient-to-r from-transparent via-gray-200 to-transparent'
             }`}
           />
@@ -39,13 +39,13 @@ function ProjectCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
         {/* Title skeleton */}
         <div
           className={`h-6 rounded ${
-            isDarkMode ? 'bg-gray-700' : 'bg-gray-300'
+            isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-300'
           } w-3/4 relative overflow-hidden`}
         >
           <div
             className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
               isDarkMode
-                ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent'
+                ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
                 : 'bg-gradient-to-r from-transparent via-gray-200 to-transparent'
             }`}
           />
@@ -55,26 +55,26 @@ function ProjectCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
         <div className="space-y-2">
           <div
             className={`h-4 rounded ${
-              isDarkMode ? 'bg-gray-700' : 'bg-gray-300'
+              isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-300'
             } w-full relative overflow-hidden`}
           >
             <div
               className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
                 isDarkMode
-                  ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent'
+                  ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
                   : 'bg-gradient-to-r from-transparent via-gray-200 to-transparent'
               }`}
             />
           </div>
           <div
             className={`h-4 rounded ${
-              isDarkMode ? 'bg-gray-700' : 'bg-gray-300'
+              isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-300'
             } w-5/6 relative overflow-hidden`}
           >
             <div
               className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
                 isDarkMode
-                  ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent'
+                  ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
                   : 'bg-gradient-to-r from-transparent via-gray-200 to-transparent'
               }`}
             />
@@ -84,13 +84,13 @@ function ProjectCardSkeleton({ isDarkMode }: { isDarkMode: boolean }) {
         {/* Tech stack skeleton */}
         <div
           className={`h-4 rounded ${
-            isDarkMode ? 'bg-gray-700' : 'bg-gray-300'
+            isDarkMode ? 'bg-[#1c1c1c]' : 'bg-gray-300'
           } w-2/3 relative overflow-hidden`}
         >
           <div
             className={`absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] ${
               isDarkMode
-                ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent'
+                ? 'bg-gradient-to-r from-transparent via-neutral-700 to-transparent'
                 : 'bg-gradient-to-r from-transparent via-gray-200 to-transparent'
             }`}
           />
@@ -142,7 +142,7 @@ export function ProjectsSection() {
     <section
       id="projects"
       ref={sectionRef}
-      className={`py-20 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+      className={`py-20 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
@@ -159,7 +159,7 @@ export function ProjectsSection() {
             Featured Projects
           </h1>
           <p
-            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
             Explore some of my recent work and side projects
           </p>
@@ -233,7 +233,7 @@ export function ProjectsSection() {
                   onClick={handleGoBackUp}
                   className={`inline-flex items-center gap-2 px-8 py-4 border-2 rounded-xl font-medium transition-all duration-200 ${
                     isDarkMode
-                      ? 'bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+                      ? 'bg-[#121212] border-neutral-800 text-white hover:bg-[#1a1a1a] hover:border-neutral-700'
                       : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                   }`}
                   whileHover={{ scale: 1.05 }}

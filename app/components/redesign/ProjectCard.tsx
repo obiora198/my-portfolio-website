@@ -33,7 +33,7 @@ export function ProjectCard({
   return (
     <motion.div
       className={`group relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border ${
-        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+        isDarkMode ? 'bg-[#121212] border-neutral-800/80 hover:border-neutral-700 shadow-black/50' : 'bg-white border-gray-100'
       }`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -70,7 +70,7 @@ export function ProjectCard({
         {/* Tech Stack Badge */}
         <div className="inline-block">
           <span
-            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${currentTheme.badgeBg} text-${currentTheme.badgeText} border border-${currentTheme.badgeBorder}`}
+            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} border ${currentTheme.badgeBorder}`}
           >
             {techStack}
           </span>
@@ -78,7 +78,7 @@ export function ProjectCard({
 
         {/* Description */}
         <p
-          className={`text-sm leading-relaxed line-clamp-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+          className={`text-sm leading-relaxed line-clamp-3 ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
         >
           {description}
         </p>
@@ -90,7 +90,7 @@ export function ProjectCard({
               href={blogUrl}
               className={`flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-4 py-2.5 border-2 rounded-xl font-medium text-sm transition-all duration-200 shadow-md hover:shadow-lg ${
                 isDarkMode
-                  ? `${borderClass} ${currentTheme.primary} hover:bg-gray-700`
+                  ? `${borderClass} ${currentTheme.primary} hover:bg-[#181818]`
                   : `${borderClass} ${currentTheme.primary} hover:bg-gray-50`
               }`}
             >
@@ -113,7 +113,7 @@ export function ProjectCard({
               rel="noopener noreferrer"
               className={`flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-4 py-2.5 border-2 rounded-xl font-medium text-sm transition-all duration-200 ${
                 isDarkMode
-                  ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600'
+                  ? 'bg-[#181818] border-neutral-700 text-white hover:bg-[#222222]'
                   : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >

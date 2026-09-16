@@ -78,6 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <ThemeScript />
         <link rel="canonical" href="https://emmanuel-obiora.vercel.app/" />
         {/* Preconnect to external domains for better performance */}
         <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
@@ -116,8 +117,10 @@ export default function RootLayout({
           })}
         </Script>
       </head>
-      <body className={`${poppins.className}`}>
-        <ThemeScript />
+      <body
+        className={`${poppins.className} bg-white dark:bg-[#000000] text-gray-900 dark:text-white antialiased`}
+        suppressHydrationWarning
+      >
         <ServiceWorkerCleaner />
         <QueryProvider>
           <ThemeProvider>

@@ -38,7 +38,7 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#0f1120]' : 'bg-white'}`}
+      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Heading */}
@@ -105,7 +105,7 @@ export function HowItWorks() {
                     </motion.div>
                     {/* Step number badge */}
                     <div
-                      className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${isDarkMode ? 'bg-[#0f1120] text-white border-2 border-white/20' : 'bg-white text-gray-900 border-2 border-gray-200 shadow-sm'}`}
+                      className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${isDarkMode ? 'bg-[#000000] text-white border-2 border-white/20' : 'bg-white text-gray-900 border-2 border-gray-200 shadow-sm'}`}
                     >
                       {step.number}
                     </div>

@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Check, ExternalLink, Clock } from 'lucide-react'
+import { Copy, Check, Clock } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
 import toast from 'react-hot-toast'
+import { getProviderImage, formatServiceName } from '@/app/utils/vtuProviders'
 
 interface Transaction {
   requestId: string
@@ -80,16 +82,14 @@ export function RecentTransactions({
 
   const displayTransactions = transactions.slice(0, 5)
 
-  if (displayTransactions.length === 0) {
-    return null
-  }
-
   return (
     <section
-      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#1C1E2E]' : 'bg-white'}`}
+      className={`py-24 px-6 sm:px-8 lg:px-12 transition-colors duration-300 relative overflow-hidden ${isDarkMode ? 'bg-[#000000]' : 'bg-white'}`}
     >
       {/* Background accent */}
-      <div className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.02] blur-3xl bg-gradient-to-br ${currentTheme.buttonGradient}`} />
+      <div
+        className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.02] blur-3xl bg-gradient-to-br ${currentTheme.buttonGradient}`}
+      />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Heading */}
@@ -101,12 +101,18 @@ export function RecentTransactions({
           transition={{ duration: 0.6 }}
         >
           <div>
-            <span className={`inline-block text-sm font-semibold tracking-widest uppercase mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+            <span
+              className={`inline-block text-sm font-semibold tracking-widest uppercase mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}
+            >
               Activity Log
             </span>
-            <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <h2
+              className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+            >
               Recent{' '}
-              <span className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}>
+              <span
+                className={`bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
+              >
                 Transactions
               </span>
             </h2>
@@ -118,21 +124,39 @@ export function RecentTransactions({
           </div>
         </motion.div>
 
-        {/* Desktop Table */}
-        <motion.div
-          className={`hidden lg:block rounded-3xl border overflow-hidden backdrop-blur-sm ${
-            isDarkMode
-              ? 'bg-white/[0.02] border-white/[0.06] shadow-2xl'
-              : 'bg-white border-gray-100 shadow-xl'
-          }`}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        {displayTransactions.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`rounded-3xl border p-12 text-center backdrop-blur-sm ${
+              isDarkMode
+                ? 'bg-[#0d0d0d] border-neutral-800 text-neutral-400'
+                : 'bg-white border-gray-100 text-gray-500 shadow-sm'
+            }`}
+          >
+            <Clock className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p className="text-base font-semibold">No recent transactions yet</p>
+            <p className="text-xs mt-1 opacity-70">
+              Purchases and bill payments will appear here in real-time.
+            </p>
+          </motion.div>
+        ) : (
+          <>
+            {/* Desktop Table */}
+            <motion.div
+              className={`hidden lg:block rounded-3xl border overflow-hidden backdrop-blur-sm ${
+                isDarkMode
+                  ? 'bg-[#0d0d0d] border-neutral-800 shadow-2xl shadow-black/80'
+                  : 'bg-white border-gray-100 shadow-xl'
+              }`}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className={`border-b ${isDarkMode ? 'border-white/[0.06]' : 'border-gray-100'}`}>
+              <tr className={`border-b ${isDarkMode ? 'border-neutral-800' : 'border-gray-100'}`}>
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50">Transaction ID</th>
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50">Service</th>
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50">Amount</th>
@@ -140,11 +164,11 @@ export function RecentTransactions({
                 <th className="px-8 py-6 text-xs font-bold uppercase tracking-wider opacity-50 text-right">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.03]">
+            <tbody className={`divide-y ${isDarkMode ? 'divide-neutral-800/60' : 'divide-gray-100'}`}>
               {displayTransactions.map((transaction, index) => (
                 <motion.tr
                   key={transaction.requestId}
-                  className={`group transition-colors ${isDarkMode ? 'hover:bg-white/[0.02]' : 'hover:bg-gray-50'}`}
+                  className={`group transition-colors ${isDarkMode ? 'hover:bg-[#141414]' : 'hover:bg-gray-50'}`}
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -171,11 +195,17 @@ export function RecentTransactions({
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
-                        <ExternalLink className={`w-4 h-4 bg-gradient-to-br ${currentTheme.gradientText} bg-clip-text text-transparent`} />
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-black/5 dark:border-white/10 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 shadow-sm">
+                        <Image
+                          src={getProviderImage(transaction.serviceID)}
+                          alt={transaction.serviceID}
+                          fill
+                          sizes="32px"
+                          className="object-cover"
+                        />
                       </div>
-                      <span className="font-bold text-sm capitalize">{transaction.serviceID.replace('-', ' ')}</span>
+                      <span className="font-bold text-sm">{formatServiceName(transaction.serviceID)}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5 font-black text-lg">{formatAmount(transaction.amount)}</td>
@@ -208,11 +238,17 @@ export function RecentTransactions({
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${currentTheme.buttonGradient} opacity-20`}>
-                    <ExternalLink className="w-5 h-5 text-indigo-500" />
+                  <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-black/5 dark:border-white/10 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 shadow-sm">
+                    <Image
+                      src={getProviderImage(transaction.serviceID)}
+                      alt={transaction.serviceID}
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                    />
                   </div>
                   <div>
-                    <p className="font-black text-base capitalize leading-tight">{transaction.serviceID.replace('-', ' ')}</p>
+                    <p className="font-black text-base leading-tight">{formatServiceName(transaction.serviceID)}</p>
                     <p className="text-[10px] opacity-50 font-bold uppercase tracking-widest mt-1">{formatDate(transaction.timestamp)}</p>
                   </div>
                 </div>
@@ -241,7 +277,9 @@ export function RecentTransactions({
             </motion.div>
           ))}
         </div>
-      </div>
-    </section>
+      </>
+    )}
+  </div>
+</section>
   )
 }

@@ -109,40 +109,40 @@ export const darkThemes: Record<string, ThemeColors> = {
     primary: 'dark:text-orange-400',
     secondary: 'dark:text-rose-400',
     accent: 'dark:text-pink-400',
-    badgeBg: 'dark:from-slate-800 dark:to-slate-900',
-    badgeBorder: 'dark:border-slate-700',
+    badgeBg: 'dark:from-black dark:to-neutral-900',
+    badgeBorder: 'dark:border-neutral-800',
     badgeText: 'dark:text-orange-400',
-    accentLight: 'dark:bg-slate-800/50',
+    accentLight: 'dark:bg-neutral-900/60',
   },
   sky: {
     ...themes.sky,
     primary: 'dark:text-sky-400',
     secondary: 'dark:text-blue-400',
     accent: 'dark:text-cyan-400',
-    badgeBg: 'dark:from-slate-800 dark:to-slate-900',
-    badgeBorder: 'dark:border-slate-700',
+    badgeBg: 'dark:from-black dark:to-neutral-900',
+    badgeBorder: 'dark:border-neutral-800',
     badgeText: 'dark:text-sky-400',
-    accentLight: 'dark:bg-slate-800/50',
+    accentLight: 'dark:bg-neutral-900/60',
   },
   emerald: {
     ...themes.emerald,
     primary: 'dark:text-emerald-400',
     secondary: 'dark:text-teal-400',
     accent: 'dark:text-green-400',
-    badgeBg: 'dark:from-slate-800 dark:to-slate-900',
-    badgeBorder: 'dark:border-slate-700',
+    badgeBg: 'dark:from-black dark:to-neutral-900',
+    badgeBorder: 'dark:border-neutral-800',
     badgeText: 'dark:text-emerald-400',
-    accentLight: 'dark:bg-slate-800/50',
+    accentLight: 'dark:bg-neutral-900/60',
   },
   minimal: {
     ...themes.minimal,
     primary: 'dark:text-gray-300',
     secondary: 'dark:text-slate-300',
     accent: 'dark:text-zinc-300',
-    badgeBg: 'dark:from-slate-800 dark:to-slate-900',
-    badgeBorder: 'dark:border-slate-700',
+    badgeBg: 'dark:from-black dark:to-neutral-900',
+    badgeBorder: 'dark:border-neutral-800',
     badgeText: 'dark:text-gray-300',
-    accentLight: 'dark:bg-slate-800/50',
+    accentLight: 'dark:bg-neutral-900/60',
   },
 }
 
@@ -157,72 +157,125 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Use a different name for the mode state setter to avoid conflict with palette function 'setTheme'
-  const [themeMode, setThemeMode] = useState<ThemeMode>('light')
-  const [themeName, setThemeName] = useState<string>('sunset')
+  // Helper to read cookies
+  const getCookieValue = (name: string): string | null => {
+    if (typeof document === 'undefined') return null
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+    return match ? decodeURIComponent(match[2]) : null
+  }
+
+  // Initialize state synchronously from DOM/localStorage/cookie if on client
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = (localStorage.getItem('theme') || getCookieValue('theme')) as ThemeMode
+      if (saved === 'light' || saved === 'dark') return saved
+      if (document.documentElement.classList.contains('dark')) return 'dark'
+      if (document.documentElement.classList.contains('light')) return 'light'
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
+    }
+    return 'dark'
+  })
+
+  const [themeName, setThemeName] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const dataPalette = document.documentElement.getAttribute('data-palette')
+      if (dataPalette && themes[dataPalette]) return dataPalette
+      const saved = localStorage.getItem('palette') || getCookieValue('palette')
+      if (saved && themes[saved]) return saved
+    }
+    return 'sunset'
+  })
+
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    try {
+      const dataPalette = document.documentElement.getAttribute('data-palette')
+      const savedPalette = localStorage.getItem('palette') || getCookieValue('palette')
+      const effectivePalette = (dataPalette && themes[dataPalette])
+        ? dataPalette
+        : (savedPalette && themes[savedPalette])
+          ? savedPalette
+          : null
+
+      if (effectivePalette) {
+        setThemeName(effectivePalette)
+      }
+
+      const savedTheme = (localStorage.getItem('theme') || getCookieValue('theme')) as ThemeMode
+      const hasDarkClass = document.documentElement.classList.contains('dark')
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const effectiveTheme = (savedTheme === 'light' || savedTheme === 'dark')
+        ? savedTheme
+        : hasDarkClass
+          ? 'dark'
+          : systemPrefersDark
+            ? 'dark'
+            : 'light'
+
+      setThemeMode(effectiveTheme)
+    } catch (e) {}
     setMounted(true)
-    const savedTheme = localStorage.getItem('theme') as ThemeMode
-    const savedPalette = localStorage.getItem('palette')
-    const systemPrefersDark = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    ).matches
-
-    if (savedTheme) {
-      setThemeMode(savedTheme)
-    } else if (systemPrefersDark) {
-      setThemeMode('dark')
-    }
-
-    if (savedPalette && themes[savedPalette]) {
-      setThemeName(savedPalette)
-    }
   }, [])
 
   useEffect(() => {
     if (!mounted) return
-    const root = document.documentElement
-    root.classList.remove('light', 'dark')
-    root.classList.add(themeMode)
-    root.setAttribute('data-palette', themeName)
-    localStorage.setItem('theme', themeMode)
-    localStorage.setItem('palette', themeName)
+    try {
+      const root = document.documentElement
+      root.classList.remove('light', 'dark')
+      root.classList.add(themeMode)
+      root.setAttribute('data-palette', themeName)
+      localStorage.setItem('theme', themeMode)
+      localStorage.setItem('palette', themeName)
+      document.cookie = `theme=${themeMode}; path=/; max-age=31536000; SameSite=Lax`
+      document.cookie = `palette=${themeName}; path=/; max-age=31536000; SameSite=Lax`
 
-    // Update favicon with current theme colors
-    const currentColors =
-      themeMode === 'light' ? themes[themeName] : darkThemes[themeName]
-    const faviconHref = generateFavicon(
-      currentColors.primary,
-      currentColors.secondary,
-      currentColors.accent
-    )
-    updateFavicon(faviconHref)
+      // Update favicon with current theme colors
+      const currentColors =
+        themeMode === 'light' ? themes[themeName] : darkThemes[themeName]
+      const faviconHref = generateFavicon(
+        currentColors.primary,
+        currentColors.secondary,
+        currentColors.accent
+      )
+      updateFavicon(faviconHref)
+    } catch (e) {}
   }, [themeMode, themeName, mounted])
 
   const toggleTheme = useCallback(() => {
-    setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'))
+    setThemeMode((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light'
+      try {
+        localStorage.setItem('theme', next)
+        document.cookie = `theme=${next}; path=/; max-age=31536000; SameSite=Lax`
+        const root = document.documentElement
+        root.classList.remove('light', 'dark')
+        root.classList.add(next)
+      } catch (e) {}
+      return next
+    })
   }, [])
 
   // This is the function to set the palette/color theme
   const setTheme = useCallback((name: string) => {
     if (themes[name]) {
       setThemeName(name)
+      try {
+        localStorage.setItem('palette', name)
+        document.cookie = `palette=${name}; path=/; max-age=31536000; SameSite=Lax`
+        document.documentElement.setAttribute('data-palette', name)
+      } catch (e) {}
     }
   }, [])
 
   const value = useMemo(() => ({
     theme: themeMode,
     themeName,
-    currentTheme: mounted
-      ? themeMode === 'light'
-        ? themes[themeName]
-        : darkThemes[themeName]
-      : themes.sunset, // Default fallback for hydration
+    currentTheme:
+      themeMode === 'light' ? themes[themeName] : darkThemes[themeName],
     setTheme,
     toggleTheme,
-  }), [themeMode, themeName, mounted, setTheme, toggleTheme])
+  }), [themeMode, themeName, setTheme, toggleTheme])
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
@@ -232,9 +285,9 @@ export function useTheme() {
   if (context === undefined) {
     // Fallback for SSR
     return {
-      theme: 'light' as ThemeMode,
+      theme: 'dark' as ThemeMode,
       themeName: 'sunset',
-      currentTheme: themes.sunset,
+      currentTheme: darkThemes.sunset,
       setTheme: () => {},
       toggleTheme: () => {},
     }
