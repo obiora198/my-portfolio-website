@@ -55,11 +55,11 @@ export async function verifyVariationAmount(
     )
   }
 
-  // Exact catalog match only - never perform heuristic string surgery on opaque provider codes
+  // Exact catalog match only - normalized for whitespace safety
+  const normalizedTarget = (variationCode || '').trim()
   const matched = variations.find(
     (v: any) =>
-      v.variation_code === variationCode ||
-      String(v.variation_code) === variationCode
+      String(v.variation_code || '').trim() === normalizedTarget
   )
 
   if (!matched) {
