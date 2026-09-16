@@ -70,15 +70,27 @@ export function VTUHero({ onGetStarted }: VTUHeroProps) {
             className="space-y-8"
           >
             <div className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-sm ${isDarkMode ? `bg-[#121212] ${currentTheme.badgeText} border-neutral-800` : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} ${currentTheme.badgeBorder}`}`}
-              >
-                <Zap className="w-4 h-4" />
-                Fast & Secure Transactions
-              </motion.div>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border backdrop-blur-sm ${isDarkMode ? `bg-[#121212] ${currentTheme.badgeText} border-neutral-800` : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} ${currentTheme.badgeBorder}`}`}
+                >
+                  <Zap className="w-4 h-4" />
+                  Fast & Secure Transactions
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border bg-amber-500/10 text-amber-500 border-amber-500/30"
+                >
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  🧪 Sandbox Testing Active
+                </motion.div>
+              </div>
 
               <h1
                 className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}

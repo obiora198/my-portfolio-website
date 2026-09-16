@@ -18,6 +18,7 @@ import {
   ArrowLeft,
   Search,
   Loader2,
+  Sparkles,
 } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -1187,6 +1188,10 @@ export function VTUPurchaseModal({
                     {activeTab === 'wallet' && 'Wallet'}
                   </span>
                 </div>
+                <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  🧪 Test Mode
+                </span>
               </div>
               <h2
                 className={`text-xl sm:text-2xl font-black tracking-tight mb-0.5 ${
@@ -1216,6 +1221,20 @@ export function VTUPurchaseModal({
                   ? 'View and fund your account balance'
                   : 'Select your provider and plan below to proceed'}
               </p>
+
+              {/* Sandbox notice banner */}
+              <div
+                className={`mt-2.5 p-2.5 rounded-xl flex items-start gap-2 text-[11px] sm:text-xs border ${
+                  isDarkMode
+                    ? 'bg-amber-950/20 border-amber-500/30 text-amber-300/90'
+                    : 'bg-amber-50/80 border-amber-200 text-amber-800'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div className="leading-snug">
+                  <span className="font-bold">Sandbox Active:</span> Use Paystack test cards or simulated payment. No real money will be charged.
+                </div>
+              </div>
             </div>
 
             {/* Wallet Funding Section */}

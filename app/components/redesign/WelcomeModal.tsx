@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Zap, X, Sparkles, ArrowRight } from 'lucide-react'
 import { useTheme } from '../ThemeContext'
 
-const STORAGE_KEY = 'obiora_welcomed'
+const STORAGE_KEY = 'obiora_welcomed_vtu_beta'
 
 export function WelcomeModal() {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,8 +15,7 @@ export function WelcomeModal() {
   const isDarkMode = theme === 'dark'
 
   useEffect(() => {
-    // Only show on first visit — check after a short delay so the
-    // hero section paints first and the modal feels intentional, not jarring.
+    // Check after a short delay so hero paints first
     const timer = setTimeout(() => {
       try {
         if (!localStorage.getItem(STORAGE_KEY)) {
@@ -64,7 +63,7 @@ export function WelcomeModal() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className={`relative w-full max-w-md overflow-hidden rounded-3xl shadow-2xl ${
+              className={`relative w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl ${
                 isDarkMode
                   ? 'bg-[#121212] border border-neutral-800/80'
                   : 'bg-white border border-gray-100'
@@ -94,24 +93,16 @@ export function WelcomeModal() {
               />
 
               {/* Content */}
-              <div className="px-8 pt-8 pb-6 text-center">
-                {/* Animated icon */}
-                <motion.div
-                  className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${currentTheme.iconBg} shadow-lg`}
-                  initial={{ rotate: -10 }}
-                  animate={{ rotate: [0, -6, 6, -3, 3, 0] }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatDelay: 3,
-                  }}
-                >
-                  <Sparkles className="w-8 h-8 text-white" />
-                </motion.div>
+              <div className="px-6 sm:px-8 pt-7 pb-5 text-center">
+                {/* Badge */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4 bg-amber-500/10 text-amber-500 border border-amber-500/30">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                  🧪 VTU Live · Beta Testing Mode
+                </div>
 
                 <h2
                   id="welcome-title"
-                  className={`text-2xl font-bold mb-2 ${
+                  className={`text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}
                 >
@@ -125,50 +116,42 @@ export function WelcomeModal() {
 
                 <p
                   className={`text-sm leading-relaxed mb-4 ${
-                    isDarkMode ? 'text-neutral-400' : 'text-gray-600'
+                    isDarkMode ? 'text-neutral-300' : 'text-gray-700'
                   }`}
                 >
-                  Thanks for stopping by! Our{' '}
-                  <span
-                    className={`font-semibold ${
-                      isDarkMode ? 'text-white' : 'text-gray-900'
-                    }`}
-                  >
-                    VTU service is now live
+                  Our{' '}
+                  <span className="font-semibold text-amber-500">
+                    VTU service is now live in Sandbox Testing Mode!
                   </span>{' '}
-                  — buy airtime, data bundles, pay electricity bills, and
-                  subscribe to cable TV instantly, all in one place.
+                  You can test recharging airtime, buying data bundles, paying
+                  electricity bills, and subscribing to cable TV —{' '}
+                  <strong>without spending real money</strong>.
                 </p>
 
-                <p
-                  className={`text-sm leading-relaxed mb-6 ${
-                    isDarkMode ? 'text-neutral-400' : 'text-gray-600'
+                {/* Sandbox Info Card */}
+                <div
+                  className={`text-left p-3.5 rounded-2xl mb-4 text-xs space-y-1.5 border ${
+                    isDarkMode
+                      ? 'bg-neutral-900/90 border-neutral-800 text-neutral-300'
+                      : 'bg-amber-50/60 border-amber-200/80 text-amber-900'
                   }`}
                 >
-                  While you&apos;re here, try switching between{' '}
-                  <span
-                    className={`font-semibold ${
-                      isDarkMode ? 'text-white' : 'text-gray-900'
-                    }`}
-                  >
-                    light &amp; dark mode
-                  </span>{' '}
-                  or change the site theme to match your vibe. If you like what
-                  you see, have a suggestion, or want to work together — drop me
-                  a message in the{' '}
-                  <span
-                    className={`font-semibold ${
-                      isDarkMode ? 'text-white' : 'text-gray-900'
-                    }`}
-                  >
-                    contact form
-                  </span>{' '}
-                  at the bottom of the page!
-                </p>
+                  <div className="flex items-center gap-2 font-bold text-amber-500">
+                    <Sparkles className="w-4 h-4" />
+                    How to help us test:
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] sm:text-xs leading-normal">
+                    <li>Try any provider (MTN, Airtel, GLO, 9mobile, DStv, Discos).</li>
+                    <li>Paystack test cards &amp; simulated payment are active.</li>
+                    <li>
+                      Tell us what you think! Drop suggestions via the contact form.
+                    </li>
+                  </ul>
+                </div>
 
                 {/* Feature pills */}
-                <div className="flex flex-wrap justify-center gap-2 mb-8">
-                  {['Instant Delivery', 'All Networks', 'Secure Payments'].map(
+                <div className="flex flex-wrap justify-center gap-2 mb-6">
+                  {['Zero Risk', 'Paystack Test Cards', 'Instant Simulation'].map(
                     (tag) => (
                       <span
                         key={tag}
@@ -178,7 +161,7 @@ export function WelcomeModal() {
                             : `bg-gradient-to-r ${currentTheme.badgeBg} ${currentTheme.badgeText} border ${currentTheme.badgeBorder}`
                         }`}
                       >
-                        <Zap className="w-3 h-3" />
+                        <Zap className="w-3 h-3 text-amber-500" />
                         {tag}
                       </span>
                     )
@@ -187,32 +170,28 @@ export function WelcomeModal() {
               </div>
 
               {/* Actions */}
-              <div
-                className={`px-8 pb-8 flex flex-col gap-3 ${
-                  isDarkMode ? '' : ''
-                }`}
-              >
+              <div className="px-6 sm:px-8 pb-7 flex flex-col gap-2.5">
                 <button
                   onClick={() => {
                     dismiss()
                     router.push('/vtu')
                   }}
-                  className={`group flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-gradient-to-r ${currentTheme.buttonGradient} text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02]`}
+                  className={`group flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-gradient-to-r ${currentTheme.buttonGradient} text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.01]`}
                 >
                   <Zap className="w-4 h-4" />
-                  Check Out VTU service
+                  Try VTU In Test Mode
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                 </button>
 
                 <button
                   onClick={dismiss}
-                  className={`w-full py-3 rounded-xl text-sm font-medium transition-colors ${
+                  className={`w-full py-2.5 rounded-xl text-xs font-medium transition-colors ${
                     isDarkMode
                       ? 'text-neutral-400 hover:text-white hover:bg-neutral-800/60'
                       : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
                   }`}
                 >
-                  Maybe Later
+                  Continue to Portfolio
                 </button>
               </div>
             </motion.div>

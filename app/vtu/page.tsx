@@ -16,6 +16,8 @@ import { HowItWorks } from '../components/vtu/HowItWorks'
 import { RecentTransactions } from '../components/vtu/RecentTransactions'
 import { WhyChooseUs } from '../components/vtu/WhyChooseUs'
 import { VTUPurchaseModal } from '../components/vtu/VTUPurchaseModal'
+import { VTUTestModeIntroModal } from '../components/vtu/VTUTestModeIntroModal'
+import { VTUTestModeBanner } from '../components/vtu/VTUTestModeBanner'
 import VTUComingSoon from '../components/vtu/VTUComingSoon'
 
 function VTUQueryParamsListener({
@@ -42,6 +44,7 @@ export default function VTUPage() {
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false)
   const [isWalletComingSoonOpen, setIsWalletComingSoonOpen] = useState(false)
+  const [isTestGuideOpen, setIsTestGuideOpen] = useState(false)
 
   // Prewarm services and common variations in the background so modal and plans load instantly
   useEffect(() => {
@@ -159,6 +162,18 @@ export default function VTUPage() {
       </Suspense>
       <Navigation />
       <ThemeSwitcher />
+
+      {/* Top Test Mode Banner */}
+      <div className="pt-20">
+        <VTUTestModeBanner onOpenGuide={() => setIsTestGuideOpen(true)} />
+      </div>
+
+      {/* Test Mode Intro Modal */}
+      <VTUTestModeIntroModal
+        onStartTesting={handleGetStarted}
+        isOpen={isTestGuideOpen ? true : undefined}
+        onClose={() => setIsTestGuideOpen(false)}
+      />
 
       {/* Beautiful Figma Design Hero */}
       <VTUHero onGetStarted={handleGetStarted} />
