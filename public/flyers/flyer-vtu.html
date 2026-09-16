@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flyer 2: Obiora VTU Services Beta Testing</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2canvas for 1-click PNG download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Fixed 1080 x 1350 resolution for crisp social media feeds */
+    #flyer-canvas {
+      width: 1080px;
+      height: 1350px;
+      min-width: 1080px;
+      min-height: 1350px;
+    }
+  </style>
+</head>
+<body class="bg-[#0b0704] text-white min-h-screen flex flex-col items-center py-10 px-4 font-sans antialiased selection:bg-orange-500 selection:text-white">
+
+  <!-- Control Bar -->
+  <header class="mb-6 flex flex-wrap items-center justify-between gap-4 w-full max-w-[1080px] bg-neutral-900/90 backdrop-blur-md p-4 rounded-2xl border border-neutral-800 shadow-xl">
+    <div class="flex items-center gap-3">
+      <span class="w-3 h-3 rounded-full bg-orange-500 animate-ping"></span>
+      <div>
+        <h1 class="font-bold text-sm text-white">Social Media Flyer · VTU Brand &amp; Sunset Edition</h1>
+        <p class="text-xs text-neutral-400">1080 × 1350 px (Instagram / LinkedIn / Twitter 4:5 Portrait)</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="px-4 py-2 text-xs font-semibold rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-all">
+        ← View Both Flyers
+      </a>
+      <a href="flyer-homepage.html" class="px-4 py-2 text-xs font-semibold rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-all">
+        Go to Homepage Edition →
+      </a>
+      <button onclick="downloadFlyer()" id="download-btn" class="px-5 py-2.5 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-400 hover:to-orange-500 text-white shadow-lg shadow-orange-500/25 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Download High-Res PNG
+      </button>
+    </div>
+  </header>
+
+  <!-- FLYER CANVAS (1080 x 1350) -->
+  <div id="flyer-canvas" class="relative overflow-hidden bg-[#0c0805] text-white shadow-[0_0_100px_rgba(249,115,22,0.15)] flex flex-col justify-between p-16">
+    
+    <!-- Sunset Ambient Mesh & Lighting -->
+    <div class="absolute -top-32 -left-32 w-[650px] h-[650px] bg-orange-600/20 rounded-full blur-[150px] pointer-events-none"></div>
+    <div class="absolute top-1/3 -right-40 w-[600px] h-[600px] bg-amber-500/15 rounded-full blur-[160px] pointer-events-none"></div>
+    <div class="absolute -bottom-36 left-1/4 w-[550px] h-[550px] bg-rose-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+    
+    <!-- Subtle Grid Overlay -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none"></div>
+
+    <!-- TOP BRAND HEADER -->
+    <div class="relative z-10 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 p-[2px] shadow-lg shadow-orange-500/20">
+          <div class="w-full h-full bg-[#140d07] rounded-[14px] flex items-center justify-center">
+            <span class="font-extrabold text-2xl text-orange-400 font-mono">⚡</span>
+          </div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black tracking-tight text-white">OBIORA VTU</h2>
+          <p class="text-sm font-semibold tracking-wider text-orange-400 uppercase font-mono">Automated Digital Utility Hub</p>
+        </div>
+      </div>
+
+      <!-- Beta Badge -->
+      <div class="flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-orange-950/60 border border-orange-500/40 backdrop-blur-xl shadow-lg shadow-orange-950/50">
+        <span class="w-2.5 h-2.5 rounded-full bg-orange-400 animate-pulse"></span>
+        <span class="text-xs font-extrabold tracking-wider text-orange-300 uppercase font-mono">PUBLIC BETA · TEST PLATFORM</span>
+      </div>
+    </div>
+
+    <!-- MAIN BODY SECTION -->
+    <div class="relative z-10 grid grid-cols-12 gap-10 items-center my-auto">
+      
+      <!-- Left Content: Headline, Info & Benefits -->
+      <div class="col-span-7 space-y-6">
+        
+        <!-- Pill -->
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-bold font-mono">
+          <span>🧪</span>
+          <span>FREE BETA TESTING NOW LIVE</span>
+        </div>
+
+        <!-- Headline -->
+        <div class="space-y-3">
+          <h1 class="text-5xl font-black leading-[1.08] tracking-tight text-white">
+            Everything You Need <br>
+            <span class="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
+              To Stay Connected
+            </span> <br>
+            In One Place.
+          </h1>
+          <p class="text-lg text-neutral-300 leading-relaxed font-normal">
+            We’ve built a fast, automated hub for airtime, cheap data, electricity bills &amp; cable TV renewals. Join our beta test and help shape the final release!
+          </p>
+        </div>
+
+        <!-- 4 Key Categories Grid -->
+        <div class="grid grid-cols-2 gap-3.5 pt-1">
+          
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl space-y-1.5">
+            <div class="w-9 h-9 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold text-lg">
+              📱
+            </div>
+            <h4 class="font-bold text-sm text-white">Instant Airtime</h4>
+            <p class="text-xs text-neutral-400">All Nigerian telcos: MTN, Airtel, GLO, 9mobile + International.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl space-y-1.5">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
+              📶
+            </div>
+            <h4 class="font-bold text-sm text-white">Cheap Data Bundles</h4>
+            <p class="text-xs text-neutral-400">SME &amp; Gifting data bundles verified directly against telecom catalog.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl space-y-1.5">
+            <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-lg">
+              💡
+            </div>
+            <h4 class="font-bold text-sm text-white">Electricity Tokens</h4>
+            <p class="text-xs text-neutral-400">Real-time meter validation for all 12 Nigerian Discos (Prepaid &amp; Postpaid).</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl space-y-1.5">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">
+              📺
+            </div>
+            <h4 class="font-bold text-sm text-white">Cable TV Renewals</h4>
+            <p class="text-xs text-neutral-400">DStv, GOtv &amp; StarTimes instant decoder activation &amp; renewal.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Right Content: VTU Sunset Hero Graphic & Simulation Info -->
+      <div class="col-span-5 relative flex flex-col items-center">
+        
+        <!-- Glow behind image -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-amber-500 to-orange-600 rounded-3xl opacity-35 blur-2xl transform scale-95"></div>
+
+        <!-- Framed Hero Card -->
+        <div class="relative z-10 w-full rounded-3xl overflow-hidden border border-orange-500/30 bg-gradient-to-b from-neutral-900/90 to-[#180f08] shadow-2xl p-3">
+          <div class="rounded-2xl overflow-hidden bg-black aspect-[4/4.8] relative flex items-center justify-center">
+            <img src="/vtu-hero-sunset.png" alt="VTU Platform Hero" class="w-full h-full object-cover object-center filter brightness-105 contrast-105" onerror="this.src='/vtu-hero-sunset.jpg'">
+            
+            <!-- Live Overlay Ribbon -->
+            <div class="absolute bottom-3 inset-x-3 bg-black/85 backdrop-blur-md border border-orange-500/30 rounded-xl p-3 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-orange-400 animate-ping"></span>
+                <span class="text-xs font-bold text-white font-mono">SANDBOX ACTIVE</span>
+              </div>
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-mono">Zero Real Cost</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test Credentials Card -->
+        <div class="w-full mt-4 p-4 rounded-2xl bg-orange-950/40 border border-orange-500/30 backdrop-blur-md flex items-center justify-between gap-3">
+          <div>
+            <p class="text-[11px] font-bold text-orange-400 uppercase tracking-wider font-mono">Use Paystack Test Card</p>
+            <p class="font-mono text-sm font-extrabold text-white tracking-widest mt-0.5">4084 · 0840 · 8408 · 4084</p>
+            <p class="text-[10px] text-neutral-400">CVV: 123 · PIN: 1234 · Any future date</p>
+          </div>
+          <div class="px-3 py-1.5 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 font-bold text-xs font-mono">
+            FREE TEST
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER / CALL TO ACTION -->
+    <div class="relative z-10 pt-6 border-t border-white/10 flex items-center justify-between">
+      
+      <!-- Invitation Text -->
+      <div>
+        <p class="text-xs font-mono uppercase tracking-widest text-orange-400 font-bold">Try It Out · Test The Experience</p>
+        <h3 class="text-2xl font-black text-white mt-0.5">Help Us Test &amp; Share Your Feedback</h3>
+      </div>
+
+      <!-- CTA URL -->
+      <div class="flex items-center gap-3">
+        <div class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white font-extrabold text-lg tracking-tight shadow-xl shadow-orange-500/30 font-mono flex items-center gap-3">
+          <span>obiora.dev/vtu</span>
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function downloadFlyer() {
+      const btn = document.getElementById('download-btn');
+      btn.innerText = 'Generating PNG...';
+      btn.disabled = true;
+
+      const element = document.getElementById('flyer-canvas');
+      html2canvas(element, {
+        scale: 2, // 2x resolution = 2160 x 2700 ultra high-def!
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#0c0805',
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'obiora-vtu-beta-flyer-vtu-edition.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Downloaded!`;
+        setTimeout(() => {
+          btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Download High-Res PNG`;
+          btn.disabled = false;
+        }, 2500);
+      }).catch(err => {
+        console.error(err);
+        alert('Could not auto-generate image. You can take a standard screenshot of the canvas below!');
+        btn.innerText = 'Download High-Res PNG';
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
