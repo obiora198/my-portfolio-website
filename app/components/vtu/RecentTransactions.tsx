@@ -80,6 +80,15 @@ export function RecentTransactions({
     return `₦${amount.toLocaleString()}`
   }
 
+  const formatRechargedTarget = (tx: Transaction) => {
+    const raw = tx.phone || tx.billersCode
+    if (!raw) return null
+    const cleaned = String(raw).trim()
+    const last4 = cleaned.slice(-4)
+    if (!last4) return null
+    return `•••• ${last4}`
+  }
+
   const displayTransactions = transactions.slice(0, 5)
 
   return (
@@ -205,7 +214,14 @@ export function RecentTransactions({
                           className="object-cover"
                         />
                       </div>
-                      <span className="font-bold text-sm">{formatServiceName(transaction.serviceID)}</span>
+                      <div>
+                        <span className="font-bold text-sm block leading-tight">{formatServiceName(transaction.serviceID)}</span>
+                        {formatRechargedTarget(transaction) && (
+                          <span className="text-[11px] font-mono opacity-60 block mt-0.5 font-medium">
+                            {formatRechargedTarget(transaction)}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="px-8 py-5 font-black text-lg">{formatAmount(transaction.amount)}</td>
@@ -249,7 +265,17 @@ export function RecentTransactions({
                   </div>
                   <div>
                     <p className="font-black text-base leading-tight">{formatServiceName(transaction.serviceID)}</p>
-                    <p className="text-[10px] opacity-50 font-bold uppercase tracking-widest mt-1">{formatDate(transaction.timestamp)}</p>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <p className="text-[10px] opacity-50 font-bold uppercase tracking-widest">{formatDate(transaction.timestamp)}</p>
+                      {formatRechargedTarget(transaction) && (
+                        <>
+                          <span className="opacity-30 text-[10px]">•</span>
+                          <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-300">
+                            {formatRechargedTarget(transaction)}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border ${getStatusStyle(transaction.status)}`}>

@@ -24,8 +24,10 @@ import VTUComingSoon from '../components/vtu/VTUComingSoon'
 
 function VTUQueryParamsListener({
   onSelectService,
+  onPaymentRedirect,
 }: {
   onSelectService: (service: string) => void
+  onPaymentRedirect: (ref: string) => void
 }) {
   const searchParams = useSearchParams()
 
@@ -34,7 +36,27 @@ function VTUQueryParamsListener({
     if (service) {
       onSelectService(service)
     }
-  }, [searchParams, onSelectService])
+
+    const paymentRef =
+      searchParams.get('payment_ref') ||
+      searchParams.get('reference') ||
+      searchParams.get('trxref')
+
+    if (paymentRef) {
+      onPaymentRedirect(paymentRef)
+      if (typeof window !== 'undefined' && window.history.replaceState) {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('payment_ref')
+        url.searchParams.delete('reference')
+        url.searchParams.delete('trxref')
+        window.history.replaceState(
+          {},
+          '',
+          url.pathname + (url.search ? url.search : '')
+        )
+      }
+    }
+  }, [searchParams, onSelectService, onPaymentRedirect])
 
   return null
 }
@@ -45,8 +67,14 @@ export default function VTUPage() {
   const queryClient = useQueryClient()
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false)
+  const [paymentRedirectRef, setPaymentRedirectRef] = useState<string | null>(null)
   const [isWalletComingSoonOpen, setIsWalletComingSoonOpen] = useState(false)
   const [isTestGuideOpen, setIsTestGuideOpen] = useState(false)
+
+  const handlePaymentRedirect = useCallback((ref: string) => {
+    setPaymentRedirectRef(ref)
+    setIsPurchaseModalOpen(true)
+  }, [])
 
   // Prewarm services and common variations in the background so modal and plans load instantly
   useEffect(() => {
@@ -145,6 +173,7 @@ export default function VTUPage() {
   const handleModalClose = () => {
     setIsPurchaseModalOpen(false)
     setSelectedService(null)
+    setPaymentRedirectRef(null)
   }
 
   const handleTransactionSuccess = () => {
@@ -160,7 +189,10 @@ export default function VTUPage() {
       className={`min-h-screen bg-gray-50 dark:bg-[#000000] ${isDarkMode ? 'bg-[#000000]' : 'bg-gray-50'}`}
     >
       <Suspense fallback={null}>
-        <VTUQueryParamsListener onSelectService={handleServiceClick} />
+        <VTUQueryParamsListener
+          onSelectService={handleServiceClick}
+          onPaymentRedirect={handlePaymentRedirect}
+        />
       </Suspense>
       <Navigation />
       <ThemeSwitcher />
@@ -205,10 +237,11 @@ export default function VTUPage() {
 
       {/* Purchase Modal */}
       <VTUPurchaseModal
-        isOpen={isPurchaseModalOpen}
+        isOpen={isPurchaseModalOpen || !!paymentRedirectRef}
         onClose={handleModalClose}
         selectedService={selectedService}
         onSuccess={handleTransactionSuccess}
+        initialPaymentRef={paymentRedirectRef}
       />
 
       {/* Wallet Coming Soon Modal */}

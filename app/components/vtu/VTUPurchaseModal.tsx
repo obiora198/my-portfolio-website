@@ -3,7 +3,7 @@
 
 import Image from 'next/image'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -35,6 +35,7 @@ interface VTUPurchaseModalProps {
   onClose: () => void
   selectedService: string | null
   onSuccess: () => void
+  initialPaymentRef?: string | null
 }
 
 type VTUTab = 'airtime' | 'data' | 'tv' | 'electricity' | 'international' | 'wallet'
@@ -328,6 +329,7 @@ export function VTUPurchaseModal({
   onClose,
   selectedService,
   onSuccess,
+  initialPaymentRef,
 }: VTUPurchaseModalProps) {
   const { theme, themeName, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
@@ -400,6 +402,33 @@ export function VTUPurchaseModal({
   const [modalMessage, setModalMessage] = useState('')
   const [showResultModal, setShowResultModal] = useState(false)
   const [lastTransaction, setLastTransaction] = useState<any>(null)
+  const paymentSuccessRef = useRef(false)
+  const modalContainerRef = useRef<HTMLDivElement>(null)
+
+  // Scroll to top of modal container when showing results on mobile
+  useEffect(() => {
+    if (showResultModal && modalContainerRef.current) {
+      modalContainerRef.current.scrollTo({ top: 0, behavior: 'instant' })
+    }
+  }, [showResultModal])
+
+  // Handle redirect from Paystack mobile checkout
+  useEffect(() => {
+    if (initialPaymentRef && isOpen) {
+      paymentSuccessRef.current = true
+      setLoading(false)
+      setModalType('pending')
+      setModalMessage(
+        'Payment received! Connecting to provider network to disburse service...'
+      )
+      setShowResultModal(true)
+      toast.loading('Payment confirmed! Disbursing service...', {
+        id: `vtu-tx-${initialPaymentRef}`,
+      })
+      onSuccess()
+      pollPaymentVerification(initialPaymentRef)
+    }
+  }, [initialPaymentRef, isOpen])
 
   // Demo Autofill Helpers
   const handleFillDemoDetails = () => {
@@ -1068,6 +1097,7 @@ export function VTUPurchaseModal({
         return
       }
 
+      paymentSuccessRef.current = false
       const handler = PaystackPop.setup({
         key: paystackKey,
         email:
@@ -1078,9 +1108,12 @@ export function VTUPurchaseModal({
         ref: reference,
         onClose: () => {
           setLoading(false)
-          toast('Payment cancelled or window closed', { icon: 'ℹ️' })
+          if (!paymentSuccessRef.current) {
+            toast('Payment cancelled or window closed', { icon: 'ℹ️' })
+          }
         },
         callback: (response: any) => {
+          paymentSuccessRef.current = true
           setLoading(false)
           setModalType('pending')
           setModalMessage(
@@ -1154,7 +1187,7 @@ export function VTUPurchaseModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div ref={modalContainerRef} className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -2081,10 +2114,10 @@ export function VTUPurchaseModal({
                       }`}
                       required
                     />
-                    <div className="flex items-center justify-between gap-2 mt-1.5 px-0.5 text-[11px]">
-                      <div className={`flex items-center gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
-                        <Info className="w-3 h-3 text-amber-500/80 flex-shrink-0" />
-                        <span className="truncate">For demo purposes, only the demo number will be successful.</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 mt-2 px-0.5 text-[11px]">
+                      <div className={`flex items-start gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                        <Info className="w-3.5 h-3.5 text-amber-500/80 flex-shrink-0 mt-0.5" />
+                        <span className="leading-snug">For demo purposes, only the demo number will be successful.</span>
                       </div>
                       <button
                         type="button"
@@ -2094,7 +2127,7 @@ export function VTUPurchaseModal({
                           setMeterVerifyError('')
                           handleFillDemoDetails()
                         }}
-                        className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                        className="self-start sm:self-auto flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
                       >
                         <Sparkles className="w-2.5 h-2.5 text-amber-500" />
                         <span>Fill demo {activeTab === 'electricity' ? 'meter' : 'card'}</span>
@@ -2195,15 +2228,15 @@ export function VTUPurchaseModal({
                   )}
 
                   {/* Subtle Demo Info & Auto-fill */}
-                  <div className="flex items-center justify-between gap-2 mt-1.5 px-0.5 text-[11px]">
-                    <div className={`flex items-center gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
-                      <Info className="w-3 h-3 text-amber-500/80 flex-shrink-0" />
-                      <span className="truncate">For demo purposes, only the demo number will be successful.</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 mt-2 px-0.5 text-[11px]">
+                    <div className={`flex items-start gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                      <Info className="w-3.5 h-3.5 text-amber-500/80 flex-shrink-0 mt-0.5" />
+                      <span className="leading-snug">For demo purposes, only the demo number will be successful.</span>
                     </div>
                     <button
                       type="button"
                       onClick={handleFillDemoDetails}
-                      className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                      className="self-start sm:self-auto flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
                     >
                       <Sparkles className="w-2.5 h-2.5 text-amber-500" />
                       <span>Fill demo number</span>

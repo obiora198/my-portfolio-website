@@ -126,7 +126,24 @@ export default function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               {children}
-              <Toaster position="top-right" reverseOrder={false} />
+              <Toaster
+                position="top-center"
+                reverseOrder={false}
+                containerStyle={{
+                  top: 24,
+                  zIndex: 999999,
+                }}
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    maxWidth: 'min(92vw, 420px)',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
+                  },
+                }}
+              />
               <SpeedInsights />
             </AuthProvider>
           </ThemeProvider>

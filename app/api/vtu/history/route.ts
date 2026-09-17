@@ -20,8 +20,25 @@ export async function GET(request: Request) {
       .limit(20)
       .lean() // Use lean for performance
 
-    console.log(`Found ${transactions.length} transactions`)
-    return NextResponse.json(transactions, {
+    // Privacy mask: preserve last 4 digits for user recognition while stripping private customer data
+    const sanitizedTransactions = transactions.map((tx: any) => {
+      const rawPhone = tx.phone ? String(tx.phone).trim() : ''
+      const rawBillers = tx.billersCode ? String(tx.billersCode).trim() : ''
+
+      return {
+        _id: tx._id,
+        requestId: tx.requestId,
+        serviceID: tx.serviceID,
+        amount: tx.amount,
+        status: tx.status,
+        timestamp: tx.timestamp,
+        phone: rawPhone ? `••••${rawPhone.slice(-4)}` : undefined,
+        billersCode: rawBillers ? `••••${rawBillers.slice(-4)}` : undefined,
+      }
+    })
+
+    console.log(`Found ${sanitizedTransactions.length} transactions`)
+    return NextResponse.json(sanitizedTransactions, {
       headers: {
         'Cache-Control':
           'no-store, no-cache, must-revalidate, proxy-revalidate',
