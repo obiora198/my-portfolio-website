@@ -34,24 +34,68 @@ export function ContactSection({
     e.preventDefault()
     setLoading(true)
 
-    try {
-      const result = await emailjs.sendForm(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        formRef.current!,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-      )
+    let emailjsSuccess = false
+    let dbSuccess = false
 
-      if (result.text === 'OK') {
-        toast.success('Message sent successfully! I will get back to you soon.')
-        setFormData({ name: '', email: '', message: '' })
+    // 1. Try sending via EmailJS
+    try {
+      if (
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID &&
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID &&
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+      ) {
+        const result = await emailjs.sendForm(
+          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+          formRef.current!,
+          process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+        )
+        if (result.text === 'OK') {
+          emailjsSuccess = true
+        }
       }
-    } catch (error) {
-      console.error('EmailJS error:', error)
-      toast.error('Failed to send message. Please try again.')
-    } finally {
-      setLoading(false)
+    } catch (error: any) {
+      console.warn('EmailJS delivery error:', error)
     }
+
+    // 2. Persist to MongoDB via /api/contact as reliable backend storage
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          source: typeof window !== 'undefined' ? window.location.pathname : 'contact_form',
+        }),
+      })
+      if (res.ok) {
+        dbSuccess = true
+      }
+    } catch (dbError) {
+      console.warn('Database save error:', dbError)
+    }
+
+    if (emailjsSuccess || dbSuccess) {
+      toast.success(
+        'Message received! Thank you, I will get back to you soon.'
+      )
+      setFormData({ name: '', email: '', message: '' })
+    } else {
+      const mailtoUrl = `mailto:emmanuelobiora11@gmail.com?subject=${encodeURIComponent(
+        `Contact from ${formData.name}`
+      )}&body=${encodeURIComponent(
+        `From: ${formData.name} (${formData.email})\n\n${formData.message}`
+      )}`
+      toast.error(
+        'Automatic email delivery failed. Opening your email app to send directly...',
+        { duration: 5000 }
+      )
+      if (typeof window !== 'undefined') {
+        window.location.href = mailtoUrl
+      }
+    }
+
+    setLoading(false)
   }
 
   const handleChange = (
@@ -275,13 +319,28 @@ export function ContactSection({
               <motion.button
                 type="submit"
                 disabled={loading}
-                className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed`}
+                className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                 whileHover={{ scale: loading ? 1 : 1.02 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
               >
                 <Send className="w-5 h-5" />
                 {loading ? 'Sending...' : 'Send Message'}
               </motion.button>
+
+              <div className="text-center pt-1">
+                <a
+                  href={`mailto:emmanuelobiora11@gmail.com?subject=${encodeURIComponent(
+                    formData.name ? `Message from ${formData.name}` : 'Portfolio Inquiry'
+                  )}&body=${encodeURIComponent(formData.message || '')}`}
+                  className={`text-xs underline transition-colors cursor-pointer ${
+                    isDarkMode
+                      ? 'text-neutral-500 hover:text-neutral-300'
+                      : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  Or email directly via your mail client
+                </a>
+              </div>
             </form>
           </motion.div>
         </div>
