@@ -2,12 +2,25 @@
 
 import { motion } from 'framer-motion'
 import { Mail, User, MessageSquare, Send } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { useTheme } from '../ThemeContext'
 import { useState, useRef } from 'react'
 import emailjs from '@emailjs/browser'
 import toast from 'react-hot-toast'
 
-export function ContactSection() {
+interface ContactSectionProps {
+  title?: string
+  subtitle?: string
+  heading?: string
+  description?: string
+}
+
+export function ContactSection({
+  title = 'Get In Touch',
+  subtitle = "Have a project in mind? Let's work together to create something amazing",
+  heading = "Let's create something amazing together",
+  description = "I'm always interested in hearing about new projects and opportunities. Whether you have a question or just want to say hi, feel free to drop me a message!",
+}: ContactSectionProps = {}) {
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
   const formRef = useRef<HTMLFormElement>(null)
@@ -18,28 +31,123 @@ export function ContactSection() {
   })
   const [loading, setLoading] = useState(false)
 
+  const handleWhatsAppSubmit = () => {
+    if (!formData.name.trim()) {
+      toast.error('Please enter your name first.')
+      const nameInput = document.getElementById('name')
+      if (nameInput) nameInput.focus()
+      return
+    }
+    if (!formData.email.trim()) {
+      toast.error('Please enter your email address.')
+      const emailInput = document.getElementById('email')
+      if (emailInput) emailInput.focus()
+      return
+    }
+    if (!formData.message.trim()) {
+      toast.error('Please enter your message.')
+      const messageInput = document.getElementById('message')
+      if (messageInput) messageInput.focus()
+      return
+    }
+
+    const isVTU = typeof window !== 'undefined' && window.location.pathname.includes('vtu')
+    const sourceLabel = isVTU ? 'VTU Services Platform' : 'Portfolio Website'
+
+    // Save to database in the background so Emmanuel has a persistent record
+    try {
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          source: isVTU ? 'vtu_mobile_whatsapp' : 'homepage_mobile_whatsapp',
+        }),
+      }).catch(() => {})
+    } catch (e) {}
+
+    const text = `Hi Emmanuel,\n\nName: ${formData.name.trim()}\nEmail: ${formData.email.trim()}\nSource: ${sourceLabel}\n\nMessage:\n${formData.message.trim()}`
+    const whatsappUrl = `https://wa.me/2348162841368?text=${encodeURIComponent(text)}`
+
+    toast.success('Opening WhatsApp...', { icon: '💬' })
+    if (typeof window !== 'undefined') {
+      window.open(whatsappUrl, '_blank')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // On mobile screens, route through WhatsApp flow
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      handleWhatsAppSubmit()
+      return
+    }
+
     setLoading(true)
 
-    try {
-      const result = await emailjs.sendForm(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        formRef.current!,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-      )
+    let emailjsSuccess = false
+    let dbSuccess = false
 
-      if (result.text === 'OK') {
-        toast.success('Message sent successfully! I will get back to you soon.')
-        setFormData({ name: '', email: '', message: '' })
+    // 1. Try sending via EmailJS
+    try {
+      if (
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID &&
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID &&
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+      ) {
+        const result = await emailjs.sendForm(
+          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+          formRef.current!,
+          process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+        )
+        if (result.text === 'OK') {
+          emailjsSuccess = true
+        }
       }
-    } catch (error) {
-      console.error('EmailJS error:', error)
-      toast.error('Failed to send message. Please try again.')
-    } finally {
-      setLoading(false)
+    } catch (error: any) {
+      console.warn('EmailJS delivery error:', error)
     }
+
+    // 2. Persist to MongoDB via /api/contact as reliable backend storage
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          source: typeof window !== 'undefined' ? window.location.pathname : 'contact_form',
+        }),
+      })
+      if (res.ok) {
+        dbSuccess = true
+      }
+    } catch (dbError) {
+      console.warn('Database save error:', dbError)
+    }
+
+    if (emailjsSuccess || dbSuccess) {
+      toast.success(
+        'Message received! Thank you, I will get back to you soon.'
+      )
+      setFormData({ name: '', email: '', message: '' })
+    } else {
+      const mailtoUrl = `mailto:emmanuelobiora11@gmail.com?subject=${encodeURIComponent(
+        `Contact from ${formData.name}`
+      )}&body=${encodeURIComponent(
+        `From: ${formData.name} (${formData.email})\n\n${formData.message}`
+      )}`
+      toast.error(
+        'Automatic email delivery failed. Opening your email app to send directly...',
+        { duration: 5000 }
+      )
+      if (typeof window !== 'undefined') {
+        window.location.href = mailtoUrl
+      }
+    }
+
+    setLoading(false)
   }
 
   const handleChange = (
@@ -70,13 +178,12 @@ export function ContactSection() {
           <h2
             className={`text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
           >
-            Get In Touch
+            {title}
           </h2>
           <p
             className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
-            Have a project in mind? Let&apos;s work together to create something
-            amazing
+            {subtitle}
           </p>
         </motion.div>
 
@@ -93,14 +200,12 @@ export function ContactSection() {
               <h3
                 className={`text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
               >
-                Let&apos;s create something amazing together
+                {heading}
               </h3>
               <p
                 className={`leading-relaxed ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
               >
-                I&apos;m always interested in hearing about new projects and
-                opportunities. Whether you have a question or just want to say
-                hi, feel free to drop me a message!
+                {description}
               </p>
             </div>
 
@@ -172,6 +277,7 @@ export function ContactSection() {
             transition={{ duration: 0.6 }}
           >
             <form
+              id="contact-form"
               ref={formRef}
               onSubmit={handleSubmit}
               className={`rounded-3xl shadow-xl border p-6 sm:p-8 space-y-4 sm:space-y-6 ${
@@ -261,17 +367,44 @@ export function ContactSection() {
                 />
               </div>
 
-              {/* Submit Button */}
+              {/* Mobile WhatsApp Button (Only displayed on mobile screens < md) */}
+              <motion.button
+                type="button"
+                onClick={handleWhatsAppSubmit}
+                className="w-full md:hidden inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer active:scale-98"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaWhatsapp className="w-5 h-5 text-white" />
+                <span>Send via WhatsApp</span>
+              </motion.button>
+
+              {/* Desktop Submit Button (Hidden on mobile, displayed on desktop/computer screens >= md) */}
               <motion.button
                 type="submit"
                 disabled={loading}
-                className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed`}
+                className={`w-full hidden md:inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                 whileHover={{ scale: loading ? 1 : 1.02 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
               >
                 <Send className="w-5 h-5" />
                 {loading ? 'Sending...' : 'Send Message'}
               </motion.button>
+
+              <div className="text-center pt-1">
+                <a
+                  href={`mailto:emmanuelobiora11@gmail.com?subject=${encodeURIComponent(
+                    formData.name ? `Message from ${formData.name}` : 'Portfolio Inquiry'
+                  )}&body=${encodeURIComponent(formData.message || '')}`}
+                  className={`text-xs underline transition-colors cursor-pointer ${
+                    isDarkMode
+                      ? 'text-neutral-500 hover:text-neutral-300'
+                      : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  Or email directly via your mail client
+                </a>
+              </div>
             </form>
           </motion.div>
         </div>

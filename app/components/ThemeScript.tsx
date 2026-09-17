@@ -7,8 +7,7 @@ export default function ThemeScript() {
       };
       var savedTheme = localStorage.getItem('theme') || getCookie('theme');
       var savedPalette = localStorage.getItem('palette') || getCookie('palette');
-      var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var theme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : (systemDark ? 'dark' : 'light');
+      var theme = savedTheme === 'light' ? 'light' : 'dark';
       
       var root = document.documentElement;
       root.classList.remove('light', 'dark');

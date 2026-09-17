@@ -24,14 +24,17 @@ export function Navigation() {
   const isDarkMode = theme === 'dark'
   const pathname = usePathname()
   const isHomePage = pathname === '/'
+  const isVTUPage = pathname === '/vtu'
 
   // Adjust nav links based on current page
   const navLinks = baseNavLinks.map((link) => {
     const isAnchor = link.href.startsWith('#')
+    const isLocalContact = isVTUPage && link.href === '#contact'
+
     return {
       ...link,
-      href: isHomePage
-        ? link.homeHref
+      href: isHomePage || isLocalContact
+        ? link.href
         : isAnchor
           ? `/${link.href}`
           : link.href,

@@ -18,6 +18,8 @@ import { WhyChooseUs } from '../components/vtu/WhyChooseUs'
 import { VTUPurchaseModal } from '../components/vtu/VTUPurchaseModal'
 import { VTUTestModeIntroModal } from '../components/vtu/VTUTestModeIntroModal'
 import { VTUTestModeBanner } from '../components/vtu/VTUTestModeBanner'
+import { ContactSection } from '../components/redesign/ContactSection'
+import { FooterSection } from '../components/redesign/FooterSection'
 import VTUComingSoon from '../components/vtu/VTUComingSoon'
 
 function VTUQueryParamsListener({
@@ -189,6 +191,17 @@ export default function VTUPage() {
 
       {/* Beautiful Figma Design Why Choose Us */}
       <WhyChooseUs />
+
+      {/* Contact Section */}
+      <ContactSection
+        title="Contact & Support"
+        subtitle="Have questions about our VTU services or want to share feedback? We're here for you."
+        heading="We'd love to hear your thoughts & questions"
+        description="Whether you have questions about our digital utilities, want to report an issue encountered during testing, or have feature suggestions, feel free to drop a message below!"
+      />
+
+      {/* Footer Section */}
+      <FooterSection />
 
       {/* Purchase Modal */}
       <VTUPurchaseModal

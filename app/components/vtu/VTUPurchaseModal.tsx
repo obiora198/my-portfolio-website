@@ -19,6 +19,8 @@ import {
   Search,
   Loader2,
   Sparkles,
+  Copy,
+  Info,
 } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -398,6 +400,38 @@ export function VTUPurchaseModal({
   const [modalMessage, setModalMessage] = useState('')
   const [showResultModal, setShowResultModal] = useState(false)
   const [lastTransaction, setLastTransaction] = useState<any>(null)
+
+  // Demo Autofill Helpers
+  const handleFillDemoDetails = () => {
+    // 1. Auto-fill known-good VTpass test phone number
+    setPhone('08011111111')
+    setPhoneError('')
+
+    // 2. Auto-fill KYC details
+    if (!fullName) setFullName('Test Customer')
+    if (!email) setEmail('tester@example.com')
+
+    // 3. Auto-fill Electricity meter or TV smartcard if on those tabs
+    if (activeTab === 'electricity') {
+      setBillersCode('1111111111111')
+      setMeterVerifyError('')
+    } else if (activeTab === 'tv') {
+      setBillersCode('1212121212')
+      setMeterVerifyError('')
+    }
+
+    // 4. Auto-fill demo amount if needed
+    if (activeTab === 'airtime' && !amount) {
+      setAmount('100')
+    } else if (activeTab === 'electricity' && !amount) {
+      setAmount('1000')
+    }
+
+    toast.success('Demo details filled (08011111111)', {
+      duration: 3000,
+      icon: '🧪',
+    })
+  }
 
   const resetForm = () => {
     setAmount('')
@@ -1039,7 +1073,7 @@ export function VTUPurchaseModal({
         email:
           email && email.includes('@')
             ? email.trim()
-            : `guest_${phone.replace(/\D/g, '')}@obiora.dev`,
+            : `guest_${phone.replace(/\D/g, '')}@emmanuel-obiora.vercel.app`,
         amount: Math.round(chargeTotal * 100),
         ref: reference,
         onClose: () => {
@@ -2047,6 +2081,25 @@ export function VTUPurchaseModal({
                       }`}
                       required
                     />
+                    <div className="flex items-center justify-between gap-2 mt-1.5 px-0.5 text-[11px]">
+                      <div className={`flex items-center gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                        <Info className="w-3 h-3 text-amber-500/80 flex-shrink-0" />
+                        <span className="truncate">For demo purposes, only the demo number will be successful.</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const demoCode = activeTab === 'electricity' ? '1111111111111' : '1212121212'
+                          setBillersCode(demoCode)
+                          setMeterVerifyError('')
+                          handleFillDemoDetails()
+                        }}
+                        className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                      >
+                        <Sparkles className="w-2.5 h-2.5 text-amber-500" />
+                        <span>Fill demo {activeTab === 'electricity' ? 'meter' : 'card'}</span>
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -2140,6 +2193,22 @@ export function VTUPurchaseModal({
                       {phoneError}
                     </p>
                   )}
+
+                  {/* Subtle Demo Info & Auto-fill */}
+                  <div className="flex items-center justify-between gap-2 mt-1.5 px-0.5 text-[11px]">
+                    <div className={`flex items-center gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                      <Info className="w-3 h-3 text-amber-500/80 flex-shrink-0" />
+                      <span className="truncate">For demo purposes, only the demo number will be successful.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleFillDemoDetails}
+                      className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                    >
+                      <Sparkles className="w-2.5 h-2.5 text-amber-500" />
+                      <span>Fill demo number</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
