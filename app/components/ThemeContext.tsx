@@ -168,10 +168,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     if (typeof window !== 'undefined') {
       const saved = (localStorage.getItem('theme') || getCookieValue('theme')) as ThemeMode
-      if (saved === 'light' || saved === 'dark') return saved
-      if (document.documentElement.classList.contains('dark')) return 'dark'
-      if (document.documentElement.classList.contains('light')) return 'light'
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
+      if (saved === 'light') return 'light'
+      return 'dark'
     }
     return 'dark'
   })
