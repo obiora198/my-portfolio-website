@@ -20,6 +20,7 @@ import {
   Loader2,
   Sparkles,
   Copy,
+  Info,
 } from 'lucide-react'
 import { useTheme } from '@/app/components/ThemeContext'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -399,7 +400,6 @@ export function VTUPurchaseModal({
   const [modalMessage, setModalMessage] = useState('')
   const [showResultModal, setShowResultModal] = useState(false)
   const [lastTransaction, setLastTransaction] = useState<any>(null)
-  const [cardCopied, setCardCopied] = useState(false)
 
   // Demo Autofill Helpers
   const handleFillDemoDetails = () => {
@@ -427,30 +427,10 @@ export function VTUPurchaseModal({
       setAmount('1000')
     }
 
-    // 5. Copy Paystack test card to clipboard
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText('4084 0840 8408 4084')
-        setCardCopied(true)
-        setTimeout(() => setCardCopied(false), 3000)
-      }
-    } catch (e) {}
-
-    toast.success(
-      'Demo details filled! Phone: 08011111111 • Paystack Test Card (4084 0840 8408 4084) copied to clipboard!',
-      { duration: 4000, icon: '🧪' }
-    )
-  }
-
-  const handleCopyTestCard = () => {
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText('4084 0840 8408 4084')
-        setCardCopied(true)
-        setTimeout(() => setCardCopied(false), 2500)
-        toast.success('Paystack test card copied: 4084 0840 8408 4084', { icon: '📋' })
-      }
-    } catch (e) {}
+    toast.success('Demo details filled (08011111111)', {
+      duration: 3000,
+      icon: '🧪',
+    })
   }
 
   const resetForm = () => {
@@ -2101,10 +2081,11 @@ export function VTUPurchaseModal({
                       }`}
                       required
                     />
-                    <div className="flex items-center justify-between gap-2 mt-1.5 px-1">
-                      <p className={`text-[11px] leading-tight ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
-                        For demo purposes, only the demo number will be successful.
-                      </p>
+                    <div className="flex items-center justify-between gap-2 mt-1.5 px-0.5 text-[11px]">
+                      <div className={`flex items-center gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                        <Info className="w-3 h-3 text-amber-500/80 flex-shrink-0" />
+                        <span className="truncate">For demo purposes, only the demo number will be successful.</span>
+                      </div>
                       <button
                         type="button"
                         onClick={() => {
@@ -2113,9 +2094,9 @@ export function VTUPurchaseModal({
                           setMeterVerifyError('')
                           handleFillDemoDetails()
                         }}
-                        className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded-md bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition-all cursor-pointer active:scale-95"
+                        className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
                       >
-                        <Sparkles className="w-3 h-3 text-amber-500" />
+                        <Sparkles className="w-2.5 h-2.5 text-amber-500" />
                         <span>Fill demo {activeTab === 'electricity' ? 'meter' : 'card'}</span>
                       </button>
                     </div>
@@ -2214,16 +2195,17 @@ export function VTUPurchaseModal({
                   )}
 
                   {/* Subtle Demo Info & Auto-fill */}
-                  <div className="flex items-center justify-between gap-2 mt-1.5 px-1">
-                    <p className={`text-[11px] leading-tight ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
-                      For demo purposes, only the demo number will be successful.
-                    </p>
+                  <div className="flex items-center justify-between gap-2 mt-1.5 px-0.5 text-[11px]">
+                    <div className={`flex items-center gap-1.5 min-w-0 ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                      <Info className="w-3 h-3 text-amber-500/80 flex-shrink-0" />
+                      <span className="truncate">For demo purposes, only the demo number will be successful.</span>
+                    </div>
                     <button
                       type="button"
                       onClick={handleFillDemoDetails}
-                      className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded-md bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition-all cursor-pointer active:scale-95"
+                      className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
                     >
-                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <Sparkles className="w-2.5 h-2.5 text-amber-500" />
                       <span>Fill demo number</span>
                     </button>
                   </div>
@@ -2432,40 +2414,6 @@ export function VTUPurchaseModal({
                   </div>
                 </div>
               )}
-
-              <div
-                className={`flex items-center justify-between gap-2 py-1.5 px-3 rounded-xl border text-[11px] ${
-                  isDarkMode
-                    ? 'bg-neutral-900/60 border-neutral-800 text-neutral-300'
-                    : 'bg-gray-50 border-gray-200 text-gray-700'
-                }`}
-              >
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <CreditCard className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
-                  <span className="font-mono text-[11px] truncate">
-                    Paystack Test Card: <strong className={isDarkMode ? 'text-white' : 'text-gray-900'}>4084 · 0840 · 8408 · 4084</strong>
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleCopyTestCard}
-                  className={`flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold font-sans transition-all ${
-                    cardCopied
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-neutral-800 hover:bg-neutral-700 text-orange-400 hover:text-orange-300 border border-neutral-700'
-                  }`}
-                >
-                  {cardCopied ? (
-                    <>
-                      <Check className="w-3 h-3 text-emerald-400" /> Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3 h-3" /> Copy
-                    </>
-                  )}
-                </button>
-              </div>
 
               <div className="flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] text-[11px] text-gray-500 dark:text-neutral-400">
                 <CreditCard className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
