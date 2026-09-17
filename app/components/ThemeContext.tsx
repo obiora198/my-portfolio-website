@@ -201,15 +201,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       }
 
       const savedTheme = (localStorage.getItem('theme') || getCookieValue('theme')) as ThemeMode
-      const hasDarkClass = document.documentElement.classList.contains('dark')
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      const effectiveTheme = (savedTheme === 'light' || savedTheme === 'dark')
-        ? savedTheme
-        : hasDarkClass
-          ? 'dark'
-          : systemPrefersDark
-            ? 'dark'
-            : 'light'
+      const effectiveTheme: ThemeMode = savedTheme === 'light' ? 'light' : 'dark'
 
       setThemeMode(effectiveTheme)
     } catch (e) {}

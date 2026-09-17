@@ -217,7 +217,7 @@ export async function POST(request: Request) {
     const paystackKobo = Math.round(savedTx.totalPaid * 100)
 
     // 7. Initialize Paystack Transaction with Invariant-Verified Total
-    const origin = request.headers.get('origin') || 'https://obiora.dev'
+    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://emmanuel-obiora.vercel.app'
     const paystackPayload = {
       email: customerEmail,
       amount: paystackKobo, // In Kobo
