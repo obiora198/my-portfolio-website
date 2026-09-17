@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Mail, User, MessageSquare, Send } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { useTheme } from '../ThemeContext'
 import { useState, useRef } from 'react'
 import emailjs from '@emailjs/browser'
@@ -30,8 +31,56 @@ export function ContactSection({
   })
   const [loading, setLoading] = useState(false)
 
+  const handleWhatsAppSubmit = () => {
+    if (!formData.name.trim()) {
+      toast.error('Please enter your name first.')
+      const nameInput = document.getElementById('name')
+      if (nameInput) nameInput.focus()
+      return
+    }
+    if (!formData.email.trim()) {
+      toast.error('Please enter your email address.')
+      const emailInput = document.getElementById('email')
+      if (emailInput) emailInput.focus()
+      return
+    }
+    if (!formData.message.trim()) {
+      toast.error('Please enter your message.')
+      const messageInput = document.getElementById('message')
+      if (messageInput) messageInput.focus()
+      return
+    }
+
+    // Save to database in the background so Emmanuel has a persistent record
+    try {
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          source: 'mobile_whatsapp_contact',
+        }),
+      }).catch(() => {})
+    } catch (e) {}
+
+    const text = `Hi Emmanuel,\n\nName: ${formData.name.trim()}\nEmail: ${formData.email.trim()}\n\nMessage:\n${formData.message.trim()}`
+    const whatsappUrl = `https://wa.me/2348162841368?text=${encodeURIComponent(text)}`
+
+    toast.success('Opening WhatsApp...', { icon: '💬' })
+    if (typeof window !== 'undefined') {
+      window.open(whatsappUrl, '_blank')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // On mobile screens, route through WhatsApp flow
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      handleWhatsAppSubmit()
+      return
+    }
+
     setLoading(true)
 
     let emailjsSuccess = false
@@ -315,11 +364,23 @@ export function ContactSection({
                 />
               </div>
 
-              {/* Submit Button */}
+              {/* Mobile WhatsApp Button (Only displayed on mobile screens < md) */}
+              <motion.button
+                type="button"
+                onClick={handleWhatsAppSubmit}
+                className="w-full md:hidden inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer active:scale-98"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaWhatsapp className="w-5 h-5 text-white" />
+                <span>Send via WhatsApp</span>
+              </motion.button>
+
+              {/* Desktop Submit Button (Hidden on mobile, displayed on desktop/computer screens >= md) */}
               <motion.button
                 type="submit"
                 disabled={loading}
-                className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
+                className={`w-full hidden md:inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r ${currentTheme.buttonGradient} text-white rounded-xl font-medium hover:${currentTheme.buttonHover} transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                 whileHover={{ scale: loading ? 1 : 1.02 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
               >
