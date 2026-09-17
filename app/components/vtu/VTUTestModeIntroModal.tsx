@@ -5,11 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Sparkles,
   X,
-  CreditCard,
   Zap,
-  CheckCircle2,
-  Copy,
-  Check,
   MessageSquare,
   ArrowRight,
   ShieldCheck,
@@ -33,7 +29,6 @@ export function VTUTestModeIntroModal({
   const isControlled = controlledIsOpen !== undefined
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen
 
-  const [copied, setCopied] = useState(false)
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
 
@@ -69,12 +64,6 @@ export function VTUTestModeIntroModal({
     if (onStartTesting) {
       onStartTesting()
     }
-  }
-
-  const copyTestCard = () => {
-    navigator.clipboard.writeText('4084084084084084')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -201,48 +190,33 @@ export function VTUTestModeIntroModal({
                     </div>
                   </div>
 
-                  {/* Paystack Test Card Box */}
+                  {/* Seamless Sandbox Simulation Tip */}
                   <div
-                    className={`p-3.5 rounded-2xl border ${
+                    className={`flex items-start gap-3 p-3 rounded-2xl border ${
                       isDarkMode
                         ? 'bg-amber-950/20 border-amber-500/30'
                         : 'bg-amber-50/80 border-amber-200'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="flex items-center gap-1.5 text-xs font-bold text-amber-500">
-                        <CreditCard className="w-3.5 h-3.5" />
-                        Paystack Test Card:
-                      </span>
-                      <button
-                        onClick={copyTestCard}
-                        className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md transition-colors ${
-                          copied
-                            ? 'bg-emerald-500/20 text-emerald-500'
-                            : isDarkMode
-                              ? 'bg-neutral-800 text-amber-400 hover:bg-neutral-700'
-                              : 'bg-white text-amber-800 hover:bg-amber-100 shadow-xs'
+                    <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500 mt-0.5 flex-shrink-0">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div className="text-xs">
+                      <p
+                        className={`font-semibold ${
+                          isDarkMode ? 'text-white' : 'text-gray-900'
                         }`}
                       >
-                        {copied ? (
-                          <>
-                            <Check className="w-3 h-3" /> Copied
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" /> Copy
-                          </>
-                        )}
-                      </button>
+                        Seamless One-Click Simulation
+                      </p>
+                      <p
+                        className={
+                          isDarkMode ? 'text-neutral-400' : 'text-gray-500'
+                        }
+                      >
+                        Use the &quot;Fill demo number&quot; shortcut in checkout to auto-populate test numbers, then choose &quot;Success&quot; inside Paystack&apos;s test checkout popup.
+                      </p>
                     </div>
-                    <div className="font-mono text-xs tracking-wider font-semibold text-amber-600 dark:text-amber-300">
-                      4084 · 0840 · 8408 · 4084
-                    </div>
-                    <p className="text-[11px] text-amber-700/80 dark:text-amber-400/70 mt-1">
-                      Expiry: <span className="font-mono">Any future date</span> ·
-                      CVV: <span className="font-mono">123</span> · OTP:{' '}
-                      <span className="font-mono">123456</span>
-                    </p>
                   </div>
                 </div>
 
