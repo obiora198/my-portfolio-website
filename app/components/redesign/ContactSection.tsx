@@ -7,7 +7,19 @@ import { useState, useRef } from 'react'
 import emailjs from '@emailjs/browser'
 import toast from 'react-hot-toast'
 
-export function ContactSection() {
+interface ContactSectionProps {
+  title?: string
+  subtitle?: string
+  heading?: string
+  description?: string
+}
+
+export function ContactSection({
+  title = 'Get In Touch',
+  subtitle = "Have a project in mind? Let's work together to create something amazing",
+  heading = "Let's create something amazing together",
+  description = "I'm always interested in hearing about new projects and opportunities. Whether you have a question or just want to say hi, feel free to drop me a message!",
+}: ContactSectionProps = {}) {
   const { theme, currentTheme } = useTheme()
   const isDarkMode = theme === 'dark'
   const formRef = useRef<HTMLFormElement>(null)
@@ -70,13 +82,12 @@ export function ContactSection() {
           <h2
             className={`text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r ${currentTheme.gradientText} bg-clip-text text-transparent`}
           >
-            Get In Touch
+            {title}
           </h2>
           <p
             className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
           >
-            Have a project in mind? Let&apos;s work together to create something
-            amazing
+            {subtitle}
           </p>
         </motion.div>
 
@@ -93,14 +104,12 @@ export function ContactSection() {
               <h3
                 className={`text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
               >
-                Let&apos;s create something amazing together
+                {heading}
               </h3>
               <p
                 className={`leading-relaxed ${isDarkMode ? 'text-neutral-400' : 'text-gray-600'}`}
               >
-                I&apos;m always interested in hearing about new projects and
-                opportunities. Whether you have a question or just want to say
-                hi, feel free to drop me a message!
+                {description}
               </p>
             </div>
 

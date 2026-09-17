@@ -233,7 +233,7 @@ export function VTUTestModeIntroModal({
 
                   <div className="flex items-center justify-between gap-3 pt-1">
                     <a
-                      href="/#contact"
+                      href="#contact"
                       onClick={dismiss}
                       className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
                         isDarkMode

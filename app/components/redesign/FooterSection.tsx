@@ -11,6 +11,7 @@ export function FooterSection() {
   const isDarkMode = theme === 'dark'
   const pathname = usePathname()
   const isHomePage = pathname === '/'
+  const isVTUPage = pathname === '/vtu'
 
   return (
     <footer className="bg-[#000000] border-t border-neutral-900 text-white py-16">
@@ -79,7 +80,7 @@ export function FooterSection() {
               </li>
               <li>
                 <a
-                  href={isHomePage ? '#contact' : '/#contact'}
+                  href={isHomePage || isVTUPage ? '#contact' : '/#contact'}
                   className="text-neutral-400 hover:text-white transition-colors duration-200"
                 >
                   Contact
