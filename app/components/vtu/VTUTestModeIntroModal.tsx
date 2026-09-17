@@ -66,6 +66,27 @@ export function VTUTestModeIntroModal({
     }
   }
 
+  const handleFeedbackClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    dismiss()
+    setTimeout(() => {
+      const contactEl =
+        document.getElementById('contact-form') ||
+        document.getElementById('contact')
+      if (contactEl) {
+        contactEl.scrollIntoView({ behavior: 'smooth' })
+        const messageInput =
+          (document.getElementById('message') as HTMLTextAreaElement | null) ||
+          (document.getElementById('name') as HTMLInputElement | null)
+        if (messageInput) {
+          messageInput.focus()
+        }
+      } else {
+        window.location.href = '/vtu#contact'
+      }
+    }, 150)
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -234,8 +255,8 @@ export function VTUTestModeIntroModal({
                   <div className="flex items-center justify-between gap-3 pt-1">
                     <a
                       href="#contact"
-                      onClick={dismiss}
-                      className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
+                      onClick={handleFeedbackClick}
+                      className={`flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer ${
                         isDarkMode
                           ? 'text-neutral-400 hover:text-white'
                           : 'text-gray-500 hover:text-gray-900'

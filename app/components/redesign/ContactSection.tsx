@@ -181,6 +181,7 @@ export function ContactSection({
             transition={{ duration: 0.6 }}
           >
             <form
+              id="contact-form"
               ref={formRef}
               onSubmit={handleSubmit}
               className={`rounded-3xl shadow-xl border p-6 sm:p-8 space-y-4 sm:space-y-6 ${
