@@ -2078,36 +2078,21 @@ export function VTUPurchaseModal({
               {(activeTab === 'electricity' || activeTab === 'tv') &&
                 variationCode && (
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <label
-                        className={`block text-sm font-semibold ${isDarkMode ? 'text-neutral-300' : 'text-gray-700'}`}
-                      >
-                        {activeTab === 'electricity'
-                          ? 'Meter Number'
-                          : 'Smartcard / IUC Number'}
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const demoCode = activeTab === 'electricity' ? '1111111111111' : '1212121212'
-                          setBillersCode(demoCode)
-                          setMeterVerifyError('')
-                          handleFillDemoDetails()
-                        }}
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all cursor-pointer active:scale-95"
-                      >
-                        <Sparkles className="w-3 h-3 text-amber-500" />
-                        <span>Fill demo {activeTab === 'electricity' ? 'meter' : 'card'}</span>
-                      </button>
-                    </div>
+                    <label
+                      className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-neutral-300' : 'text-gray-700'}`}
+                    >
+                      {activeTab === 'electricity'
+                        ? 'Meter Number'
+                        : 'Smartcard / IUC Number'}
+                    </label>
                     <input
                       type="text"
                       value={billersCode}
                       onChange={(e) => setBillersCode(e.target.value)}
                       placeholder={
                         activeTab === 'electricity'
-                          ? 'Enter meter number (Demo: 1111111111111)'
-                          : 'Enter smartcard number (Demo: 1212121212)'
+                          ? 'Enter meter number'
+                          : 'Enter smartcard number'
                       }
                       className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${themeStyles.focusRing} ${themeStyles.focusBorder} ${
                         isDarkMode
@@ -2116,13 +2101,10 @@ export function VTUPurchaseModal({
                       }`}
                       required
                     />
-                    <div className="flex items-center justify-between mt-1.5 px-1 text-[11px]">
-                      <span className={isDarkMode ? 'text-neutral-500' : 'text-gray-500'}>
-                        Verified test number:{' '}
-                        <code className="font-mono text-amber-400 font-bold">
-                          {activeTab === 'electricity' ? '1111111111111' : '1212121212'}
-                        </code>
-                      </span>
+                    <div className="flex items-center justify-between gap-2 mt-1.5 px-1">
+                      <p className={`text-[11px] leading-tight ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                        For demo purposes, only the demo number will be successful.
+                      </p>
                       <button
                         type="button"
                         onClick={() => {
@@ -2131,9 +2113,10 @@ export function VTUPurchaseModal({
                           setMeterVerifyError('')
                           handleFillDemoDetails()
                         }}
-                        className="font-bold text-amber-500 hover:underline flex items-center gap-1 cursor-pointer"
+                        className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded-md bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition-all cursor-pointer active:scale-95"
                       >
-                        Auto-fill
+                        <Sparkles className="w-3 h-3 text-amber-500" />
+                        <span>Fill demo {activeTab === 'electricity' ? 'meter' : 'card'}</span>
                       </button>
                     </div>
                   </div>
@@ -2195,21 +2178,11 @@ export function VTUPurchaseModal({
                   isVerified) ||
                 (activeTab === 'international' && selectedOperatorId)) && (
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label
-                      className={`block text-sm font-semibold ${isDarkMode ? 'text-neutral-300' : 'text-gray-700'}`}
-                    >
-                      Phone Number
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleFillDemoDetails}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all cursor-pointer active:scale-95"
-                    >
-                      <Sparkles className="w-3 h-3 text-amber-500" />
-                      <span>Fill demo details</span>
-                    </button>
-                  </div>
+                  <label
+                    className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-neutral-300' : 'text-gray-700'}`}
+                  >
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
                     value={phone}
@@ -2218,7 +2191,7 @@ export function VTUPurchaseModal({
                     placeholder={
                       activeTab === 'international'
                         ? '+1234567890'
-                        : '08012345678 (Demo: 08011111111)'
+                        : '08012345678'
                     }
                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
                       isDarkMode
@@ -2240,65 +2213,18 @@ export function VTUPurchaseModal({
                     </p>
                   )}
 
-                  {/* Dedicated Demo Helper Card Under Phone Field */}
-                  <div
-                    className={`mt-2 p-2.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs ${
-                      isDarkMode
-                        ? 'bg-amber-950/20 border-amber-500/30 text-amber-300/90'
-                        : 'bg-amber-50/80 border-amber-300/60 text-amber-900'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
-                      <div>
-                        <span className="font-medium">Test phone: </span>
-                        <code className="font-mono font-bold text-amber-400 bg-black/30 dark:bg-black/50 px-1.5 py-0.5 rounded">
-                          08011111111
-                        </code>
-                      </div>
-                    </div>
+                  {/* Subtle Demo Info & Auto-fill */}
+                  <div className="flex items-center justify-between gap-2 mt-1.5 px-1">
+                    <p className={`text-[11px] leading-tight ${isDarkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
+                      For demo purposes, only the demo number will be successful.
+                    </p>
                     <button
                       type="button"
                       onClick={handleFillDemoDetails}
-                      className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-black transition-all flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer"
+                      className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 hover:text-amber-400 py-0.5 px-2 rounded-md bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition-all cursor-pointer active:scale-95"
                     >
-                      <Sparkles className="w-3 h-3" />
-                      <span>Fill demo details</span>
-                    </button>
-                  </div>
-
-                  {/* Paystack Test Card Info Bar Under Phone */}
-                  <div
-                    className={`mt-1.5 p-2 rounded-xl border flex items-center justify-between gap-2 text-xs font-mono ${
-                      isDarkMode
-                        ? 'bg-[#09090b] border-neutral-800 text-neutral-300'
-                        : 'bg-gray-50 border-gray-200 text-gray-700'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <CreditCard className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
-                      <span className="text-[11px] truncate">
-                        Test Card: <strong className={isDarkMode ? 'text-white' : 'text-gray-900'}>4084 0840 8408 4084</strong> · Exp: 12/34 · CVV: 408
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleCopyTestCard}
-                      className={`flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold font-sans transition-all ${
-                        cardCopied
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-neutral-800 hover:bg-neutral-700 text-orange-400 hover:text-orange-300 border border-neutral-700'
-                      }`}
-                    >
-                      {cardCopied ? (
-                        <>
-                          <Check className="w-3 h-3 text-emerald-400" /> Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3" /> Copy Card
-                        </>
-                      )}
+                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <span>Fill demo number</span>
                     </button>
                   </div>
                 </div>
