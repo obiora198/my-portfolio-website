@@ -51,6 +51,9 @@ export function ContactSection({
       return
     }
 
+    const isVTU = typeof window !== 'undefined' && window.location.pathname.includes('vtu')
+    const sourceLabel = isVTU ? 'VTU Services Platform' : 'Portfolio Website'
+
     // Save to database in the background so Emmanuel has a persistent record
     try {
       fetch('/api/contact', {
@@ -58,12 +61,12 @@ export function ContactSection({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          source: 'mobile_whatsapp_contact',
+          source: isVTU ? 'vtu_mobile_whatsapp' : 'homepage_mobile_whatsapp',
         }),
       }).catch(() => {})
     } catch (e) {}
 
-    const text = `Hi Emmanuel,\n\nName: ${formData.name.trim()}\nEmail: ${formData.email.trim()}\n\nMessage:\n${formData.message.trim()}`
+    const text = `Hi Emmanuel,\n\nName: ${formData.name.trim()}\nEmail: ${formData.email.trim()}\nSource: ${sourceLabel}\n\nMessage:\n${formData.message.trim()}`
     const whatsappUrl = `https://wa.me/2348162841368?text=${encodeURIComponent(text)}`
 
     toast.success('Opening WhatsApp...', { icon: '💬' })
